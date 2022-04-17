@@ -1,0 +1,38 @@
+name: MendingTools
+author: Emcc13
+desription: MendingTools - A plugin to manage tools with a mending enchantment.
+version: 0.5
+depend: [Vault,OpenInv]
+api-version: 1.18
+
+main: com.github.Emcc13.MendingToolsMain
+
+commands:
+#  mt_tools:
+#    description: tools
+#  mt_restore_tool:
+#    description: restore tool
+#  mt_upgrade_tool:
+#    description: upgrade enchantment level
+#  mt_blueprints:
+#    description: set blueprint material
+#  mt_tool_new:
+#    description: new tool
+#  mt_delete_tool:
+#    description: delete tool
+#  mt_transfer:
+#    description: transfer item to player
+#  mt_reload:
+#    description: reload config
+
+  mendingtools:
+    aliases: mt
+    description: general command
+
+permissions:
+  mt.reload:
+    default: false
+    description: reload config
+  mt.admin:
+    default: false
+    description: bypass restore restrictions

@@ -1,0 +1,181 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<blueprints>
+    <blueprint id="1" name="Miners Lucky Pickaxe" material="DIAMOND_PICKAXE">
+        <enchantment name="efficiency" level="10"/>
+        <enchantment name="mending" level="1"/>
+        <enchantment name="unbreaking" level="10" maxlevel="50">
+            <money>50000</money>
+            <command>hiddenticket %PLAYER% upgraded his tool %ID% unbreaking to %LEVEL% for %MONEY%.</command>
+        </enchantment>
+        <enchantment name="fortune" level="8" maxlevel="50">
+            <money>%LEVEL%*100000</money>
+            <command>hiddenticket %PLAYER% upgraded his tool %ID% fortune to %LEVEL% for %MONEY%.</command>
+        </enchantment>
+        <money>sign(%RESTORES%-9)*1000</money>
+        <command>hiddenticket %PLAYER% restored tool %BPNAME%-%BPID% %ID% for %MONEY%.</command>
+    </blueprint>
+
+    <blueprint id="2" name="Miners Gentle Pickaxe" material="DIAMOND_PICKAXE">
+        <enchantment name="efficiency" level="10"/>
+        <enchantment name="mending" level="1"/>
+        <enchantment name="silk_touch" level="1"/>
+        <enchantment name="unbreaking" level="10" maxlevel="50">
+            <money>50000</money>
+            <command>hiddenticket %PLAYER% upgraded his tool %ID% unbreaking to %LEVEL% for %MONEY%.</command>
+        </enchantment>
+        <money>sign(%RESTORES%-9)*1000</money>
+        <command>hiddenticket %PLAYER% restored tool %BPNAME%-%BPID% %ID% for %MONEY%.</command>
+    </blueprint>
+
+    <blueprint id="3" name="Lumberjacks Finest Axe" material="DIAMOND_AXE">
+        <enchantment name="efficiency" level="10"/>
+        <enchantment name="mending" level="1"/>
+        <enchantment name="unbreaking" level="10" maxlevel="50">
+            <money>50000</money>
+            <command>hiddenticket %PLAYER% upgraded his tool %ID% unbreaking to %LEVEL% for %MONEY%.</command>
+        </enchantment>
+        <money>sign(%RESTORES%-9)*1000</money>
+        <command>hiddenticket %PLAYER% restored tool %BPNAME%-%BPID% %ID% for %MONEY%.</command>
+    </blueprint>
+
+    <blueprint id="4" name="Lumberjacks Lucky Axe" material="DIAMOND_AXE">
+        <enchantment name="efficiency" level="10"/>
+        <enchantment name="mending" level="1"/>
+        <enchantment name="fortune" level="6"/>
+        <enchantment name="unbreaking" level="10" maxlevel="50">
+            <money>50000</money>
+            <command>hiddenticket %PLAYER% upgraded his tool %ID% unbreaking to %LEVEL% for %MONEY%.</command>
+        </enchantment>
+        <money>sign(%RESTORES%-9)*1000</money>
+        <command>hiddenticket %PLAYER% restored tool %BPNAME%-%BPID% %ID% for %MONEY%.</command>
+    </blueprint>
+
+    <blueprint id="5" name="Babars Lucky Axe" material="DIAMOND_AXE">
+        <enchantment name="efficiency" level="10"/>
+        <enchantment name="mending" level="1"/>
+        <enchantment name="looting" level="5"/>
+        <enchantment name="unbreaking" level="10" maxlevel="50">
+            <money>50000</money>
+            <command>hiddenticket %PLAYER% upgraded his tool %ID% unbreaking to %LEVEL% for %MONEY%.</command>
+        </enchantment>
+        <money>sign(%RESTORES%-9)*1000</money>
+        <command>hiddenticket %PLAYER% restored tool %BPNAME%-%BPID% %ID% for %MONEY%.</command>
+    </blueprint>
+
+    <blueprint id="6" name="Diggers Lucky Shovel" material="DIAMOND_SHOVEL">
+        <enchantment name="efficiency" level="10"/>
+        <enchantment name="mending" level="1"/>
+        <enchantment name="fortune" level="4"/>
+        <enchantment name="unbreaking" level="10" maxlevel="50">
+            <money>50000</money>
+            <command>hiddenticket %PLAYER% upgraded his tool %ID% unbreaking to %LEVEL% for %MONEY%.</command>
+        </enchantment>
+        <money>sign(%RESTORES%-9)*1000</money>
+        <command>hiddenticket %PLAYER% restored tool %BPNAME%-%BPID% %ID% for %MONEY%.</command>
+    </blueprint>
+
+    <blueprint id="7" name="Diggers Gentle Shovel" material="DIAMOND_SHOVEL">
+        <enchantment name="efficiency" level="10"/>
+        <enchantment name="mending" level="1"/>
+        <enchantment name="silk_touch" level="1"/>
+        <enchantment name="unbreaking" level="10" maxlevel="50">
+            <money>50000</money>
+            <command>hiddenticket %PLAYER% upgraded his tool %ID% unbreaking to %LEVEL% for %MONEY%.</command>
+        </enchantment>
+        <money>sign(%RESTORES%-9)*1000</money>
+        <command>hiddenticket %PLAYER% restored tool %BPNAME%-%BPID% %ID% for %MONEY%.</command>
+    </blueprint>
+
+    <blueprint id="8" name="Slice of Life" material="DIAMOND_SWORD">
+        <enchantment name="mending" level="1"/>
+        <enchantment name="looting" level="5"/>
+        <enchantment name="sharpness" level="10"/>
+        <enchantment name="unbreaking" level="10" maxlevel="50">
+            <money>50000</money>
+            <command>hiddenticket %PLAYER% upgraded his tool %ID% unbreaking to %LEVEL% for %MONEY%.</command>
+        </enchantment>
+        <money>sign(%RESTORES%-9)*1000</money>
+        <command>hiddenticket %PLAYER% restored tool %BPNAME%-%BPID% %ID% for %MONEY%.</command>
+    </blueprint>
+
+    <blueprint id="9" name="English Longbow" material="BOW">
+        <enchantment name="mending" level="1"/>
+        <enchantment name="power" level="10"/>
+        <enchantment name="infinity" level="10"/>
+        <enchantment name="unbreaking" level="10" maxlevel="50">
+            <money>50000</money>
+            <command>hiddenticket %PLAYER% upgraded his tool %ID% unbreaking to %LEVEL% for %MONEY%.</command>
+        </enchantment>
+        <money>sign(%RESTORES%-9)*1000</money>
+        <command>hiddenticket %PLAYER% restored tool %BPNAME%-%BPID% %ID% for %MONEY%.</command>
+    </blueprint>
+
+    <blueprint id="10" name="Shepherds Finest Shears" material="SHEARS">
+        <enchantment name="mending" level="1"/>
+        <enchantment name="efficiency" level="11"/>
+        <enchantment name="unbreaking" level="10" maxlevel="50">
+            <money>50000</money>
+            <command>hiddenticket %PLAYER% upgraded his tool %ID% unbreaking to %LEVEL% for %MONEY%.</command>
+        </enchantment>
+        <money>sign(%RESTORES%-9)*1000</money>
+        <command>hiddenticket %PLAYER% restored tool %BPNAME%-%BPID% %ID% for %MONEY%.</command>
+    </blueprint>
+
+    <blueprint id="11" name="Fishermans Fishing Rod" material="FISHING_ROD">
+        <enchantment name="mending" level="1"/>
+        <enchantment name="lure" level="3"/>
+        <enchantment name="luck_of_the_sea" level="3"/>
+        <enchantment name="unbreaking" level="10" maxlevel="50">
+            <money>50000</money>
+            <command>hiddenticket %PLAYER% upgraded his tool %ID% unbreaking to %LEVEL% for %MONEY%.</command>
+        </enchantment>
+        <money>sign(%RESTORES%-9)*1000</money>
+        <command>hiddenticket %PLAYER% restored tool %BPNAME%-%BPID% %ID% for %MONEY%.</command>
+    </blueprint>
+
+    <blueprint id="12" name="Indestructible Soup Bowl" material="DIAMOND_HELMET">
+        <enchantment name="mending" level="1"/>
+        <enchantment name="unbreaking" level="10" maxlevel="50">
+            <money>50000</money>
+            <command>hiddenticket %PLAYER% upgraded his tool %ID% unbreaking to %LEVEL% for %MONEY%.</command>
+        </enchantment>
+    </blueprint>
+
+    <blueprint id="13" name="Untouchable Tank Top" material="DIAMOND_CHESTPLATE">
+        <enchantment name="mending" level="1"/>
+        <enchantment name="unbreaking" level="10" maxlevel="50">
+            <money>50000</money>
+            <command>hiddenticket %PLAYER% upgraded his tool %ID% unbreaking to %LEVEL% for %MONEY%.</command>
+        </enchantment>
+    </blueprint>
+
+    <blueprint id="14" name="Well Fitted Yoga Pants" material="DIAMOND_LEGGINGS">
+        <enchantment name="mending" level="1"/>
+        <enchantment name="unbreaking" level="10" maxlevel="50">
+            <money>50000</money>
+            <command>hiddenticket %PLAYER% upgraded his tool %ID% unbreaking to %LEVEL% for %MONEY%.</command>
+        </enchantment>
+    </blueprint>
+
+    <blueprint id="15" name="Hermes Flying Shoes" material="DIAMOND_BOOTS">
+        <enchantment name="mending" level="1"/>
+        <enchantment name="unbreaking" level="10" maxlevel="50">
+            <money>50000</money>
+            <command>hiddenticket %PLAYER% upgraded his tool %ID% unbreaking to %LEVEL% for %MONEY%.</command>
+        </enchantment>
+    </blueprint>
+
+    <blueprint id="42" name="Example Stick" material="STICK">
+        <enchantment name="mending" level="1"/>
+        <enchantment name="unbreaking" level="3" maxlevel="5">
+            <money>50000</money>
+            <command>hiddenticket %PLAYER% upgraded his tool %ID% unbreaking to %LEVEL% for %MONEY%.</command>
+        </enchantment>
+        <enchantment name="knockback" level="1" maxlevel="100">
+            <money>%LEVEL%*100+%unbreaking%*7</money>
+            <command>hiddenticket %PLAYER% upgraded his tool %BPNAME%-%BPID% %ID% unbreaking to %LEVEL% for %MONEY%</command>
+        </enchantment>
+        <money>sign(%RESTORES%-9)*1000</money>
+        <command>hiddenticket %PLAYER% restored tool %BPNAME%-%BPID% %ID% for %MONEY%. Restores: %RESTORES%</command>
+    </blueprint>
+</blueprints>
