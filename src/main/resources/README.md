@@ -1,4 +1,4 @@
-# MendingTools v0.5 for API 1.16
+# MendingTools v0.6 for API 1.16
 
 A plugin to manage tools with a mending enchantment.
 
