@@ -146,7 +146,7 @@ public class MTListener implements Listener {
                 checkItem = true;
                 break;
         }
-        if (checkItem && item.getItemMeta().getPersistentDataContainer().
+        if (checkItem && item !=null && item.hasItemMeta() && item.getItemMeta().getPersistentDataContainer().
                 get(main.getNBT_key(), PersistentDataType.LONG) != null) {
             event.setCancelled(true);
             p.updateInventory();

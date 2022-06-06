@@ -21,7 +21,7 @@ public class MendingToolsCMD extends mtCommands {
     }
 
     protected void commandHint(CommandSender commandSender){
-        super.commandHint(commandSender, (String)main.getCachedConfig().get(BaseConfig_EN.EN.languageConf_hint_mendingtools.key()), COMMAND);
+        super.commandHint(commandSender, BaseConfig_EN.EN.languageConf_hint_mendingtools.key(), COMMAND);
     }
 
     @Override
