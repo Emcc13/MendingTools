@@ -13,10 +13,17 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataType;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 public class mtDeleteTool extends mtCommands {
     public static String COMMAND = "mt_delete_tool";
+    public static List<String> command_complete_list[] = new List[]{
+            new ArrayList<String>() {{
+                add("blueprint id");
+            }},
+    };
 
     public mtDeleteTool(MendingToolsMain main) {
         super(main);
@@ -29,6 +36,13 @@ public class mtDeleteTool extends mtCommands {
 
     protected void commandHint(CommandSender commandSender){
         super.commandHint(commandSender, BaseConfig_EN.EN.languageConf_hint_deleteTool.key(), COMMAND);
+    }
+
+    public List<String> subCommandComplete(String[] args){
+        if (this.command_complete_list != null && args.length-1<=this.command_complete_list.length) {
+            return this.command_complete_list[args.length - 2];
+        }
+        return null;
     }
 
     @Override

@@ -13,11 +13,20 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataType;
 
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
 public class mtToolNew extends mtCommands {
     public static String COMMAND = "mt_tool_new";
+    public static List<String> command_complete_list[] = new List[]{
+            new ArrayList<String>() {{
+                add("blueprint id");
+            }},
+            new ArrayList<String>() {{
+                add("player name");
+            }},
+    };
 
     public mtToolNew(MendingToolsMain main) {
         super(main);
@@ -30,6 +39,13 @@ public class mtToolNew extends mtCommands {
 
     protected void commandHint(CommandSender commandSender){
         super.commandHint(commandSender, BaseConfig_EN.EN.languageConf_hint_toolNew.key(), COMMAND);
+    }
+
+    public List<String> subCommandComplete(String[] args){
+        if (this.command_complete_list != null && args.length-1<=this.command_complete_list.length) {
+            return this.command_complete_list[args.length - 2];
+        }
+        return null;
     }
 
     @Override

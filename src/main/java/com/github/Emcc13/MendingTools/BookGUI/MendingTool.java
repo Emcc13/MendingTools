@@ -149,6 +149,7 @@ public class MendingTool {
     }
 
     public ItemStack getItemStack(String playerName) {
+        Map<String, Object> conf = MendingToolsMain.getInstance().getCachedConfig();
         ItemStack result = new ItemStack(Material.getMaterial(material));
         ItemMeta im = result.getItemMeta();
         List<String> lore = im.getLore();
@@ -159,7 +160,7 @@ public class MendingTool {
         NamespacedKey key = MendingToolsMain.getInstance().getNBT_key();
         im.getPersistentDataContainer().set(key, PersistentDataType.LONG, id);
         Damageable damage = (Damageable) im;
-        damage.setDamage(result.getData().getItemType().getMaxDurability()-1);
+        damage.setDamage(result.getData().getItemType().getMaxDurability()-(Integer)conf.get(BaseConfig_EN.option_restoreTool_durability.key()));
         result.setItemMeta(im);
         Enchantment ench;
         for (Map.Entry<String, Integer> entry : enchantments.entrySet()) {

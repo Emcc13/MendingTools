@@ -96,9 +96,14 @@ public enum DE implements ConfigInterface {
             put("text", "/%COMMAND% <tool id> <enchantment> <new level>");
         }});
     }}),
+    languageConf_hint_renameTool(new ArrayList<Map<String, String>>() {{
+        add(new HashMap<String, String>(){{
+            put("text", "/%COMMAND% <new name>");
+        }});
+    }}),
     languageConf_hint_mendingtools(new ArrayList<Map<String, String>>(){{
         add(new HashMap<String, String>(){{
-            put("text", "/%COMMAND% [tools, blueprints, delete, restore, new, transfer, upgrade] <subcommand " +
+            put("text", "/%COMMAND% [tools, blueprints, delete, restore, new, transfer, upgrade, rename] <subcommand " +
                     "specific arguments>");
         }});
     }}),

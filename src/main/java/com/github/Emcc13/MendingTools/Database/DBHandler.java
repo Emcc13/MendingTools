@@ -80,7 +80,7 @@ public class DBHandler {
                     "UPDATE Enchantments SET Level=? WHERE ID=? AND Name=?;");
             allToolsSorted = connection.prepareStatement(
                     "SELECT ID, BlueprintID, Material, Broken, Restores, UUID FROM Tool " +
-                            "ORDER BY Material ASC, ID ASC LIMIT ?, ?;");
+                            "ORDER BY BlueprintID ASC, ID ASC LIMIT ?, ?;");
             return connection;
         } catch (SQLException e) {
             this.connection = null;

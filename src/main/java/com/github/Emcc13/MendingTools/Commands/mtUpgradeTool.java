@@ -22,6 +22,18 @@ import java.util.function.Consumer;
 
 public class mtUpgradeTool extends mtCommands {
     public static String COMMAND = "mt_upgrade_tool";
+    public static List<String> command_complete_list[] = new List[]{
+            new ArrayList<String>() {{
+                add("blueprint id");
+            }},
+            new ArrayList<String>() {{
+                add("enchantment");
+            }},
+            new ArrayList<String>() {{
+                add("new level");
+            }},
+    };
+
 
     public mtUpgradeTool(MendingToolsMain main) {
         super(main);
@@ -34,6 +46,13 @@ public class mtUpgradeTool extends mtCommands {
 
     protected void commandHint(CommandSender commandSender){
         super.commandHint(commandSender, BaseConfig_EN.EN.languageConf_hint_upgradeTool.key(), COMMAND);
+    }
+
+    public List<String> subCommandComplete(String[] args){
+        if (this.command_complete_list != null && args.length-1<=this.command_complete_list.length) {
+            return this.command_complete_list[args.length - 2];
+        }
+        return null;
     }
 
     @Override

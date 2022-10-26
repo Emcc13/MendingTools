@@ -63,6 +63,7 @@ public class MendingToolsMain extends JavaPlugin {
         this.commands.put(mtUpgradeTool.COMMAND, new mtUpgradeTool(this));
         this.commands.put(mtDeleteTool.COMMAND, new mtDeleteTool(this));
         this.commands.put(mtTransferTool.COMMAND, new mtTransferTool(this));
+        this.commands.put(mtRename.COMMAND, new mtRename(this));
 
         this.generalCommand = new MendingToolsCMD(this);
     }
@@ -74,6 +75,7 @@ public class MendingToolsMain extends JavaPlugin {
 //            Objects.requireNonNull(getCommand(entry.getKey())).setExecutor(entry.getValue());
 //        }
         getCommand(MendingToolsCMD.COMMAND).setExecutor(this.generalCommand);
+//        getCommand(MendingToolsCMD.COMMAND).setTabCompleter(this.generalCommand);
     }
 
     private void setCommandPermissions() {

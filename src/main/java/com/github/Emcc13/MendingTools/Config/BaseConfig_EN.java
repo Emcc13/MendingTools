@@ -20,144 +20,152 @@ public enum BaseConfig_EN implements ConfigInterface {
     perm_command_upgradeTool("mt.upgradeTool"),
     perm_command_deleteTool("mt.deleteTool"),
     perm_command_transferTool("mt.transferTool"),
+    perm_command_renameTool("mt.renameTool"),
     perm_command_mendingtools("mendingtools"),
     perm_keep_inventory("mt.dummy_perm.keep_inv"),
     altColor("&"),
     language("de"),
     mendingToolBlueprintFile("blueprints.xml"),
+
+    option_restoreTool_durability(15),
     ;
 
     public enum EN implements ConfigInterface {
-        languageConf_noPermission(new ArrayList<Map<String, String>>(){{
-            add(new HashMap<String, String>(){{
+        languageConf_noPermission(new ArrayList<Map<String, String>>() {{
+            add(new HashMap<String, String>() {{
                 put("text", "You don't have permission for this command!");
             }});
         }}),
-        languageConf_error_db(new ArrayList<Map<String, String>>(){{
-            add(new HashMap<String, String>(){{
+        languageConf_error_db(new ArrayList<Map<String, String>>() {{
+            add(new HashMap<String, String>() {{
                 put("text", "Failed to perform database action!");
             }});
         }}),
-        languageConf_error_noSuchTool(new ArrayList<Map<String, String>>(){{
-            add(new HashMap<String, String>(){{
+        languageConf_error_noSuchTool(new ArrayList<Map<String, String>>() {{
+            add(new HashMap<String, String>() {{
                 put("text", "There is no such tool %ID%!");
             }});
         }}),
-        languageConf_error_hasNoTools(new ArrayList<Map<String, String>>(){{
-            add(new HashMap<String, String>(){{
+        languageConf_error_hasNoTools(new ArrayList<Map<String, String>>() {{
+            add(new HashMap<String, String>() {{
                 put("text", "%PLAYER% has no tools!");
             }});
         }}),
-        languageConf_error_noSuchEnchantment(new ArrayList<Map<String, String>>(){{
-            add(new HashMap<String, String>(){{
+        languageConf_error_noSuchEnchantment(new ArrayList<Map<String, String>>() {{
+            add(new HashMap<String, String>() {{
                 put("text", "The tool does not have the enchantment: %ENCH%");
             }});
         }}),
-        languageConf_error_notPlayed(new ArrayList<Map<String, String>>(){{
-            add(new HashMap<String, String>(){{
+        languageConf_error_notPlayed(new ArrayList<Map<String, String>>() {{
+            add(new HashMap<String, String>() {{
                 put("text", "%PLAYER% has not played on the server! Please check this and perform the action by hand if necessary!");
             }});
         }}),
-        languageConf_error_loadOfflinePlayer(new ArrayList<Map<String, String>>(){{
-            add(new HashMap<String, String>(){{
+        languageConf_error_loadOfflinePlayer(new ArrayList<Map<String, String>>() {{
+            add(new HashMap<String, String>() {{
                 put("text", "Failed to load offline Player: %PLAYER%! Please check this and perform the action by hand if necessary!");
             }});
         }}),
-        languageConf_error_loadBlueprint(new ArrayList<Map<String, String>>(){{
-            add(new HashMap<String, String>(){{
+        languageConf_error_loadBlueprint(new ArrayList<Map<String, String>>() {{
+            add(new HashMap<String, String>() {{
                 put("text", "Failed to load blueprint for %ID%. Please report this issue or check the config.");
             }});
         }}),
-        languageConf_error_notEnoughMoney(new ArrayList<Map<String, String>>(){{
-            add(new HashMap<String, String>(){{
+        languageConf_error_notEnoughMoney(new ArrayList<Map<String, String>>() {{
+            add(new HashMap<String, String>() {{
                 put("text", "%PLAYER% has not enough money; required: %MONEY%.");
             }});
         }}),
-        languageConf_error_removingItem(new ArrayList<Map<String, String>>(){{
-            add(new HashMap<String, String>(){{
+        languageConf_error_removingItem(new ArrayList<Map<String, String>>() {{
+            add(new HashMap<String, String>() {{
                 put("text", "Failed to remove tool %ID% from player %PLAYER%!");
             }});
         }}),
-        languageConf_error_targetLevelBelow(new ArrayList<Map<String, String>>(){{
-            add(new HashMap<String, String>(){{
+        languageConf_error_targetLevelBelow(new ArrayList<Map<String, String>>() {{
+            add(new HashMap<String, String>() {{
                 put("text", "The desired Level is lower than the current level!");
             }});
         }}),
-        languageConf_hint_deleteTool(new ArrayList<Map<String, String>>(){{
-            add(new HashMap<String, String>(){{
+        languageConf_hint_deleteTool(new ArrayList<Map<String, String>>() {{
+            add(new HashMap<String, String>() {{
                 put("text", "/%COMMAND% <tool id>");
             }});
         }}),
-        languageConf_hint_restoreTool(new ArrayList<Map<String, String>>(){{
-            add(new HashMap<String, String>(){{
+        languageConf_hint_restoreTool(new ArrayList<Map<String, String>>() {{
+            add(new HashMap<String, String>() {{
                 put("text", "/%COMMAND% <tool id>");
             }});
         }}),
-        languageConf_hint_toolNotBroken(new ArrayList<Map<String, String>>(){{
-            add(new HashMap<String, String>(){{
+        languageConf_hint_toolNotBroken(new ArrayList<Map<String, String>>() {{
+            add(new HashMap<String, String>() {{
                 put("text", "Tool %ID% is not broken!");
             }});
         }}),
-        languageConf_hint_toolNew(new ArrayList<Map<String, String>>(){{
-            add(new HashMap<String, String>(){{
+        languageConf_hint_toolNew(new ArrayList<Map<String, String>>() {{
+            add(new HashMap<String, String>() {{
                 put("text", "/%COMMAND% <blueprint id> <player name>");
             }});
         }}),
-        languageConf_hint_tools(new ArrayList<Map<String, String>>(){{
-            add(new HashMap<String, String>(){{
+        languageConf_hint_tools(new ArrayList<Map<String, String>>() {{
+            add(new HashMap<String, String>() {{
                 put("text", "/%COMMAND% [all | player name | tool id]");
             }});
         }}),
-        languageConf_hint_transferTool(new ArrayList<Map<String, String>>(){{
-            add(new HashMap<String, String>(){{
+        languageConf_hint_transferTool(new ArrayList<Map<String, String>>() {{
+            add(new HashMap<String, String>() {{
                 put("text", "/%COMMAND% <tool id> <player name>");
             }});
         }}),
-        languageConf_hint_upgradeTool(new ArrayList<Map<String, String>>(){{
-            add(new HashMap<String, String>(){{
+        languageConf_hint_upgradeTool(new ArrayList<Map<String, String>>() {{
+            add(new HashMap<String, String>() {{
                 put("text", "/%COMMAND% <tool id> <enchantment> <new level>");
             }});
         }}),
-        languageConf_hint_mendingtools(new ArrayList<Map<String, String>>(){{
-            add(new HashMap<String, String>(){{
-                put("text", "/%COMMAND% [tools, blueprints, delete, restore, new, transfer, upgrade] <subcommand " +
+        languageConf_hint_renameTool(new ArrayList<Map<String, String>>() {{
+            add(new HashMap<String, String>() {{
+                put("text", "/%COMMAND% <new name>");
+            }});
+        }}),
+        languageConf_hint_mendingtools(new ArrayList<Map<String, String>>() {{
+            add(new HashMap<String, String>() {{
+                put("text", "/%COMMAND% [tools, blueprints, delete, restore, new, transfer, upgrade, rename] <subcommand " +
                         "specific arguments>");
             }});
         }}),
 
-        languageConf_text_nextBook(new ArrayList<Map<String, String>>(){{
-            add(new HashMap<String, String>(){{
+        languageConf_text_nextBook(new ArrayList<Map<String, String>>() {{
+            add(new HashMap<String, String>() {{
                 put("text", "Next Book");
                 put("runcommand", "/%COMMAND% all %ID%");
             }});
         }}),
-        languageConf_text_upgrade(new ArrayList<Map<String, String>>(){{
-            add(new HashMap<String, String>(){{
+        languageConf_text_upgrade(new ArrayList<Map<String, String>>() {{
+            add(new HashMap<String, String>() {{
                 put("text", "&o&7Upgrade");
             }});
         }}),
-        languageConf_text_player(new ArrayList<Map<String, String>>(){{
-            add(new HashMap<String, String>(){{
+        languageConf_text_player(new ArrayList<Map<String, String>>() {{
+            add(new HashMap<String, String>() {{
                 put("text", "&nPlayer");
             }});
         }}),
-        languageConf_text_broken(new ArrayList<Map<String, String>>(){{
-            add(new HashMap<String, String>(){{
+        languageConf_text_broken(new ArrayList<Map<String, String>>() {{
+            add(new HashMap<String, String>() {{
                 put("text", "&oBroken");
             }});
         }}),
-        languageConf_text_intact(new ArrayList<Map<String, String>>(){{
-            add(new HashMap<String, String>(){{
+        languageConf_text_intact(new ArrayList<Map<String, String>>() {{
+            add(new HashMap<String, String>() {{
                 put("text", "&oIntact");
             }});
         }}),
-        languageConf_text_restore(new ArrayList<Map<String, String>>(){{
-            add(new HashMap<String, String>(){{
+        languageConf_text_restore(new ArrayList<Map<String, String>>() {{
+            add(new HashMap<String, String>() {{
                 put("text", "&4Restore");
             }});
         }}),
-        languageConf_text_noTools(new ArrayList<Map<String, String>>(){{
-            add(new HashMap<String, String>(){{
+        languageConf_text_noTools(new ArrayList<Map<String, String>>() {{
+            add(new HashMap<String, String>() {{
                 put("text", "You have no mending tools.");
             }});
         }}),
@@ -206,7 +214,11 @@ public enum BaseConfig_EN implements ConfigInterface {
             cachedConfig.put(key, value);
         }
         cachedConfig.put(altColor.key(), ((String) cachedConfig.get(altColor.key())).charAt(0));
-
+        try{
+            cachedConfig.put(option_restoreTool_durability.key(), (Integer) cachedConfig.get(option_restoreTool_durability.key()));
+        }catch (Exception e){
+            cachedConfig.put(option_restoreTool_durability.key(), (Integer)option_restoreTool_durability.value());
+        }
         char altColor_char = (char) cachedConfig.get(altColor.key());
         config.addDefaults(cachedConfig);
 
@@ -254,7 +266,7 @@ public enum BaseConfig_EN implements ConfigInterface {
                     ntc.setClickEvent(new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND,
                             comp.get("suggestcommand")));
                 }
-                if (comp.containsKey("clipboard")){
+                if (comp.containsKey("clipboard")) {
                     ntc.setClickEvent(new ClickEvent(ClickEvent.Action.COPY_TO_CLIPBOARD,
                             comp.get("clipboard")));
                 }

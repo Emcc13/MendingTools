@@ -1,4 +1,4 @@
-# MendingTools v0.6 for API 1.16
+# MendingTools v0.6 for API 1.18
 
 A plugin to manage tools with a mending enchantment.
 
@@ -46,6 +46,10 @@ A plugin to manage tools with a mending enchantment.
     - perm: mt.transferTool
     - args: id player
     - transfer item to player, removes item from previous owner inventory and adds it to new player inventory
+- mt_rename
+    - perm: mt.renameTool
+    - args: new name
+    - set the display name of item in main hand
 
 ## Events
 

@@ -13,10 +13,20 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataType;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 public class mtTransferTool extends mtCommands{
     public static String COMMAND = "mt_transfer";
+    public static List<String> command_complete_list[] = new List[]{
+            new ArrayList<String>() {{
+                add("blueprint id");
+            }},
+            new ArrayList<String>() {{
+                add("player name");
+            }},
+    };
 
     public mtTransferTool(MendingToolsMain main){
         super(main);
@@ -29,6 +39,13 @@ public class mtTransferTool extends mtCommands{
 
     protected void commandHint(CommandSender commandSender){
         super.commandHint(commandSender, BaseConfig_EN.EN.languageConf_hint_transferTool.key(), COMMAND);
+    }
+
+    public List<String> subCommandComplete(String[] args){
+        if (this.command_complete_list != null && args.length-1<=this.command_complete_list.length) {
+            return this.command_complete_list[args.length - 2];
+        }
+        return null;
     }
 
     @Override

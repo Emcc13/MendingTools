@@ -1,5 +1,6 @@
 package com.github.Emcc13.MendingTools.Commands;
 
+import com.github.Emcc13.MendingTools.BookGUI.MendingBlueprint;
 import com.github.Emcc13.MendingTools.BookGUI.MendingTool;
 import com.github.Emcc13.MendingTools.Config.BaseConfig_EN;
 import com.github.Emcc13.MendingTools.Util.Tuple;
@@ -18,6 +19,7 @@ import org.bukkit.inventory.meta.BookMeta;
 
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 public class mtTools extends mtCommands {
     public static String COMMAND = "mt_tools";
@@ -33,6 +35,13 @@ public class mtTools extends mtCommands {
 
     protected void commandHint(CommandSender commandSender) {
         super.commandHint(commandSender, BaseConfig_EN.EN.languageConf_hint_tools.key(), COMMAND);
+    }
+
+    public List<String> subCommandComplete(String[] args){
+        if (this.command_complete_list != null && args.length-1<=this.command_complete_list.length) {
+            return this.command_complete_list[args.length - 2];
+        }
+        return null;
     }
 
     @Override
@@ -63,17 +72,20 @@ public class mtTools extends mtCommands {
                         } catch (NumberFormatException e) {
                         }
                     }
+                    Map<Integer, MendingBlueprint> blueprintMap = MendingToolsMain.getInstance().getBlueprintConfig().getBlueprints();
+
                     List<MendingTool> tools = main.get_db().getToolsSorted(bookNum);
                     ItemStack book = new ItemStack(Material.WRITTEN_BOOK);
                     BookMeta bookMeta = (BookMeta) book.getItemMeta();
                     List<BaseComponent[]> toolPages = new LinkedList<>();
-                    List<Tuple<String, Integer>> materials = new LinkedList<>();
-                    String mat = null;
+                    List<Tuple<String, Integer>> blueprintNames = new LinkedList<>();
+                    String last_blueprint_name = null;
                     int page_idx = 1;
                     for (MendingTool tool : tools) {
-                        if (!tool.getMaterial().equals(mat)) {
-                            mat = tool.getMaterial();
-                            materials.add(new Tuple<>(mat, page_idx));
+                        String blueprint_name = blueprintMap.get(tool.getBlueprintID()).getName();
+                        if (!blueprint_name.equals(last_blueprint_name)) {
+                            last_blueprint_name = blueprint_name;
+                            blueprintNames.add(new Tuple<>(last_blueprint_name, page_idx));
                         }
                         page_idx++;
                         toolPages.add(tool.asPage_(true));
@@ -81,9 +93,9 @@ public class mtTools extends mtCommands {
 
                     List<BaseComponent[]> pages = new LinkedList<>();
                     List<BaseComponent> contentPage = new LinkedList<>();
-                    int numContentPages = (int) Math.ceil(materials.size() / 9.0);
+                    int numContentPages = (int) Math.ceil(blueprintNames.size() / 9.0);
                     TextComponent tc;
-                    for (Tuple<String, Integer> content : materials) {
+                    for (Tuple<String, Integer> content : blueprintNames) {
                         tc = new TextComponent(content.t1+"\n");
                         tc.setClickEvent(new ClickEvent(ClickEvent.Action.CHANGE_PAGE, String.valueOf(
                                 content.t2+numContentPages)));
@@ -113,8 +125,9 @@ public class mtTools extends mtCommands {
                     p.openBook(book);
                     return false;
                 }
+                String lower_case_player_name = args[0].toLowerCase();
                 for (OfflinePlayer player : Bukkit.getServer().getOfflinePlayers()) {
-                    if (args[0].equals(player.getName())) {
+                    if (lower_case_player_name.equals(player.getName())) {
                         uuid = player.getUniqueId().toString();
                         break;
                     }
@@ -148,7 +161,7 @@ public class mtTools extends mtCommands {
         BookMeta bookMeta = (BookMeta) book.getItemMeta();
         assert bookMeta != null;
         for (MendingTool mt : tools) {
-            bookMeta.spigot().addPage(mt.asPage());
+            bookMeta.spigot().addPage(mt.asPage_(true));
         }
         if (tools.size()<1){
 

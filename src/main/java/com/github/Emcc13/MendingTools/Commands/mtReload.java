@@ -6,11 +6,18 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
+import java.util.List;
+
 public class mtReload extends mtCommands {
     public static String COMMAND = "mt_reload";
 
     public mtReload(MendingToolsMain main) {
         super(main);
+    }
+
+    @Override
+    public List<String> subCommandComplete(String[] args) {
+        return null;
     }
 
     protected String getPerm_key() {

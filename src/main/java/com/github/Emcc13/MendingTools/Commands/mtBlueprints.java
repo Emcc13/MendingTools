@@ -12,6 +12,8 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.BookMeta;
 
+import java.util.List;
+
 public class mtBlueprints extends mtCommands {
     public static String COMMAND = "mt_blueprints";
 
@@ -22,6 +24,13 @@ public class mtBlueprints extends mtCommands {
     @Override
     protected String getPerm_key() {
         return BaseConfig_EN.perm_command_blueprints.key();
+    }
+
+    public List<String> subCommandComplete(String[] args){
+        if (this.command_complete_list != null && args.length-1<=this.command_complete_list.length) {
+            return this.command_complete_list[args.length - 2];
+        }
+        return null;
     }
 
     @Override
