@@ -127,7 +127,7 @@ public class mtTools extends mtCommands {
                 }
                 String lower_case_player_name = args[0].toLowerCase();
                 for (OfflinePlayer player : Bukkit.getServer().getOfflinePlayers()) {
-                    if (lower_case_player_name.equals(player.getName())) {
+                    if (lower_case_player_name.equals(player.getName().toLowerCase())) {
                         uuid = player.getUniqueId().toString();
                         break;
                     }
