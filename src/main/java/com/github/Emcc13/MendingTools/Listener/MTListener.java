@@ -4,6 +4,7 @@ import com.github.Emcc13.MendingTools.BookGUI.MendingBlueprint;
 import com.github.Emcc13.MendingTools.BookGUI.MendingTool;
 import com.github.Emcc13.MendingTools.Config.BaseConfig_EN;
 import com.github.Emcc13.MendingToolsMain;
+import org.apache.commons.lang.ArrayUtils;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
@@ -49,25 +50,41 @@ public class MTListener implements Listener {
             if (itemStack == null)
                 return;
             ItemMeta meta = itemStack.getItemMeta();
+//            System.out.println("Meta");
+//            System.out.println(meta);
             assert meta != null;
             if (!meta.hasEnchant(ench))
                 return;
             boolean has_lore = false;
-            for (String lore : Objects.requireNonNull(meta.getLore())) {
-                if (ChatColor.stripColor(lore).equals(p.getName())) {
-                    has_lore = true;
-                    break;
+//            System.out.println("Lore");
+//            System.out.println(meta.getLore());
+            List<String> lore = meta.getLore();
+            if (lore != null){
+                for (String lore_line : lore) {
+                    if (ChatColor.stripColor(lore_line).equals(p.getName())) {
+                        has_lore = true;
+                        break;
+                    }
                 }
             }
-            if (!has_lore)
-                return;
+//            System.out.println("Check ID");
             Long id = meta.getPersistentDataContainer().get(main.getNBT_key(), PersistentDataType.LONG);
             if (id != null) {
+//                System.out.println("Found ID");
                 if (tools.containsKey(id)) {
                     tools.remove(id);
                     return;
                 }
+                if (!has_lore){
+                    meta.setLore(new ArrayList<String>(){{
+                        add(p.getName());
+                    }});
+//                    System.out.println("Add Lore");
+                    has_lore=true;
+                }
             }
+            if (!has_lore)
+                return;
             id = main.get_db().add_tool(itemStack, p.getUniqueId().toString(), findBlueprint(itemStack));
             if (id < 1)
                 return;
@@ -125,6 +142,17 @@ public class MTListener implements Listener {
             case MOVE_TO_OTHER_INVENTORY:
                 inv = event.getInventory();
                 item = event.getCurrentItem();
+                switch (inv.getType()){
+                    case ENDER_CHEST:
+                    case PLAYER:
+                    case SMITHING:
+                        return;
+                    case ANVIL:
+                        if (ArrayUtils.indexOf(inv.getContents(), null) > 0)
+                            checkItem = true;
+                        break;
+                }
+                break;
             case PLACE_ALL:
             case PLACE_ONE:
             case PLACE_SOME:
@@ -136,9 +164,13 @@ public class MTListener implements Listener {
                     case ENDER_CHEST:
                     case PLAYER:
                     case SMITHING:
-                    case ANVIL:
                         return;
+                    case ANVIL:
+                        if (event.getSlot() > 0)
+                            checkItem = true;
+                        break;
                 }
+                break;
             case CLONE_STACK:
             case DROP_ALL_CURSOR:
             case DROP_ALL_SLOT:
