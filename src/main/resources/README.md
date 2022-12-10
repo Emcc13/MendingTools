@@ -1,4 +1,4 @@
-# MendingTools v0.6 for API 1.18
+# MendingTools v0.8 for API 1.18
 
 A plugin to manage tools with a mending enchantment.
 
@@ -15,6 +15,7 @@ A plugin to manage tools with a mending enchantment.
         - upgrade -> mt_upgrade_tool
         - delete -> mt_delete_tool
         - transfer -> mt_transfer_tool
+        - confirm -> mt_confirm
 - mt_reload
     - perm: mt.reload
     - reload config/blueprints
@@ -24,9 +25,10 @@ A plugin to manage tools with a mending enchantment.
 - mt_tools
     - perm: mt.tools
     - open a book with the own tools
+    - arg: book <book number> -> open 2nd/3rd... book with the own tools
     - arg: all - requires mt.tools_team perm -> open book with all tools
-    - arg: playername - requires mt.tools_team perm -> open book with all tools of player
-    - arg: id - requires mt.tools_team perm -> show page of tool with id
+    - arg: playername <book number> - requires mt.tools_team perm -> open book with all tools of player
+    - arg: id <tool id> - requires mt.tools_team perm if the tool is not owned by CommandSender -> show page of tool with id
 - mt_new_mending_tool
     - perm: mt.newMendingTool
     - args: blueprint-id player
@@ -50,6 +52,10 @@ A plugin to manage tools with a mending enchantment.
     - perm: mt.renameTool
     - args: new name
     - set the display name of item in main hand
+- mt_confirm
+  - perm: mt.confirm
+  - args: "config key for chat message" "message arguments"... (text_to_replace=text_to_insert)
+  - confirm upgrade of enchantment
 
 ## Events
 
@@ -75,6 +81,11 @@ A plugin to manage tools with a mending enchantment.
 - perm: permissions
     - mending tools command permissions
     - keep_inventory: permission for keeping the inventory of any other plugin (default: mt.dummy_perm.keep_inv)
+- option:
+  - restoreTool:
+    - durability: durability of a tool after it has been restored
+- bookButton:
+  - configurations to display/handle "buttons" in books
 - languageConf: changed by language setting
     - keys for TextComponents:
         - text -> shown text
@@ -83,6 +94,40 @@ A plugin to manage tools with a mending enchantment.
         - suggestcommand -> click event, open chat and suggest command
         - clipboard -> copy to clipboard
         - openurl -> click event, open url
+
+
+### LanguageConf
+
+- prefix: Prefix for chat messages
+- noPermission: command executed without permission
+- error:
+    - db: problem with the database
+    - noSuchTool: tool with given id does not exist
+    - hasNoTools: player has no tools to show
+    - noSuchEnchantment: minecraft has no enchantment with given name
+    - notPlayed: player has not played on the server yet
+    - loadOfflinePlayer: failed to load offline player
+    - loadBlueprint: blueprint of given tool could not be found in the blueprints config
+    - notEnoughMoney: cannot restore / upgrade tool because the player has not enough money
+    - removingItem: failed to remove item from players inventory
+    - targetLevelBelow: requested to 'upgrade' enchantment, but given level is below current level
+- hint: command hints
+- text:
+    - nextBook: text to switch to next book (clickable)
+    - player: label where the player name is placed
+    - broken: short text to label that the item is broken
+    - intact: short text to label that the item is intact
+    - restore: short text to restore tool (clickable)
+    - noTools: (longer) text shown when a player has no tools
+    - repairs: short text to label how often a tool has been repaired
+    - mendingToolID: short text to label die tool ID
+    - blueprintID: short text to label the blueprint ID
+
+### BookButton
+
+- upgrade:
+    - command: chat message with clickable option to run a command
+    - confirm: confirm command with arguments to send confirm message
 
 ## Blueprint Config
 
@@ -129,29 +174,6 @@ general behaviour for money equations:
 - any other char than a-zA-Z%# may throw an exception
 - any other argument/function will result in a value of 0 for that term
 
-## Language
-
-- noPermission: command executed without permission
-- error:
-    - db: problem with the database
-    - noSuchTool: tool with given id does not exist
-    - hasNoTools: player has no tools to show
-    - noSuchEnchantment: minecraft has no enchantment with given name
-    - notPlayed: player has not played on the server yet
-    - loadOfflinePlayer: failed to load offline player
-    - loadBlueprint: blueprint of given tool could not be found in the blueprints config
-    - notEnoughMoney: cannot restore / upgrade tool because the player has not enough money
-    - removingItem: failed to remove item from players inventory
-    - targetLevelBelow: requested to 'upgrade' enchantment, but given level is below current level
-- hint: command hints
-- text:
-    - nextBook: text to switch to next book (clickable)
-    - upgrade: text to upgrade enchantment (clickable)
-    - player: label where the player name is placed
-    - broken: short text to show that the item is broken
-    - intact: short text to show that the item is intact
-    - restore: short text to restore tool (clickable)
-    - noTools: (longer) text shown when a player has no tools
 
 ## Database
 

@@ -17,12 +17,25 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.BookMeta;
 
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
 public class mtTools extends mtCommands {
     public static String COMMAND = "mt_tools";
+    public static List<String>[] command_complete_list = new List[]{
+            new ArrayList<String>() {{
+                add("id");
+                add("all");
+                add("book");
+                add("player name");
+            }},
+            new ArrayList<String>() {{
+                add("tool id");
+                add("book number");
+            }},
+    };
 
     public mtTools(MendingToolsMain main) {
         super(main);
@@ -37,8 +50,8 @@ public class mtTools extends mtCommands {
         super.commandHint(commandSender, BaseConfig_EN.EN.languageConf_hint_tools.key(), COMMAND);
     }
 
-    public List<String> subCommandComplete(String[] args){
-        if (this.command_complete_list != null && args.length-1<=this.command_complete_list.length) {
+    public List<String> subCommandComplete(String[] args) {
+        if (this.command_complete_list != null && args.length - 1 <= this.command_complete_list.length) {
             return this.command_complete_list[args.length - 2];
         }
         return null;
@@ -52,123 +65,158 @@ public class mtTools extends mtCommands {
         }
         Player p = (Player) commandSender;
         String uuid = p.getUniqueId().toString();
-        boolean oneTool = false;
         long toolID = 0;
-        if (args.length > 0 && (p.hasPermission(permission + "_team") || p.isOp())) {
-            try {
-                toolID = Long.parseLong(args[0]);
-                oneTool = true;
-            } catch (NumberFormatException e) {
-            }
-            if (!oneTool) {
-                if (args[0].equals("?")) {
-                    commandHint(commandSender);
-                    return false;
-                } else if (args[0].equals("all")) {
-                    int bookNum = 0;
-                    if (args.length > 1) {
-                        try {
-                            bookNum = Integer.parseInt(args[1]);
-                        } catch (NumberFormatException e) {
-                        }
-                    }
-                    Map<Integer, MendingBlueprint> blueprintMap = MendingToolsMain.getInstance().getBlueprintConfig().getBlueprints();
 
-                    List<MendingTool> tools = main.get_db().getToolsSorted(bookNum);
-                    ItemStack book = new ItemStack(Material.WRITTEN_BOOK);
-                    BookMeta bookMeta = (BookMeta) book.getItemMeta();
-                    List<BaseComponent[]> toolPages = new LinkedList<>();
-                    List<Tuple<String, Integer>> blueprintNames = new LinkedList<>();
-                    String last_blueprint_name = null;
-                    int page_idx = 1;
-                    for (MendingTool tool : tools) {
-                        String blueprint_name = blueprintMap.get(tool.getBlueprintID()).getName();
-                        if (!blueprint_name.equals(last_blueprint_name)) {
-                            last_blueprint_name = blueprint_name;
-                            blueprintNames.add(new Tuple<>(last_blueprint_name, page_idx));
-                        }
-                        List<BaseComponent[]> pages = tool.asPage_Teamler();
-                        page_idx += pages.size();
-                        for (BaseComponent[] page:pages)
-                            toolPages.add(page);
-                    }
-
-                    List<BaseComponent[]> pages = new LinkedList<>();
-                    List<BaseComponent> contentPage = new LinkedList<>();
-                    int numContentPages = (int) Math.ceil(blueprintNames.size() / 9.0);
-                    TextComponent tc;
-                    for (Tuple<String, Integer> content : blueprintNames) {
-                        tc = new TextComponent(content.t1+"\n");
-                        tc.setClickEvent(new ClickEvent(ClickEvent.Action.CHANGE_PAGE, String.valueOf(
-                                content.t2+numContentPages)));
-                        contentPage.add(tc);
-                        if (contentPage.size()>=9){
-                            pages.add(contentPage.toArray(new BaseComponent[]{}));
-                            contentPage = new LinkedList<>();
-                        }
-                    }
-                    if (page_idx>=45){
-                        contentPage.add(formatComponents(
-                                (List<TextComponent>)main.getCachedConfig().get(
-                                        BaseConfig_EN.EN.languageConf_text_nextBook.key()),
-                                new Tuple<>("%COMMAND%", COMMAND),
-                                new Tuple<>("%ID%", String.valueOf(bookNum+1))));
-                    }
-                    if (contentPage.size()>0){
-                        pages.add(contentPage.toArray(new BaseComponent[]{}));
-                    }
-
-                    pages.addAll(toolPages);
-                    assert bookMeta != null;
-                    bookMeta.spigot().setPages(pages);
-                    bookMeta.setTitle("MendingTools");
-                    bookMeta.setAuthor("MendingTools");
-                    book.setItemMeta(bookMeta);
-                    p.openBook(book);
-                    return false;
-                }
-                String lower_case_player_name = args[0].toLowerCase();
-                for (OfflinePlayer player : Bukkit.getServer().getOfflinePlayers()) {
-                    if (lower_case_player_name.equals(player.getName().toLowerCase())) {
-                        uuid = player.getUniqueId().toString();
-                        break;
-                    }
-                }
-            }
-        }
-        if (oneTool) {
-            MendingTool tool = main.get_db().getTool(toolID);
-            if (tool == null) {
-                sendErrorMessage(commandSender, BaseConfig_EN.EN.languageConf_error_noSuchTool.key(),
-                        new Tuple<>("%ID%", String.valueOf(toolID)),
-                        new Tuple<>("%PREFIX%", (String) MendingToolsMain.getInstance().getCachedConfig().get(BaseConfig_EN.languageConf_prefix.key())));
-                return false;
-            }
-            ItemStack book = new ItemStack(Material.WRITTEN_BOOK);
-            BookMeta bookMeta = (BookMeta) book.getItemMeta();
-            assert bookMeta != null;
-            for (BaseComponent[] page : tool.asPage_Player()){
-                bookMeta.spigot().addPage(page);
-            }
-            bookMeta.setTitle("MendingTools");
-            bookMeta.setAuthor("MendingTools");
-            book.setItemMeta(bookMeta);
-            p.openBook(book);
-            return false;
-        }
-        List<MendingTool> tools = main.get_db().getPlayerTools(uuid);
-        if ((tools == null) || (tools.size()<1)) {
-            sendErrorMessage(commandSender, BaseConfig_EN.EN.languageConf_text_noTools.key(),
-                    new Tuple<>("%PREFIX%", (String) MendingToolsMain.getInstance().getCachedConfig().get(BaseConfig_EN.languageConf_prefix.key())));
-            return false;
-        }
         ItemStack book = new ItemStack(Material.WRITTEN_BOOK);
         BookMeta bookMeta = (BookMeta) book.getItemMeta();
         assert bookMeta != null;
+        List<BaseComponent[]> pages = new LinkedList<>();
+        List<MendingTool> tools;
+        BaseComponent nextBookCommand = formatComponents((List<TextComponent>) main.getCachedConfig().get(
+                BaseConfig_EN.EN.languageConf_text_nextBook.key()));
+        int bookNum;
+        if (args.length > 0) {
+            switch (args[0]) {
+                case "?":
+                    commandHint(commandSender);
+                    return false;
+                case "all":
+                    if (!(p.hasPermission(permission + "_team") || p.isOp())) {
+                        sendErrorMessage(commandSender, BaseConfig_EN.EN.languageConf_noPermission.key(),
+                                new Tuple<>("%PREFIX%", (String) MendingToolsMain.getInstance().getCachedConfig().get(BaseConfig_EN.languageConf_prefix.key())));
+                    }
+                    bookNum = 0;
+                    if (args.length > 1) {
+                        try {
+                            bookNum = Integer.parseInt(args[1]) - 1;
+                        } catch (NumberFormatException e) {
+                        }
+                    }
+                    nextBookCommand.setClickEvent(new ClickEvent(
+                            ClickEvent.Action.RUN_COMMAND,
+                            MendingToolsCMD.COMMAND + " tools all " + (bookNum + 2)
+                    ));
+                    pages.addAll(pagesByTools(main.get_db().getToolsSorted(bookNum), true, nextBookCommand));
+                    break;
+                case "id":
+                    if (!(args.length > 1)) {
+                        commandHint(commandSender);
+                        return false;
+                    }
+                    try {
+                        toolID = Long.parseLong(args[1]);
+                    } catch (NumberFormatException e) {
+                        commandHint(commandSender);
+                        return false;
+                    }
+                    MendingTool tool = main.get_db().getTool(toolID);
+                    if (tool == null) {
+                        sendErrorMessage(commandSender, BaseConfig_EN.EN.languageConf_error_noSuchTool.key(),
+                                new Tuple<>("%ID%", String.valueOf(toolID)),
+                                new Tuple<>("%PREFIX%", (String) MendingToolsMain.getInstance().getCachedConfig().get(BaseConfig_EN.languageConf_prefix.key())));
+                        return false;
+                    }
+                    if (!tool.getUuid().equals(uuid)) {
+                        if (!(p.hasPermission(permission + "_team") || p.isOp())) {
+                            sendErrorMessage(commandSender, BaseConfig_EN.EN.languageConf_noPermission.key(),
+                                    new Tuple<>("%PREFIX%", (String) MendingToolsMain.getInstance().getCachedConfig().get(BaseConfig_EN.languageConf_prefix.key())));
+                            return false;
+                        }
+                        pages.addAll(tool.asPage_Teamler());
+                    } else {
+                        pages.addAll(tool.asPage_Player());
+                    }
+                    break;
+                case "book":
+                    bookNum = 0;
+                    if (args.length > 1) {
+                        try {
+                            bookNum = Integer.parseInt(args[1]) - 1;
+                        } catch (NumberFormatException e) {
+                        }
+                    }
+                    tools = main.get_db().getPlayerTools_limited(uuid, bookNum);
+                    if ((tools == null) || (tools.size() < 1)) {
+                        sendErrorMessage(commandSender, BaseConfig_EN.EN.languageConf_text_noTools.key(),
+                                new Tuple<>("%PREFIX%", (String) MendingToolsMain.getInstance().getCachedConfig().get(BaseConfig_EN.languageConf_prefix.key())));
+                        return false;
+                    }
+                    nextBookCommand.setClickEvent(new ClickEvent(
+                            ClickEvent.Action.RUN_COMMAND,
+                            MendingToolsCMD.COMMAND + " book " + (bookNum + 2)
+                    ));
+                    pages.addAll(pagesByTools(tools, false, nextBookCommand));
+                    break;
+                default:
+                    if (!(p.hasPermission(permission + "_team") || p.isOp())) {
+                        sendErrorMessage(commandSender, BaseConfig_EN.EN.languageConf_noPermission.key(),
+                                new Tuple<>("%PREFIX%", (String) MendingToolsMain.getInstance().getCachedConfig().get(BaseConfig_EN.languageConf_prefix.key())));
+                        return false;
+                    }
+                    String lower_case_player_name = args[0].toLowerCase();
+                    boolean found = false;
+                    for (OfflinePlayer player : Bukkit.getServer().getOfflinePlayers()) {
+                        if (lower_case_player_name.equals(player.getName().toLowerCase())) {
+                            uuid = player.getUniqueId().toString();
+                            found = true;
+                            break;
+                        }
+                    }
+                    if (!found) {
+                        sendErrorMessage(commandSender, BaseConfig_EN.EN.languageConf_error_notPlayed.key(),
+                                new Tuple<>("%PREFIX%", (String) MendingToolsMain.getInstance().getCachedConfig().get(BaseConfig_EN.languageConf_prefix.key())),
+                                new Tuple<>("%PLAYER%", args[0])
+                        );
+                    }
+                    bookNum = 0;
+                    if (args.length > 1) {
+                        try {
+                            bookNum = Integer.parseInt(args[1]) - 1;
+                        } catch (NumberFormatException e) {
+                        }
+                    }
+                    tools = main.get_db().getPlayerTools_limited(uuid, bookNum);
+                    if ((tools == null) || (tools.size() < 1)) {
+                        sendErrorMessage(commandSender, BaseConfig_EN.EN.languageConf_error_hasNoTools.key(),
+                                new Tuple<>("%PREFIX%", (String) MendingToolsMain.getInstance().getCachedConfig().get(BaseConfig_EN.languageConf_prefix.key())),
+                                new Tuple<>("%PLAYER%", args[0])
+                                );
+                        return false;
+                    }
+                    nextBookCommand.setClickEvent(new ClickEvent(
+                            ClickEvent.Action.RUN_COMMAND,
+                            MendingToolsCMD.COMMAND + " tools " + lower_case_player_name + " " + (bookNum + 2)
+                    ));
+                    pages.addAll(pagesByTools(tools, true, nextBookCommand));
+                    break;
+            }
+        } else {
+            tools = main.get_db().getPlayerTools_limited(uuid, 0);
+            if ((tools == null) || (tools.size() < 1)) {
+                sendErrorMessage(commandSender, BaseConfig_EN.EN.languageConf_text_noTools.key(),
+                        new Tuple<>("%PREFIX%", (String) MendingToolsMain.getInstance().getCachedConfig().get(BaseConfig_EN.languageConf_prefix.key())));
+                return false;
+            }
+            nextBookCommand.setClickEvent(new ClickEvent(
+                    ClickEvent.Action.RUN_COMMAND,
+                    MendingToolsCMD.COMMAND + " book " + 2
+            ));
+            pages.addAll(pagesByTools(tools, false, nextBookCommand));
+        }
 
-        Map<Integer, MendingBlueprint> blueprintMap = MendingToolsMain.getInstance().getBlueprintConfig().getBlueprints();
+        bookMeta.spigot().setPages(pages);
+        bookMeta.setTitle("MendingTools");
+        bookMeta.setAuthor("MendingTools");
+        book.setItemMeta(bookMeta);
+        p.openBook(book);
+        return false;
+    }
+
+    protected List<BaseComponent[]> pagesByTools(List<MendingTool> tools, boolean team, BaseComponent nextBookCommand) {
+        List<BaseComponent[]> pages = new LinkedList<>();
         List<BaseComponent[]> toolPages = new LinkedList<>();
         List<Tuple<String, Integer>> blueprintNames = new LinkedList<>();
+        Map<Integer, MendingBlueprint> blueprintMap = MendingToolsMain.getInstance().getBlueprintConfig().getBlueprints();
         String last_blueprint_name = null;
         int page_idx = 1;
         for (MendingTool tool : tools) {
@@ -177,32 +225,35 @@ public class mtTools extends mtCommands {
                 last_blueprint_name = blueprint_name;
                 blueprintNames.add(new Tuple<>(last_blueprint_name, page_idx));
             }
-            List<BaseComponent[]> pages = tool.asPage_Player();
-            page_idx += pages.size();
-            toolPages.addAll(pages);
+            List<BaseComponent[]> pages_tool;
+            if (team) {
+                pages_tool = tool.asPage_Teamler();
+            } else {
+                pages_tool = tool.asPage_Player();
+            }
+            page_idx += pages_tool.size();
+            toolPages.addAll(pages_tool);
         }
-
-        List<BaseComponent[]> pages = new LinkedList<>();
         List<BaseComponent> contentPage = new LinkedList<>();
         int numContentPages = (int) Math.ceil(blueprintNames.size() / 9.0);
         TextComponent tc;
         for (Tuple<String, Integer> content : blueprintNames) {
-            tc = new TextComponent(content.t1+"\n");
+            tc = new TextComponent(content.t1 + "\n");
             tc.setClickEvent(new ClickEvent(ClickEvent.Action.CHANGE_PAGE, String.valueOf(
-                    content.t2+numContentPages)));
+                    content.t2 + numContentPages)));
             contentPage.add(tc);
-            if (contentPage.size()>=9){
+            if (contentPage.size() >= 9) {
                 pages.add(contentPage.toArray(new BaseComponent[]{}));
                 contentPage = new LinkedList<>();
             }
         }
-        pages.add(contentPage.toArray(new BaseComponent[]{}));
+        if (page_idx >= 45) {
+            contentPage.add(nextBookCommand);
+        }
+        if (contentPage.size() > 0) {
+            pages.add(contentPage.toArray(new BaseComponent[]{}));
+        }
         pages.addAll(toolPages);
-        bookMeta.spigot().setPages(pages);
-        bookMeta.setTitle("MendingTools");
-        bookMeta.setAuthor("MendingTools");
-        book.setItemMeta(bookMeta);
-        p.openBook(book);
-        return false;
+        return pages;
     }
 }

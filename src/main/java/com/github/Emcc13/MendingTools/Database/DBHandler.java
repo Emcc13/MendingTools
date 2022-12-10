@@ -23,6 +23,7 @@ public class DBHandler {
     private PreparedStatement breakTool = null;
     private PreparedStatement restoreTool = null;
     private PreparedStatement playerTools = null;
+    private PreparedStatement playerTools_limited = null;
     private PreparedStatement toolsEnchantments = null;
     private PreparedStatement idTool = null;
     private PreparedStatement upgradeEnchantment = null;
@@ -70,6 +71,9 @@ public class DBHandler {
                     "UPDATE Tool SET Broken=? WHERE ID=?;");
             restoreTool = connection.prepareStatement(
                     "UPDATE Tool SET Restores=Restores+1, Broken=? WHERE ID=?;");
+            playerTools_limited = connection.prepareStatement(
+                    "SELECT ID, BlueprintID, Material, Broken, Restores FROM Tool WHERE UUID=? " +
+                            "ORDER BY BlueprintID ASC, ID ASC LIMIT ?, ?;");
             playerTools = connection.prepareStatement(
                     "SELECT ID, BlueprintID, Material, Broken, Restores FROM Tool WHERE UUID=?;");
             idTool = connection.prepareStatement(
@@ -141,6 +145,13 @@ public class DBHandler {
     private PreparedStatement getPlayerTools() {
         if (connect() != null) {
             return playerTools;
+        }
+        return null;
+    }
+
+    private PreparedStatement getPlayerTools_limited() {
+        if (connect() != null) {
+            return playerTools_limited;
         }
         return null;
     }
@@ -297,6 +308,45 @@ public class DBHandler {
         return setBroken(id, false);
     }
 
+    public List<MendingTool> getPlayerTools_limited(String uuid, int book) {
+        List<MendingTool> result = new LinkedList<>();
+        MendingTool mt;
+        long id;
+        PreparedStatement playerTools_limited = getPlayerTools_limited();
+        PreparedStatement toolsEnchantments = getToolsEnchantments();
+        if (playerTools_limited == null || toolsEnchantments == null){
+            return null;
+        }
+        try {
+            playerTools_limited.clearParameters();
+            playerTools_limited.setString(1, uuid);
+            playerTools_limited.setInt(2, book*20);
+            playerTools_limited.setInt(3, 20);
+            ResultSet rs_tool = playerTools_limited.executeQuery();
+            ResultSet rs_enchantments;
+            while (rs_tool.next()) {
+                id = rs_tool.getLong(1);
+                mt = new MendingTool(id,
+                        rs_tool.getInt(2),
+                        rs_tool.getString(3),
+                        rs_tool.getInt(4) > 0,
+                        rs_tool.getInt(5),
+                        uuid);
+                toolsEnchantments.clearParameters();
+                toolsEnchantments.setLong(1, id);
+                rs_enchantments = toolsEnchantments.executeQuery();
+                while (rs_enchantments.next()) {
+                    mt.addEnchantment(rs_enchantments.getString(1),
+                            rs_enchantments.getInt(2));
+                }
+                result.add(mt);
+            }
+        } catch (SQLException sqle) {
+            return null;
+        }
+        return result;
+    }
+
     public List<MendingTool> getPlayerTools(String uuid) {
         List<MendingTool> result = new LinkedList<>();
         MendingTool mt;
@@ -394,8 +444,8 @@ public class DBHandler {
         }
         try {
             allTools.clearParameters();
-            allTools.setInt(1, book*45);
-            allTools.setInt(2, 45);
+            allTools.setInt(1, book*20);
+            allTools.setInt(2, 20);
             ResultSet rs_tool = allTools.executeQuery();
             ResultSet rs_enchantments;
             while (rs_tool.next()) {

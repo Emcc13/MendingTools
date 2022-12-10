@@ -56,14 +56,7 @@ public class mtConfirm extends mtCommands {
         System.out.println(args);
         System.out.println(args[0]);
         List<TextComponent> message = (List<TextComponent>) this.main.getCachedConfig().get(args[0]);
-        Map<String, String> replacements = new HashMap<String, String>(); //{{
-//            put("$", "%");
-//        }};
-//        message = new ArrayList<TextComponent>(){{
-//            add(formatComponents(message, new HashMap<>(){{
-//                put("$", "%");
-//            }}));
-//        }};
+        Map<String, String> replacements = new HashMap<String, String>();
         String[] values;
         for (int i = 1; i < args.length; i++) {
             values = args[i].split("=");

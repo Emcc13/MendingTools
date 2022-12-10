@@ -107,6 +107,11 @@ public enum DE_config implements ConfigInterface {
                     "specific arguments>");
         }});
     }}),
+    languageConf_hint_confirm(new ArrayList<Map<String, String>>(){{
+        add(new HashMap<String, String>(){{
+            put("text", "/%COMMAND% Konfiguration der Chat Nachricht");
+        }});
+    }}),
 
     languageConf_text_nextBook(new ArrayList<Map<String, String>>(){{
         add(new HashMap<String, String>(){{

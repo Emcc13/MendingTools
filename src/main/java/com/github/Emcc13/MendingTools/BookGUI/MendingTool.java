@@ -154,73 +154,78 @@ public class MendingTool {
         return result;
     }
 
-    protected List<BaseComponent> bookBlueprint(MendingBlueprint blueprint){
+    protected List<BaseComponent> bookBlueprint(MendingBlueprint blueprint) {
         TextComponent tc = new TextComponent((blueprint != null ? blueprint.getName() : this.material) + "\n");
         tc.setBold(true);
-        return new ArrayList<BaseComponent>(){{
+        return new ArrayList<BaseComponent>() {{
             add(tc);
         }};
     }
 
-    protected List<BaseComponent> bookOwner(Map<String, Object> conf){
-        return new ArrayList<BaseComponent>(){{
+    protected List<BaseComponent> bookOwner(Map<String, Object> conf) {
+        return new ArrayList<BaseComponent>() {{
             add(((List<TextComponent>) conf.get(BaseConfig_EN.EN.languageConf_text_player.key())).get(0).duplicate());
             add(new TextComponent("\n  " + nameForUUID(uuid) + "\n"));
         }};
     }
 
-    protected List<BaseComponent> bookToolId(Map<String, Object> conf){
+    protected List<BaseComponent> bookToolId(Map<String, Object> conf) {
         TextComponent tc = ((List<TextComponent>) conf.get(BaseConfig_EN.EN.languageConf_text_mendingToolID.key())).get(0).duplicate();
         tc.addExtra(": " + id + "\n");
         tc.setItalic(true);
-        return new ArrayList<BaseComponent>(){{
+        return new ArrayList<BaseComponent>() {{
             add(tc);
         }};
     }
 
-    protected List<BaseComponent> bookRepairs(Map<String, Object> conf){
+    protected List<BaseComponent> bookRepairs(Map<String, Object> conf) {
         TextComponent tc = ((List<TextComponent>) conf.get(BaseConfig_EN.EN.languageConf_text_repairs.key())).get(0).duplicate();
         tc.addExtra(": " + this.restores + "\n");
-        return new ArrayList<BaseComponent>(){{
+        return new ArrayList<BaseComponent>() {{
             add(tc);
         }};
     }
 
-    protected List<BaseComponent> bookBrokenIntact(Map<String, Object> conf){
+    protected List<BaseComponent> bookBrokenIntact(Map<String, Object> conf) {
         TextComponent tc = broken ? ((List<TextComponent>) conf.get(BaseConfig_EN.EN.languageConf_text_broken.key())).get(0).duplicate() :
                 ((List<TextComponent>) conf.get(BaseConfig_EN.EN.languageConf_text_intact.key())).get(0).duplicate();
         tc.addExtra(new TextComponent("\n\n"));
-        return new ArrayList<BaseComponent>(){{
+        return new ArrayList<BaseComponent>() {{
             add(tc);
         }};
     }
 
-    protected List<BaseComponent> bookRestoreButton(Map<String, Object> conf){
-        TextComponent tc = new TextComponent("-- ");
-        tc.addExtra(((List<TextComponent>) conf.get(BaseConfig_EN.EN.languageConf_text_restore.key())).get(0).duplicate());
-        tc.addExtra(new TextComponent(" --"));
-        tc.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND,
-                "/" + MendingToolsCMD.COMMAND + " restore " + this.id));
-        return new ArrayList<BaseComponent>(){{
-           add(tc);
-        }};
+    protected List<BaseComponent> bookRestoreButton(Map<String, Object> conf) {
+        if (this.isBroken()) {
+            TextComponent tc = new TextComponent("-- ");
+            tc.addExtra(((List<TextComponent>) conf.get(BaseConfig_EN.EN.languageConf_text_restore.key())).get(0).duplicate());
+            tc.addExtra(new TextComponent(" --"));
+            tc.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND,
+                    "/" + MendingToolsCMD.COMMAND + " restore " + this.id));
+            return new ArrayList<BaseComponent>() {{
+                add(tc);
+            }};
+        } else {
+            return new ArrayList<BaseComponent>();
+        }
+
     }
 
-    protected List<BaseComponent> bookBlueprintID(MendingBlueprint blueprint, Map<String, Object> conf){
+    protected List<BaseComponent> bookBlueprintID(MendingBlueprint blueprint, Map<String, Object> conf) {
         TextComponent tc = new TextComponent("\n\n");
         tc.addExtra(((List<TextComponent>) conf.get(BaseConfig_EN.EN.languageConf_text_blueprintID.key())).get(0).duplicate());
         tc.addExtra(": " + (blueprint != null ? blueprint.getID() : "???") + "\n");
-        return new ArrayList<BaseComponent>(){{
+        return new ArrayList<BaseComponent>() {{
             add(tc);
         }};
     }
 
     protected List<BaseComponent> bookEnchantments(
-            MendingBlueprint blueprint, Map<String, Object> conf, Map<String, List<TextComponent>> languageConf){
+            MendingBlueprint blueprint, Map<String, Object> conf, Map<String, List<TextComponent>> languageConf) {
         LinkedList<BaseComponent> result = new LinkedList<BaseComponent>();
         TextComponent tc;
         for (Map.Entry<String, Integer> entry : enchantments.entrySet()) {
-            tc = formatComponents(languageConf.get(TranslateConf.languageConf_enchantment+entry.getKey()));
+            tc = formatComponents(languageConf.get(TranslateConf.languageConf_enchantment + entry.getKey()));
             tc.addExtra(": ");
             tc.setUnderlined(true);
             result.add(tc);
@@ -322,7 +327,7 @@ public class MendingTool {
         double moneyValue = 0;
         if (blueprintEnch.getMoney() == null)
             return moneyValue;
-        for (int intermediateLevel = currlevel+1; intermediateLevel <= currlevel + 1; intermediateLevel++) {
+        for (int intermediateLevel = currlevel + 1; intermediateLevel <= currlevel + 1; intermediateLevel++) {
             if (!blueprint.upgradeAllowed(ench, intermediateLevel)) {
                 break;
             }

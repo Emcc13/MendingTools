@@ -112,7 +112,7 @@ public enum BaseConfig_EN implements ConfigInterface {
         }}),
         languageConf_hint_tools(new ArrayList<Map<String, String>>() {{
             add(new HashMap<String, String>() {{
-                put("text", "/%COMMAND% [all | player name | tool id]");
+                put("text", "/%COMMAND% [all | player name [book number] | id <tool id> | book <book number>]");
             }});
         }}),
         languageConf_hint_transferTool(new ArrayList<Map<String, String>>() {{
@@ -145,7 +145,6 @@ public enum BaseConfig_EN implements ConfigInterface {
         languageConf_text_nextBook(new ArrayList<Map<String, String>>() {{
             add(new HashMap<String, String>() {{
                 put("text", "Next Book");
-                put("runcommand", "/%COMMAND% all %ID%");
             }});
         }}),
         languageConf_text_player(new ArrayList<Map<String, String>>() {{
@@ -191,7 +190,7 @@ public enum BaseConfig_EN implements ConfigInterface {
 
         bookButton_upgrade_command(new ArrayList<Map<String, String>>(){{
             add(new HashMap<String, String>(){{
-                put("text", "Are you sure you want to upgrade your tools %ID% enchantement %ENCH% from " +
+                put("text", "&%PREFIX% Are you sure you want to upgrade your tools %ID% enchantement %ENCH% from " +
                         "%CURRLEVEL% to %LEVEL% for %MONEY%?  ");
             }});
             add(new HashMap<String, String>(){{
