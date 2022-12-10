@@ -76,14 +76,16 @@ public class mtUpgradeTool extends mtCommands {
         MendingTool tool = main.get_db().getTool(id);
         if (tool == null){
             sendErrorMessage(commandSender, BaseConfig_EN.EN.languageConf_error_noSuchTool.key(),
-                    new Tuple<>("%ID%", String.valueOf(id)));
+                    new Tuple<>("%ID%", String.valueOf(id)),
+                    new Tuple<>("%PREFIX%", (String) MendingToolsMain.getInstance().getCachedConfig().get(BaseConfig_EN.languageConf_prefix.key())));
             return false;
         }
         String enchantment = args[1];
         Enchantment ench = Enchantment.getByKey(NamespacedKey.minecraft(enchantment));
         if (ench == null) {
             sendErrorMessage(commandSender, BaseConfig_EN.EN.languageConf_error_noSuchEnchantment.key(),
-                    new Tuple<>("%ENCH%", args[1]));
+                    new Tuple<>("%ENCH%", args[1]),
+                    new Tuple<>("%PREFIX%", (String) MendingToolsMain.getInstance().getCachedConfig().get(BaseConfig_EN.languageConf_prefix.key())));
             return false;
         }
         int level;
@@ -94,14 +96,17 @@ public class mtUpgradeTool extends mtCommands {
             return false;
         }
         if (level <= tool.getEnchantmentLevel(enchantment)) {
-            sendErrorMessage(commandSender, BaseConfig_EN.EN.languageConf_error_targetLevelBelow.key());
+            sendErrorMessage(commandSender, BaseConfig_EN.EN.languageConf_error_targetLevelBelow.key(),
+                    new Tuple<>("%PREFIX%", (String) MendingToolsMain.getInstance().getCachedConfig().get(BaseConfig_EN.languageConf_prefix.key()))
+            );
             return false;
         }
 
         MendingBlueprint blueprint = main.getBlueprintConfig().getBlueprints().get(tool.getBlueprintID());
         if (blueprint == null) {
             sendErrorMessage(commandSender, BaseConfig_EN.EN.languageConf_error_loadBlueprint.key(),
-                    new Tuple<>("%ID%", String.valueOf(tool.getBlueprintID())));
+                    new Tuple<>("%ID%", String.valueOf(tool.getBlueprintID())),
+                    new Tuple<>("%PREFIX%", (String) MendingToolsMain.getInstance().getCachedConfig().get(BaseConfig_EN.languageConf_prefix.key())));
             return false;
         }
         Player p_withInv;
@@ -122,7 +127,8 @@ public class mtUpgradeTool extends mtCommands {
                 p_other = main.getOpenInv().loadPlayer(op);
                 if (p_other == null){
                     sendErrorMessage(commandSender, BaseConfig_EN.EN.languageConf_error_loadOfflinePlayer.key(),
-                            new Tuple<>("%PLAYER%", p_other.getName()));
+                            new Tuple<>("%PLAYER%", p_other.getName()),
+                            new Tuple<>("%PREFIX%", (String) MendingToolsMain.getInstance().getCachedConfig().get(BaseConfig_EN.languageConf_prefix.key())));
                     return false;
                 }
             }
@@ -184,12 +190,14 @@ public class mtUpgradeTool extends mtCommands {
         if (finalLevel < level){
             sendErrorMessage(commandSender, BaseConfig_EN.EN.languageConf_error_notEnoughMoney.key(),
                     new Tuple<>("%PLAYER%", p_withInv.getName()),
-                    new Tuple<>("%MONEY%", String.valueOf(moneyValue)));
+                    new Tuple<>("%MONEY%", String.valueOf(moneyValue)),
+                    new Tuple<>("%PREFIX%", (String) MendingToolsMain.getInstance().getCachedConfig().get(BaseConfig_EN.languageConf_prefix.key())));
             return false;
         }
 
         if (!main.get_db().upgradeToolEnchantment(id, enchantment, finalLevel)) {
-            sendErrorMessage(commandSender, BaseConfig_EN.EN.languageConf_error_db.key());
+            sendErrorMessage(commandSender, BaseConfig_EN.EN.languageConf_error_db.key(),
+                    new Tuple<>("%PREFIX%", (String) MendingToolsMain.getInstance().getCachedConfig().get(BaseConfig_EN.languageConf_prefix.key())));
             return false;
         }
         if (!tool.isBroken()) {

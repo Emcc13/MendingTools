@@ -68,7 +68,8 @@ public class mtTransferTool extends mtCommands{
         MendingTool tool = main.get_db().getTool(id);
         if (tool==null){
             sendErrorMessage(commandSender, BaseConfig_EN.EN.languageConf_error_noSuchTool.key(),
-                    new Tuple<>("%ID%", String.valueOf(id)));
+                    new Tuple<>("%ID%", String.valueOf(id)),
+                    new Tuple<>("%PREFIX%", (String) MendingToolsMain.getInstance().getCachedConfig().get(BaseConfig_EN.languageConf_prefix.key())));
             return false;
         }
 
@@ -84,20 +85,23 @@ public class mtTransferTool extends mtCommands{
             }
             if (toOP == null || !toOP.hasPlayedBefore()){
                 sendErrorMessage(commandSender, BaseConfig_EN.EN.languageConf_error_notPlayed.key(),
-                        new Tuple<>("%PLAYER%", toOP.getName()));
+                        new Tuple<>("%PLAYER%", toOP.getName()),
+                        new Tuple<>("%PREFIX%", (String) MendingToolsMain.getInstance().getCachedConfig().get(BaseConfig_EN.languageConf_prefix.key())));
                 return false;
             }
             toOffline = true;
             toPlayer = main.getOpenInv().loadPlayer(toOP);
             if (toPlayer == null){
                 sendErrorMessage(commandSender, BaseConfig_EN.EN.languageConf_error_loadOfflinePlayer.key(),
-                        new Tuple<>("%PLAYER%", toPlayer.getName()));
+                        new Tuple<>("%PLAYER%", toPlayer.getName()),
+                        new Tuple<>("%PREFIX%", (String) MendingToolsMain.getInstance().getCachedConfig().get(BaseConfig_EN.languageConf_prefix.key())));
                 return false;
             }
         }
 
         if (!main.get_db().transfer_tool(id, toPlayer.getUniqueId().toString())){
-            sendErrorMessage(commandSender, BaseConfig_EN.EN.languageConf_error_db.key());
+            sendErrorMessage(commandSender, BaseConfig_EN.EN.languageConf_error_db.key(),
+                    new Tuple<>("%PREFIX%", (String) MendingToolsMain.getInstance().getCachedConfig().get(BaseConfig_EN.languageConf_prefix.key())));
             return false;
         }
 
@@ -111,20 +115,24 @@ public class mtTransferTool extends mtCommands{
             fromOP = Bukkit.getServer().getOfflinePlayer(UUID.fromString(tool.getUuid()));
             if (!fromOP.hasPlayedBefore()){
                 sendErrorMessage(commandSender, BaseConfig_EN.EN.languageConf_error_notPlayed.key(),
-                        new Tuple<>("%PLAYER%", fromOP.getName()));
+                        new Tuple<>("%PLAYER%", fromOP.getName()),
+                        new Tuple<>("%PREFIX%", (String) MendingToolsMain.getInstance().getCachedConfig().get(BaseConfig_EN.languageConf_prefix.key())));
                 sendErrorMessage(commandSender, BaseConfig_EN.EN.languageConf_error_removingItem.key(),
                         new Tuple<>("%ID%", String.valueOf(tool.getID())),
-                        new Tuple<>("%PLAYER%", fromPlayer.getName()));
+                        new Tuple<>("%PLAYER%", fromPlayer.getName()),
+                        new Tuple<>("%PREFIX%", (String) MendingToolsMain.getInstance().getCachedConfig().get(BaseConfig_EN.languageConf_prefix.key())));
                 return false;
             }
             fromOffline = true;
             fromPlayer = main.getOpenInv().loadPlayer(fromOP);
             if (fromPlayer == null) {
                 sendErrorMessage(commandSender, BaseConfig_EN.EN.languageConf_error_loadOfflinePlayer.key(),
-                        new Tuple<>("%PLAYER%", fromPlayer.getName()));
+                        new Tuple<>("%PLAYER%", fromPlayer.getName()),
+                        new Tuple<>("%PREFIX%", (String) MendingToolsMain.getInstance().getCachedConfig().get(BaseConfig_EN.languageConf_prefix.key())));
                 sendErrorMessage(commandSender, BaseConfig_EN.EN.languageConf_error_removingItem.key(),
                         new Tuple<>("%ID%", String.valueOf(tool.getID())),
-                        new Tuple<>("%PLAYER%", fromPlayer.getName()));
+                        new Tuple<>("%PLAYER%", fromPlayer.getName()),
+                        new Tuple<>("%PREFIX%", (String) MendingToolsMain.getInstance().getCachedConfig().get(BaseConfig_EN.languageConf_prefix.key())));
                 return false;
             }
         }
@@ -177,7 +185,8 @@ public class mtTransferTool extends mtCommands{
         if (!removedItem){
             sendErrorMessage(commandSender, BaseConfig_EN.EN.languageConf_error_removingItem.key(),
                     new Tuple<>("%ID%", String.valueOf(tool.getID())),
-                    new Tuple<>("%PLAYER%", fromPlayer.getName()));
+                    new Tuple<>("%PLAYER%", fromPlayer.getName()),
+                    new Tuple<>("%PREFIX%", (String) MendingToolsMain.getInstance().getCachedConfig().get(BaseConfig_EN.languageConf_prefix.key())));
         }
         return false;
     }

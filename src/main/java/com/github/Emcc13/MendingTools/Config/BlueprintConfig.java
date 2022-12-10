@@ -2,6 +2,7 @@ package com.github.Emcc13.MendingTools.Config;
 
 import com.github.Emcc13.MendingTools.BookGUI.MendingBlueprint;
 import com.github.Emcc13.MendingToolsMain;
+import org.bukkit.Bukkit;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
@@ -18,6 +19,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.logging.Level;
 
 public class BlueprintConfig {
     private Map<Integer, MendingBlueprint> blueprints;
@@ -36,10 +38,10 @@ public class BlueprintConfig {
                 this.blueprints.put(blueprint.getID(), blueprint);
             }
         } catch (ParserConfigurationException e){
-            System.out.println("[ERROR MT] Failed to load any blueprints!");
+            Bukkit.getLogger().log(Level.SEVERE,"[ERROR MT] Failed to load any blueprints!");
         } catch (IOException | SAXException e){
-            System.out.println("[MT] Failed to load custom blueprints.");
-            System.out.println("[MT] Loading default blueprints ...");
+            Bukkit.getLogger().log(Level.SEVERE,"[MT] Failed to load custom blueprints.");
+            Bukkit.getLogger().log(Level.WARNING,"[MT] Loading default blueprints ...");
             String default_file_name = "/blueprints.xml";
             InputStream is = getClass().getResourceAsStream(default_file_name);
             try{
@@ -64,7 +66,7 @@ public class BlueprintConfig {
                 StreamResult result = new StreamResult(new File(MendingToolsMain.getInstance().getDataFolder().getAbsolutePath(),"blueprints.xml"));
                 transformer.transform(source, result);
             } catch (ParserConfigurationException | IOException | SAXException | TransformerException | IllegalArgumentException e2){
-                System.out.println("[ERROR MT] Failed to load any blueprints!");
+                Bukkit.getLogger().log(Level.SEVERE,"[ERROR MT] Failed to load any blueprints!");
             }
         }
 

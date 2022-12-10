@@ -65,7 +65,8 @@ public class mtDeleteTool extends mtCommands {
         MendingTool tool = main.get_db().getTool(id);
         if (!main.get_db().delete_tool(id)) {
             sendErrorMessage(commandSender, BaseConfig_EN.EN.languageConf_error_noSuchTool.key(),
-                    new Tuple<>("%ID%", String.valueOf(id)));
+                    new Tuple<>("%ID%", String.valueOf(id)),
+                    new Tuple<>("%PREFIX%", (String) MendingToolsMain.getInstance().getCachedConfig().get(BaseConfig_EN.languageConf_prefix.key())));
             return false;
         }
 
@@ -78,20 +79,24 @@ public class mtDeleteTool extends mtCommands {
             op = Bukkit.getServer().getOfflinePlayer(UUID.fromString(tool.getUuid()));
             if (!op.hasPlayedBefore()) {
                 sendErrorMessage(commandSender,BaseConfig_EN.EN.languageConf_error_notPlayed.key(),
-                        new Tuple<>("%PLAYER%", op.getName()));
+                        new Tuple<>("%PLAYER%", op.getName()),
+                        new Tuple<>("%PREFIX%", (String) MendingToolsMain.getInstance().getCachedConfig().get(BaseConfig_EN.languageConf_prefix.key())));
                 sendErrorMessage(commandSender, BaseConfig_EN.EN.languageConf_error_removingItem.key(),
                         new Tuple<>("%ID%", String.valueOf(tool.getID())),
-                        new Tuple<>("%PLAYER%", op.getName()));
+                        new Tuple<>("%PLAYER%", op.getName()),
+                        new Tuple<>("%PREFIX%", (String) MendingToolsMain.getInstance().getCachedConfig().get(BaseConfig_EN.languageConf_prefix.key())));
                 return false;
             }
             offline = true;
             p = main.getOpenInv().loadPlayer(op);
             if (p == null) {
                 sendErrorMessage(commandSender, BaseConfig_EN.EN.languageConf_error_loadOfflinePlayer.key(),
-                        new Tuple<>("%PLAYER%", op.getName()));
+                        new Tuple<>("%PLAYER%", op.getName()),
+                        new Tuple<>("%PREFIX%", (String) MendingToolsMain.getInstance().getCachedConfig().get(BaseConfig_EN.languageConf_prefix.key())));
                 sendErrorMessage(commandSender, BaseConfig_EN.EN.languageConf_error_removingItem.key(),
                         new Tuple<>("%ID%", String.valueOf(tool.getID())),
-                        new Tuple<>("%PLAYER%", op.getName()));
+                        new Tuple<>("%PLAYER%", op.getName()),
+                        new Tuple<>("%PREFIX%", (String) MendingToolsMain.getInstance().getCachedConfig().get(BaseConfig_EN.languageConf_prefix.key())));
                 return false;
             }
         }
@@ -136,7 +141,8 @@ public class mtDeleteTool extends mtCommands {
         if (!removedItem){
             sendErrorMessage(commandSender, BaseConfig_EN.EN.languageConf_error_removingItem.key(),
                     new Tuple<>("%ID%", String.valueOf(tool.getID())),
-                    new Tuple<>("%PLAYER%", op.getName()));
+                    new Tuple<>("%PLAYER%", op.getName()),
+                    new Tuple<>("%PREFIX%", (String) MendingToolsMain.getInstance().getCachedConfig().get(BaseConfig_EN.languageConf_prefix.key())));
         }
         return false;
     }

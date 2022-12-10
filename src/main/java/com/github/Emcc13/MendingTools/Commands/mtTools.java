@@ -87,8 +87,10 @@ public class mtTools extends mtCommands {
                             last_blueprint_name = blueprint_name;
                             blueprintNames.add(new Tuple<>(last_blueprint_name, page_idx));
                         }
-                        page_idx++;
-                        toolPages.add(tool.asPage_(true));
+                        List<BaseComponent[]> pages = tool.asPage_Teamler();
+                        page_idx += pages.size();
+                        for (BaseComponent[] page:pages)
+                            toolPages.add(page);
                     }
 
                     List<BaseComponent[]> pages = new LinkedList<>();
@@ -138,13 +140,16 @@ public class mtTools extends mtCommands {
             MendingTool tool = main.get_db().getTool(toolID);
             if (tool == null) {
                 sendErrorMessage(commandSender, BaseConfig_EN.EN.languageConf_error_noSuchTool.key(),
-                        new Tuple<>("%ID%", String.valueOf(toolID)));
+                        new Tuple<>("%ID%", String.valueOf(toolID)),
+                        new Tuple<>("%PREFIX%", (String) MendingToolsMain.getInstance().getCachedConfig().get(BaseConfig_EN.languageConf_prefix.key())));
                 return false;
             }
             ItemStack book = new ItemStack(Material.WRITTEN_BOOK);
             BookMeta bookMeta = (BookMeta) book.getItemMeta();
             assert bookMeta != null;
-            bookMeta.spigot().addPage(tool.asPage_(true));
+            for (BaseComponent[] page : tool.asPage_Player()){
+                bookMeta.spigot().addPage(page);
+            }
             bookMeta.setTitle("MendingTools");
             bookMeta.setAuthor("MendingTools");
             book.setItemMeta(bookMeta);
@@ -152,21 +157,48 @@ public class mtTools extends mtCommands {
             return false;
         }
         List<MendingTool> tools = main.get_db().getPlayerTools(uuid);
-        if (tools == null) {
-            sendErrorMessage(commandSender, BaseConfig_EN.EN.languageConf_error_hasNoTools.key(),
-                    new Tuple<>("%PLAYER%", args[0]));
+        if ((tools == null) || (tools.size()<1)) {
+            sendErrorMessage(commandSender, BaseConfig_EN.EN.languageConf_text_noTools.key(),
+                    new Tuple<>("%PREFIX%", (String) MendingToolsMain.getInstance().getCachedConfig().get(BaseConfig_EN.languageConf_prefix.key())));
             return false;
         }
         ItemStack book = new ItemStack(Material.WRITTEN_BOOK);
         BookMeta bookMeta = (BookMeta) book.getItemMeta();
         assert bookMeta != null;
-        for (MendingTool mt : tools) {
-            bookMeta.spigot().addPage(mt.asPage_(true));
-        }
-        if (tools.size()<1){
 
-            bookMeta.spigot().addPage(((List<BaseComponent>)main.getCachedConfig().get(BaseConfig_EN.EN.languageConf_text_noTools.key())).toArray(new BaseComponent[]{}));
+        Map<Integer, MendingBlueprint> blueprintMap = MendingToolsMain.getInstance().getBlueprintConfig().getBlueprints();
+        List<BaseComponent[]> toolPages = new LinkedList<>();
+        List<Tuple<String, Integer>> blueprintNames = new LinkedList<>();
+        String last_blueprint_name = null;
+        int page_idx = 1;
+        for (MendingTool tool : tools) {
+            String blueprint_name = blueprintMap.get(tool.getBlueprintID()).getName();
+            if (!blueprint_name.equals(last_blueprint_name)) {
+                last_blueprint_name = blueprint_name;
+                blueprintNames.add(new Tuple<>(last_blueprint_name, page_idx));
+            }
+            List<BaseComponent[]> pages = tool.asPage_Player();
+            page_idx += pages.size();
+            toolPages.addAll(pages);
         }
+
+        List<BaseComponent[]> pages = new LinkedList<>();
+        List<BaseComponent> contentPage = new LinkedList<>();
+        int numContentPages = (int) Math.ceil(blueprintNames.size() / 9.0);
+        TextComponent tc;
+        for (Tuple<String, Integer> content : blueprintNames) {
+            tc = new TextComponent(content.t1+"\n");
+            tc.setClickEvent(new ClickEvent(ClickEvent.Action.CHANGE_PAGE, String.valueOf(
+                    content.t2+numContentPages)));
+            contentPage.add(tc);
+            if (contentPage.size()>=9){
+                pages.add(contentPage.toArray(new BaseComponent[]{}));
+                contentPage = new LinkedList<>();
+            }
+        }
+        pages.add(contentPage.toArray(new BaseComponent[]{}));
+        pages.addAll(toolPages);
+        bookMeta.spigot().setPages(pages);
         bookMeta.setTitle("MendingTools");
         bookMeta.setAuthor("MendingTools");
         book.setItemMeta(bookMeta);

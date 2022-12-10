@@ -136,6 +136,7 @@ public class MTListener implements Listener {
                     case ENDER_CHEST:
                     case PLAYER:
                     case SMITHING:
+                    case ANVIL:
                         return;
                 }
             case CLONE_STACK:

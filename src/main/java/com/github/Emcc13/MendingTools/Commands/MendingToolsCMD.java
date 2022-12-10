@@ -77,6 +77,9 @@ public class MendingToolsCMD extends mtCommands {
             case "rename":
                 main.commands.get(mtRename.COMMAND).onCommand(commandSender, cmd, cmdname, Arrays.copyOfRange(args, 1, args.length));
                 break;
+            case "confirm":
+                main.commands.get(mtConfirm.COMMAND).onCommand(commandSender, cmd, cmdname, Arrays.copyOfRange(args, 1, args.length));
+                break;
             default:
                 commandHint(commandSender);
                 break;

@@ -14,6 +14,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.*;
+import java.util.logging.Level;
 
 public class mtRestoreTool extends mtCommands {
     public static String COMMAND = "mt_restore_tool";
@@ -63,18 +64,21 @@ public class mtRestoreTool extends mtCommands {
         MendingTool tool = main.get_db().getTool(id);
         if (tool==null){
             sendErrorMessage(commandSender, BaseConfig_EN.EN.languageConf_error_noSuchTool.key(),
-                    new Tuple<>("%ID%", String.valueOf(id)));
+                    new Tuple<>("%ID%", String.valueOf(id)),
+                    new Tuple<>("%PREFIX%", (String) MendingToolsMain.getInstance().getCachedConfig().get(BaseConfig_EN.languageConf_prefix.key())));
             return false;
         }
         if (!tool.isBroken()) {
             sendErrorMessage(commandSender, BaseConfig_EN.EN.languageConf_hint_toolNotBroken.key(),
-                    new Tuple<>("%ID%", String.valueOf(tool.getID())));
+                    new Tuple<>("%ID%", String.valueOf(tool.getID())),
+                    new Tuple<>("%PREFIX%", (String) MendingToolsMain.getInstance().getCachedConfig().get(BaseConfig_EN.languageConf_prefix.key())));
             return false;
         }
         MendingBlueprint blueprint = main.getBlueprintConfig().getBlueprints().get(tool.getBlueprintID());
         if (blueprint==null && !(p_executor.hasPermission("mt.admin") || p_executor.isOp())){
             sendErrorMessage(commandSender, BaseConfig_EN.EN.languageConf_error_loadBlueprint.key(),
-                    new Tuple<>("%ID%", String.valueOf(tool.getBlueprintID())));
+                    new Tuple<>("%ID%", String.valueOf(tool.getBlueprintID())),
+                    new Tuple<>("%PREFIX%", (String) MendingToolsMain.getInstance().getCachedConfig().get(BaseConfig_EN.languageConf_prefix.key())));
             return false;
         }
         if (!p_executor.getUniqueId().toString().equals(tool.getUuid())) {
@@ -87,7 +91,8 @@ public class mtRestoreTool extends mtCommands {
                 p_receiver = main.getOpenInv().loadPlayer(op_receiver);
                 if (p_receiver == null) {
                     sendErrorMessage(commandSender, BaseConfig_EN.EN.languageConf_error_loadOfflinePlayer.key(),
-                            new Tuple<>("%PLAYER%", tool.getUuid()));
+                            new Tuple<>("%PLAYER%", tool.getUuid()),
+                            new Tuple<>("%PREFIX%", (String) MendingToolsMain.getInstance().getCachedConfig().get(BaseConfig_EN.languageConf_prefix.key())));
                     return false;
                 }
             }
@@ -104,13 +109,15 @@ public class mtRestoreTool extends mtCommands {
             if (main.getEconomy().getBalance(p_receiver) < toPay) {
                 sendErrorMessage(commandSender, BaseConfig_EN.EN.languageConf_error_notEnoughMoney.key(),
                         new Tuple<>("%PLAYER%", p_receiver.getName()),
-                        new Tuple<>("%MONEY%", String.valueOf(toPay))
+                        new Tuple<>("%MONEY%", String.valueOf(toPay)),
+                        new Tuple<>("%PREFIX%", (String) MendingToolsMain.getInstance().getCachedConfig().get(BaseConfig_EN.languageConf_prefix.key()))
                         );
                 return false;
             }
         }
         if (!main.get_db().restore_tool(id)) {
-            sendErrorMessage(commandSender, BaseConfig_EN.EN.languageConf_error_db.key());
+            sendErrorMessage(commandSender, BaseConfig_EN.EN.languageConf_error_db.key(),
+                    new Tuple<>("%PREFIX%", (String) MendingToolsMain.getInstance().getCachedConfig().get(BaseConfig_EN.languageConf_prefix.key())));
             return false;
         }
         if (blueprint!=null && blueprint.getMoney()!=null) {
@@ -136,7 +143,7 @@ public class mtRestoreTool extends mtCommands {
                         Bukkit.dispatchCommand(Bukkit.getConsoleSender(), command);
                     }
                 } catch (Exception e) {
-                    System.out.println("Caught exception running: "+latestCommand);
+                    Bukkit.getLogger().log(Level.WARNING,"Caught exception running: "+latestCommand);
                     e.printStackTrace();
                 }
             }, 0);

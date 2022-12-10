@@ -68,7 +68,8 @@ public class mtToolNew extends mtCommands {
         MendingBlueprint blueprint = main.getBlueprintConfig().getBlueprints().get(blueprintID);
         if (blueprint == null) {
             sendErrorMessage(commandSender, BaseConfig_EN.EN.languageConf_error_loadBlueprint.key(),
-                    new Tuple<>("%ID%", String.valueOf(blueprintID)));
+                    new Tuple<>("%ID%", String.valueOf(blueprintID)),
+                    new Tuple<>("%PREFIX%", (String) MendingToolsMain.getInstance().getCachedConfig().get(BaseConfig_EN.languageConf_prefix.key())));
             return false;
         }
         Player player = main.getServer().getPlayer(args[1]);
@@ -83,21 +84,24 @@ public class mtToolNew extends mtCommands {
             }
             if (op == null || !op.hasPlayedBefore()){
                 sendErrorMessage(commandSender, BaseConfig_EN.EN.languageConf_error_notPlayed.key(),
-                        new Tuple<>("%PLAYER%", args[1]));
+                        new Tuple<>("%PLAYER%", args[1]),
+                        new Tuple<>("%PREFIX%", (String) MendingToolsMain.getInstance().getCachedConfig().get(BaseConfig_EN.languageConf_prefix.key())));
                 return false;
             }
             offline = true;
             player = main.getOpenInv().loadPlayer(op);
             if (player == null){
                 sendErrorMessage(commandSender, BaseConfig_EN.EN.languageConf_error_loadOfflinePlayer.key(),
-                        new Tuple<>("%PLAYER%", op.getName()));
+                        new Tuple<>("%PLAYER%", op.getName()),
+                        new Tuple<>("%PREFIX%", (String) MendingToolsMain.getInstance().getCachedConfig().get(BaseConfig_EN.languageConf_prefix.key())));
                 return false;
             }
         }
 
         long tool_id = MendingToolsMain.getInstance().get_db().add_tool(blueprint, player.getUniqueId().toString());
         if (tool_id < 1) {
-            sendErrorMessage(commandSender, BaseConfig_EN.EN.languageConf_error_db.key());
+            sendErrorMessage(commandSender, BaseConfig_EN.EN.languageConf_error_db.key(),
+                    new Tuple<>("%PREFIX%", (String) MendingToolsMain.getInstance().getCachedConfig().get(BaseConfig_EN.languageConf_prefix.key())));
             return false;
         }
 

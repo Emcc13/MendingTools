@@ -100,7 +100,8 @@ public abstract class mtCommands implements TabExecutor {
         assert commandSender instanceof Player;
         ((Player) commandSender).spigot().sendMessage(formatComponents(
                 (List<TextComponent>) main.getCachedConfig().
-                        get(BaseConfig_EN.EN.languageConf_noPermission.key())));
+                        get(BaseConfig_EN.EN.languageConf_noPermission.key()),
+                new Tuple<>("%PREFIX%", (String) main.getCachedConfig().get(BaseConfig_EN.languageConf_prefix.key()))));
     }
 
     protected void sendErrorMessage(CommandSender commandSender, String key, Tuple<String, String>... replacements) {

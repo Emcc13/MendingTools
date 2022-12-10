@@ -3,21 +3,27 @@ package com.github.Emcc13;
 import com.github.Emcc13.MendingTools.Commands.*;
 import com.github.Emcc13.MendingTools.Config.BaseConfig_EN;
 import com.github.Emcc13.MendingTools.Config.BlueprintConfig;
+import com.github.Emcc13.MendingTools.Config.TranslateConf;
 import com.github.Emcc13.MendingTools.Database.DBHandler;
 import com.github.Emcc13.MendingTools.Listener.MTListener;
 import com.lishid.openinv.IOpenInv;
+import net.md_5.bungee.api.chat.TextComponent;
 import net.milkbowl.vault.economy.Economy;
+import org.bukkit.Bukkit;
 import org.bukkit.NamespacedKey;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.logging.Level;
 
 public class MendingToolsMain extends JavaPlugin {
     private static MendingToolsMain instance;
     private Map<String, Object> cachedConfig;
+    private Map<String, List<TextComponent>> languageConfig;
     private BlueprintConfig blueprintConfig;
     private DBHandler dbhandler;
     private NamespacedKey NBT_key;
@@ -32,16 +38,30 @@ public class MendingToolsMain extends JavaPlugin {
     }
 
     public void onEnable() {
-        this.cachedConfig = BaseConfig_EN.getConfig(this);
-        this.blueprintConfig = new BlueprintConfig((String) cachedConfig.get(
-                BaseConfig_EN.mendingToolBlueprintFile.key()));
-        this.dbhandler = new DBHandler(this);
-        this.NBT_key = new NamespacedKey(this, "ID");
+//        try {
+//            this.cachedConfig = BaseConfig_EN.getConfig(this);
+//        } catch (Exception e) {
+//            Bukkit.getLogger().log(Level.SEVERE, "[MT ERROR] Failed to load config! Change it and reload it.");
+//        }
+//        try {
+//            this.blueprintConfig = new BlueprintConfig((String) cachedConfig.get(
+//                    BaseConfig_EN.mendingToolBlueprintFile.key()));
+//        } catch (Exception e) {
+//            Bukkit.getLogger().log(Level.SEVERE, "[MT ERROR] Failed to load blueprints! Change it and reload it.");
+//        }
+//        try {
+//            this.languageConfig = TranslateConf.getConfig(this.cachedConfig);
+//        } catch (Exception e) {
+//            Bukkit.getLogger().log(Level.SEVERE, "[MT ERROR] Failed to load language config! Change it and reload it.");
+//        }
+//        this.dbhandler = new DBHandler(this);
+//        this.setCommandPermissions();
         this.economy = Objects.requireNonNull(this.getServer().getServicesManager().getRegistration(Economy.class)).getProvider();
         this.openInv = (IOpenInv) this.getServer().getPluginManager().getPlugin("OpenInv");
+        this.loadCachedConfig();
         this.createCommands();
         this.registerCommands();
-        this.setCommandPermissions();
+        this.NBT_key = new NamespacedKey(this, "ID");
         this.addListener();
     }
 
@@ -49,7 +69,7 @@ public class MendingToolsMain extends JavaPlugin {
 
     }
 
-    public NamespacedKey getNBT_key(){
+    public NamespacedKey getNBT_key() {
         return this.NBT_key;
     }
 
@@ -64,6 +84,7 @@ public class MendingToolsMain extends JavaPlugin {
         this.commands.put(mtDeleteTool.COMMAND, new mtDeleteTool(this));
         this.commands.put(mtTransferTool.COMMAND, new mtTransferTool(this));
         this.commands.put(mtRename.COMMAND, new mtRename(this));
+        this.commands.put(mtConfirm.COMMAND, new mtConfirm(this));
 
         this.generalCommand = new MendingToolsCMD(this);
     }
@@ -86,15 +107,32 @@ public class MendingToolsMain extends JavaPlugin {
         this.generalCommand.setPermission();
     }
 
-    private void addListener(){
+    private void addListener() {
         getServer().getPluginManager().registerEvents(new MTListener(this), this);
     }
 
-    public void reloadCachedConfig() {
-        this.cachedConfig = BaseConfig_EN.getConfig(this);
-        this.blueprintConfig = new BlueprintConfig((String) cachedConfig.get(
-                BaseConfig_EN.mendingToolBlueprintFile.key()));
+    private void loadCachedConfig(){
+        try {
+            this.cachedConfig = BaseConfig_EN.getConfig(this);
+        } catch (Exception e) {
+            Bukkit.getLogger().log(Level.SEVERE, "[MT ERROR] Failed to load config! Change it and reload it.");
+        }
+        try {
+            this.blueprintConfig = new BlueprintConfig((String) cachedConfig.get(
+                    BaseConfig_EN.mendingToolBlueprintFile.key()));
+        } catch (Exception e) {
+            Bukkit.getLogger().log(Level.SEVERE, "[MT ERROR] Failed to load blueprints! Change it and reload it.");
+        }
+        try {
+            this.languageConfig = TranslateConf.getConfig(this.cachedConfig);
+        } catch (Exception e) {
+            Bukkit.getLogger().log(Level.SEVERE, "[MT ERROR] Failed to load language config! Change it and reload it.");
+        }
         this.dbhandler = new DBHandler(this);
+    }
+
+    public void reloadCachedConfig() {
+        loadCachedConfig();
         setCommandPermissions();
     }
 
@@ -106,7 +144,11 @@ public class MendingToolsMain extends JavaPlugin {
         return blueprintConfig;
     }
 
-    public DBHandler get_db(){
+    public Map<String, List<TextComponent>> getLanguageConfig() {
+        return languageConfig;
+    }
+
+    public DBHandler get_db() {
         return this.dbhandler;
     }
 
@@ -114,11 +156,11 @@ public class MendingToolsMain extends JavaPlugin {
         return instance;
     }
 
-    public Economy getEconomy(){
+    public Economy getEconomy() {
         return this.economy;
     }
 
-    public IOpenInv getOpenInv(){
+    public IOpenInv getOpenInv() {
         return this.openInv;
     }
 
