@@ -94,7 +94,7 @@ public class mtTools extends mtCommands {
                     }
                     nextBookCommand.setClickEvent(new ClickEvent(
                             ClickEvent.Action.RUN_COMMAND,
-                            MendingToolsCMD.COMMAND + " tools all " + (bookNum + 2)
+                            "/"+MendingToolsCMD.COMMAND + " tools all " + (bookNum + 2)
                     ));
                     pages.addAll(pagesByTools(main.get_db().getToolsSorted(bookNum), true, nextBookCommand));
                     break;
@@ -143,7 +143,7 @@ public class mtTools extends mtCommands {
                     }
                     nextBookCommand.setClickEvent(new ClickEvent(
                             ClickEvent.Action.RUN_COMMAND,
-                            MendingToolsCMD.COMMAND + " book " + (bookNum + 2)
+                            "/"+MendingToolsCMD.COMMAND + " tools book " + (bookNum + 2)
                     ));
                     pages.addAll(pagesByTools(tools, false, nextBookCommand));
                     break;
@@ -185,7 +185,7 @@ public class mtTools extends mtCommands {
                     }
                     nextBookCommand.setClickEvent(new ClickEvent(
                             ClickEvent.Action.RUN_COMMAND,
-                            MendingToolsCMD.COMMAND + " tools " + lower_case_player_name + " " + (bookNum + 2)
+                            "/"+MendingToolsCMD.COMMAND + " tools " + lower_case_player_name + " " + (bookNum + 2)
                     ));
                     pages.addAll(pagesByTools(tools, true, nextBookCommand));
                     break;
@@ -199,7 +199,7 @@ public class mtTools extends mtCommands {
             }
             nextBookCommand.setClickEvent(new ClickEvent(
                     ClickEvent.Action.RUN_COMMAND,
-                    MendingToolsCMD.COMMAND + " book " + 2
+                    "/"+MendingToolsCMD.COMMAND + " tools book " + 2
             ));
             pages.addAll(pagesByTools(tools, false, nextBookCommand));
         }
@@ -235,6 +235,10 @@ public class mtTools extends mtCommands {
             toolPages.addAll(pages_tool);
         }
         List<BaseComponent> contentPage = new LinkedList<>();
+        TextComponent title = formatComponents((List<TextComponent>)MendingToolsMain.getInstance().getCachedConfig()
+                .get(BaseConfig_EN.EN.languageConf_text_pageOfContentTitle.key()));
+        title.addExtra("\n");
+        contentPage.add(title);
         int numContentPages = (int) Math.ceil(blueprintNames.size() / 9.0);
         TextComponent tc;
         for (Tuple<String, Integer> content : blueprintNames) {
@@ -247,7 +251,8 @@ public class mtTools extends mtCommands {
                 contentPage = new LinkedList<>();
             }
         }
-        if (page_idx >= 45) {
+        if (page_idx >= 41) {
+            contentPage.add(new TextComponent("\n"));
             contentPage.add(nextBookCommand);
         }
         if (contentPage.size() > 0) {

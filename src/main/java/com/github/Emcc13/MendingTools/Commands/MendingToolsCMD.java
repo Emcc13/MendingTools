@@ -24,6 +24,7 @@ public class MendingToolsCMD extends mtCommands {
         add("upgrade");
         add("tools");
         add("rename");
+        add("version");
     }};
 
     public MendingToolsCMD(MendingToolsMain main) {
@@ -79,6 +80,9 @@ public class MendingToolsCMD extends mtCommands {
                 break;
             case "confirm":
                 main.commands.get(mtConfirm.COMMAND).onCommand(commandSender, cmd, cmdname, Arrays.copyOfRange(args, 1, args.length));
+                break;
+            case "version":
+                main.commands.get(mtVersion.COMMAND).onCommand(commandSender, cmd, cmdname, Arrays.copyOfRange(args, 1, args.length));
                 break;
             default:
                 commandHint(commandSender);

@@ -113,10 +113,21 @@ public enum DE_config implements ConfigInterface {
         }});
     }}),
 
+    languageConf_hint_version(new ArrayList<Map<String, String>>(){{
+        add(new HashMap<String, String>(){{
+            put("text", "/%COMMAND%");
+        }});
+    }}),
+
+    languageConf_text_version(new ArrayList<Map<String, String>>(){{
+        add(new HashMap<String, String>(){{
+            put("text", "%PREFIX% %VERSION%");
+        }});
+    }}),
+
     languageConf_text_nextBook(new ArrayList<Map<String, String>>(){{
         add(new HashMap<String, String>(){{
             put("text", "Nächstes Buch");
-            put("runcommand", "/%COMMAND% all %ID%");
         }});
     }}),
     languageConf_text_player(new ArrayList<Map<String, String>>(){{
@@ -157,6 +168,11 @@ public enum DE_config implements ConfigInterface {
     languageConf_text_blueprintID(new ArrayList<Map<String, String>>(){{
         add(new HashMap<String, String>(){{
             put("text", "Blaupause ID");
+        }});
+    }}),
+    languageConf_text_pageOfContentTitle(new ArrayList<Map<String, String>>(){{
+        add(new HashMap<String, String>(){{
+            put("text", "Inhaltsverzeichnis");
         }});
     }}),
 

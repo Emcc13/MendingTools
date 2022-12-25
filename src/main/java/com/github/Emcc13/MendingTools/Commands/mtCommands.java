@@ -113,7 +113,7 @@ public abstract class mtCommands implements TabExecutor {
         }
     }
 
-    private static String formatString(String template, Tuple<String, String>... replacements) {
+    protected static String formatString(String template, Tuple<String, String>... replacements) {
         String result = template;
         for (Tuple<String, String> replacement : replacements) {
             result = result.replace(replacement.t1, replacement.t2);

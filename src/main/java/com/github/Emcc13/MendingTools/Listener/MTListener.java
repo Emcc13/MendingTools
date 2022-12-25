@@ -34,7 +34,7 @@ public class MTListener implements Listener {
     }
 
     @EventHandler
-    boolean onPlayerJoin(PlayerJoinEvent event) {
+    void onPlayerJoin(PlayerJoinEvent event) {
         Player p = event.getPlayer();
         Enchantment ench = Enchantment.MENDING;
         Map<Long, MendingTool> tools = new HashMap<Long, MendingTool>();
@@ -50,14 +50,10 @@ public class MTListener implements Listener {
             if (itemStack == null)
                 return;
             ItemMeta meta = itemStack.getItemMeta();
-//            System.out.println("Meta");
-//            System.out.println(meta);
             assert meta != null;
             if (!meta.hasEnchant(ench))
                 return;
             boolean has_lore = false;
-//            System.out.println("Lore");
-//            System.out.println(meta.getLore());
             List<String> lore = meta.getLore();
             if (lore != null){
                 for (String lore_line : lore) {
@@ -67,10 +63,8 @@ public class MTListener implements Listener {
                     }
                 }
             }
-//            System.out.println("Check ID");
             Long id = meta.getPersistentDataContainer().get(main.getNBT_key(), PersistentDataType.LONG);
             if (id != null) {
-//                System.out.println("Found ID");
                 if (tools.containsKey(id)) {
                     tools.remove(id);
                     return;
@@ -79,7 +73,6 @@ public class MTListener implements Listener {
                     meta.setLore(new ArrayList<String>(){{
                         add(p.getName());
                     }});
-//                    System.out.println("Add Lore");
                     has_lore=true;
                 }
             }
@@ -98,7 +91,7 @@ public class MTListener implements Listener {
                 main.get_db().break_tool(tool.getID());
             }
         }
-        return false;
+        return;
     }
 
     @EventHandler

@@ -1,5 +1,6 @@
 package com.github.Emcc13.MendingTools.Commands;
 
+import com.github.Emcc13.MendingTools.BookGUI.MendingTool;
 import com.github.Emcc13.MendingTools.Config.BaseConfig_EN;
 import com.github.Emcc13.MendingToolsMain;
 import net.md_5.bungee.api.chat.ClickEvent;
@@ -7,6 +8,7 @@ import net.md_5.bungee.api.chat.HoverEvent;
 import net.md_5.bungee.api.chat.TextComponent;
 import net.md_5.bungee.api.chat.hover.content.Content;
 import net.md_5.bungee.api.chat.hover.content.Text;
+import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -53,18 +55,23 @@ public class mtConfirm extends mtCommands {
             return false;
         }
         Player p = (Player) commandSender;
-        System.out.println(args);
-        System.out.println(args[0]);
         List<TextComponent> message = (List<TextComponent>) this.main.getCachedConfig().get(args[0]);
         Map<String, String> replacements = new HashMap<String, String>();
         String[] values;
         for (int i = 1; i < args.length; i++) {
             values = args[i].split("=");
-            System.out.println(values[0]);
-            System.out.println(values[1]);
             replacements.put(values[0].replace("$", "%"), values[1]);
         }
         replacements.put("%PREFIX%", (String) MendingToolsMain.getInstance().getCachedConfig().get(BaseConfig_EN.languageConf_prefix.key()));
+        try {
+            long toolID = Integer.parseInt(replacements.get("%ID%"));
+            MendingTool tool = MendingToolsMain.getInstance().get_db().getTool(toolID);
+            p = Bukkit.getServer().getPlayer(UUID.fromString(tool.getUuid()));
+            if (p == null){
+                p = (Player) commandSender;
+            }
+        }catch (Exception ignored){
+        }
         p.spigot().sendMessage(formatComponents(message, replacements));
         return false;
     }

@@ -1,4 +1,4 @@
-# MendingTools v0.8 for API 1.18
+# MendingTools v0.8.3 for API 1.18
 
 A plugin to manage tools with a mending enchantment.
 
@@ -56,6 +56,10 @@ A plugin to manage tools with a mending enchantment.
   - perm: mt.confirm
   - args: "config key for chat message" "message arguments"... (text_to_replace=text_to_insert)
   - confirm upgrade of enchantment
+- mt_version
+  - perm: mt.version
+  - args: None
+  - getting the plugin version
 
 ## Events
 

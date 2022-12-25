@@ -25,6 +25,7 @@ public enum BaseConfig_EN implements ConfigInterface {
     perm_command_renameTool("mt.renameTool"),
     perm_command_confirm("mt.confirm"),
     perm_command_mendingtools("mendingtools"),
+    perm_command_version("mt.version"),
     perm_keep_inventory("mt.dummy_perm.keep_inv"),
     altColor("&"),
     language("de"),
@@ -141,6 +142,17 @@ public enum BaseConfig_EN implements ConfigInterface {
                 put("text", "/%COMMAND% config key of text message");
             }});
         }}),
+        languageConf_hint_version(new ArrayList<Map<String, String>>(){{
+            add(new HashMap<String, String>(){{
+                put("text", "/%COMMAND%");
+            }});
+        }}),
+
+        languageConf_text_version(new ArrayList<Map<String, String>>(){{
+            add(new HashMap<String, String>(){{
+                put("text", "%PREFIX% %VERSION%");
+            }});
+        }}),
 
         languageConf_text_nextBook(new ArrayList<Map<String, String>>() {{
             add(new HashMap<String, String>() {{
@@ -185,6 +197,11 @@ public enum BaseConfig_EN implements ConfigInterface {
         languageConf_text_blueprintID(new ArrayList<Map<String, String>>(){{
             add(new HashMap<String, String>(){{
                 put("text", "Blueprint ID");
+            }});
+        }}),
+        languageConf_text_pageOfContentTitle(new ArrayList<Map<String, String>>(){{
+            add(new HashMap<String, String>(){{
+                put("text", "Page of Content");
             }});
         }}),
 
