@@ -17,11 +17,6 @@ import java.util.*;
 
 public class mtConfirm extends mtCommands {
     public static String COMMAND = "mt_confirm";
-    public static List<String> command_complete_list[] = new List[]{
-            new ArrayList<String>() {{
-                add("text string");
-            }},
-    };
 
 
     public mtConfirm(MendingToolsMain main) {
@@ -31,6 +26,11 @@ public class mtConfirm extends mtCommands {
     @Override
     protected String getPerm_key() {
         return BaseConfig_EN.perm_command_confirm.key();
+    }
+
+    @Override
+    protected String getTabCompleteKey() {
+        return BaseConfig_EN.TabComplete.tabComplete_confirm.key();
     }
 
     protected void commandHint(CommandSender commandSender) {
@@ -67,10 +67,10 @@ public class mtConfirm extends mtCommands {
             long toolID = Integer.parseInt(replacements.get("%ID%"));
             MendingTool tool = MendingToolsMain.getInstance().get_db().getTool(toolID);
             p = Bukkit.getServer().getPlayer(UUID.fromString(tool.getUuid()));
-            if (p == null){
+            if (p == null) {
                 p = (Player) commandSender;
             }
-        }catch (Exception ignored){
+        } catch (Exception ignored) {
         }
         p.spigot().sendMessage(formatComponents(message, replacements));
         return false;

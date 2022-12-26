@@ -26,6 +26,11 @@ public class mtBlueprints extends mtCommands {
         return BaseConfig_EN.perm_command_blueprints.key();
     }
 
+    @Override
+    protected String getTabCompleteKey(){
+        return BaseConfig_EN.TabComplete.tabComplete_blueprints.key();
+    }
+
     public List<String> subCommandComplete(String[] args){
         if (this.command_complete_list != null && args.length-1<=this.command_complete_list.length) {
             return this.command_complete_list[args.length - 2];

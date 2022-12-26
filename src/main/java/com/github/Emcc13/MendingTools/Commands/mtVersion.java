@@ -13,18 +13,22 @@ import java.util.Map;
 
 public class mtVersion extends mtCommands {
     public static String COMMAND = "mt_version";
-    public static List<String> command_complete_list[] = new List[]{};
 
-    public mtVersion(MendingToolsMain main){
+    public mtVersion(MendingToolsMain main) {
         super(main);
     }
 
     @Override
-    protected String getPerm_key(){
+    protected String getPerm_key() {
         return BaseConfig_EN.perm_command_version.key();
     }
 
-    protected void commandHint(CommandSender commandSender){
+    @Override
+    protected String getTabCompleteKey() {
+        return BaseConfig_EN.TabComplete.tabComplete_version.key();
+    }
+
+    protected void commandHint(CommandSender commandSender) {
         super.commandHint(commandSender, BaseConfig_EN.EN.languageConf_hint_version.key(), COMMAND);
     }
 
@@ -44,10 +48,10 @@ public class mtVersion extends mtCommands {
         Player p = (Player) commandSender;
         Map<String, Object> cached_config = main.getCachedConfig();
         p.spigot().sendMessage(formatComponents(
-                (List<TextComponent>)cached_config.get(BaseConfig_EN.EN.languageConf_text_version.key()),
-                new Tuple<String, String>("%PREFIX%", (String)cached_config.get(BaseConfig_EN.languageConf_prefix.key())),
+                (List<TextComponent>) cached_config.get(BaseConfig_EN.EN.languageConf_text_version.key()),
+                new Tuple<String, String>("%PREFIX%", (String) cached_config.get(BaseConfig_EN.languageConf_prefix.key())),
                 new Tuple<String, String>("%VERSION%", main.getDescription().getVersion())
-                ));
+        ));
         return false;
     }
 }

@@ -15,18 +15,20 @@ import org.bukkit.command.TabExecutor;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
 public abstract class mtCommands implements TabExecutor {
     protected MendingToolsMain main;
     protected String permission;
+    public List<String> command_complete_list[];
     public static String COMMAND;
-    public static List<String>[] command_complete_list = null;
 
     public mtCommands(MendingToolsMain main) {
         this.main = main;
-        this.permission = (String) main.getCachedConfig().get(this.getPerm_key());
+        this.setPermission();
+        this.setTabComplete();
     }
 
     @Override
@@ -59,7 +61,13 @@ public abstract class mtCommands implements TabExecutor {
         this.permission = (String) main.getCachedConfig().get(this.getPerm_key());
     }
 
+    public void setTabComplete(){
+        this.command_complete_list = ((List<List<String>>)main.getCachedConfig().
+                get(this.getTabCompleteKey())).toArray(new ArrayList[]{});
+    }
+
     protected abstract String getPerm_key();
+    protected abstract String getTabCompleteKey();
 
     protected TextComponent formatComponents(List<TextComponent> template, Tuple<String, String>... replacements) {
         TextComponent result = new TextComponent();

@@ -30,7 +30,6 @@ public enum BaseConfig_EN implements ConfigInterface {
     altColor("&"),
     language("de"),
     mendingToolBlueprintFile("blueprints.xml"),
-
     option_restoreTool_durability(15),
     languageConf_prefix("[MT] "),
     ;
@@ -91,6 +90,11 @@ public enum BaseConfig_EN implements ConfigInterface {
                 put("text", "%PREFIX% The desired Level is lower than the current level!");
             }});
         }}),
+        languageConf_error_toolHasNotEnchantment(new ArrayList<Map<String, String>>() {{
+            add(new HashMap<String, String>() {{
+                put("text", "%PREFIX% The tool %ID% has not the enchantment: %DISP-ENCH%!");
+            }});
+        }}),
         languageConf_hint_deleteTool(new ArrayList<Map<String, String>>() {{
             add(new HashMap<String, String>() {{
                 put("text", "/%COMMAND% <tool id>");
@@ -137,19 +141,19 @@ public enum BaseConfig_EN implements ConfigInterface {
                         "specific arguments>");
             }});
         }}),
-        languageConf_hint_confirm(new ArrayList<Map<String, String>>(){{
-            add(new HashMap<String, String>(){{
+        languageConf_hint_confirm(new ArrayList<Map<String, String>>() {{
+            add(new HashMap<String, String>() {{
                 put("text", "/%COMMAND% config key of text message");
             }});
         }}),
-        languageConf_hint_version(new ArrayList<Map<String, String>>(){{
-            add(new HashMap<String, String>(){{
+        languageConf_hint_version(new ArrayList<Map<String, String>>() {{
+            add(new HashMap<String, String>() {{
                 put("text", "/%COMMAND%");
             }});
         }}),
 
-        languageConf_text_version(new ArrayList<Map<String, String>>(){{
-            add(new HashMap<String, String>(){{
+        languageConf_text_version(new ArrayList<Map<String, String>>() {{
+            add(new HashMap<String, String>() {{
                 put("text", "%PREFIX% %VERSION%");
             }});
         }}),
@@ -184,46 +188,44 @@ public enum BaseConfig_EN implements ConfigInterface {
                 put("text", "You have no mending tools.");
             }});
         }}),
-        languageConf_text_repairs(new ArrayList<Map<String, String>>(){{
-            add(new HashMap<String, String>(){{
+        languageConf_text_repairs(new ArrayList<Map<String, String>>() {{
+            add(new HashMap<String, String>() {{
                 put("text", "Repairs");
             }});
         }}),
-        languageConf_text_mendingToolID(new ArrayList<Map<String, String>>(){{
-            add(new HashMap<String, String>(){{
+        languageConf_text_mendingToolID(new ArrayList<Map<String, String>>() {{
+            add(new HashMap<String, String>() {{
                 put("text", "Mending Tool ID");
             }});
         }}),
-        languageConf_text_blueprintID(new ArrayList<Map<String, String>>(){{
-            add(new HashMap<String, String>(){{
+        languageConf_text_blueprintID(new ArrayList<Map<String, String>>() {{
+            add(new HashMap<String, String>() {{
                 put("text", "Blueprint ID");
             }});
         }}),
-        languageConf_text_pageOfContentTitle(new ArrayList<Map<String, String>>(){{
-            add(new HashMap<String, String>(){{
+        languageConf_text_pageOfContentTitle(new ArrayList<Map<String, String>>() {{
+            add(new HashMap<String, String>() {{
                 put("text", "Page of Content");
             }});
         }}),
 
-        bookButton_upgrade_command(new ArrayList<Map<String, String>>(){{
-            add(new HashMap<String, String>(){{
+        bookButton_upgrade_command(new ArrayList<Map<String, String>>() {{
+            add(new HashMap<String, String>() {{
                 put("text", "&%PREFIX% Are you sure you want to upgrade your tools %ID% enchantement %DISP-ENCH% from " +
                         "%CURRLEVEL% to %LEVEL% for %MONEY%?  ");
             }});
-            add(new HashMap<String, String>(){{
+            add(new HashMap<String, String>() {{
                 put("text", "[YES]");
                 put("runcommand", "/mt upgrade %ID% %ENCH% %LEVEL%");
             }});
         }}),
-        bookButton_upgrade_confirm(new ArrayList<Map<String, String>>(){{
-            add(new HashMap<String, String>(){{
+        bookButton_upgrade_confirm(new ArrayList<Map<String, String>>() {{
+            add(new HashMap<String, String>() {{
                 put("text", "&o&7Upgrade");
-                put("runcommand", "/mt confirm "+BaseConfig_EN.EN.bookButton_upgrade_command.key()+
+                put("runcommand", "/mt confirm " + BaseConfig_EN.EN.bookButton_upgrade_command.key() +
                         " $ID$=%ID% $LEVEL$=%LEVEL% $ENCH$=%ENCH% $CURRLEVEL$=%CURRLEVEL% $MONEY$=%MONEY% $DISP-ENCH$=%DISP-ENCH%");
             }});
-        }})
-
-        ;
+        }});
         public final List<Map<String, String>> value;
         private final String key_;
 
@@ -241,7 +243,92 @@ public enum BaseConfig_EN implements ConfigInterface {
             return this.value;
         }
 
-        public String key(){
+        public String key() {
+            return this.key_;
+        }
+    }
+
+    public enum TabComplete implements ConfigInterface {
+        tabComplete_blueprints(new List[]{
+        }),
+        tabComplete_confirm(new List[]{
+                new ArrayList<String>() {{
+                    add("text string");
+                }},
+        }),
+        tabComplete_deleteTool(new List[]{
+                new ArrayList<String>() {{
+                    add("tool id");
+                }},
+        }),
+        tabComplete_reload(new List[]{
+        }),
+        tabComplete_rename(new List[]{
+                new ArrayList<String>() {{
+                    add("new name");
+                }},
+        }),
+        tabComplete_restoreTool(new List[]{
+                new ArrayList<String>() {{
+                    add("tool id");
+                }},
+        }),
+        tabComplete_newTool(new List[]{
+                new ArrayList<String>() {{
+                    add("blueprint id");
+                }},
+                null,
+        }),
+        tabComplete_tools(new List[]{
+                new ArrayList<String>() {{
+                    add("id");
+                    add("all");
+                    add("book");
+                    add("player name");
+                }},
+                new ArrayList<String>() {{
+                    add("tool id");
+                    add("book number");
+                }},
+        }),
+        tabComplete_transferTool(new List[]{
+                new ArrayList<String>() {{
+                    add("tool id");
+                }},
+                null,
+        }),
+        tabComplete_upgradeTool(new List[]{
+                new ArrayList<String>() {{
+                    add("tool id");
+                }},
+                new ArrayList<String>() {{
+                    add("enchantment");
+                }},
+                new ArrayList<String>() {{
+                    add("new level");
+                }},
+        }),
+        tabComplete_version(new List[]{
+        }),
+        ;
+        public final List<String> value[];
+        private final String key_;
+
+        TabComplete(List<String> value[]) {
+            this.value = value;
+            this.key_ = this.name().replace('_', '.');
+        }
+
+        TabComplete(String key, List<String> value[]) {
+            this.value = value;
+            this.key_ = key;
+        }
+
+        public Object value() {
+            return this.value;
+        }
+
+        public String key() {
             return this.key_;
         }
     }
@@ -258,7 +345,7 @@ public enum BaseConfig_EN implements ConfigInterface {
         return this.value;
     }
 
-    public String key(){
+    public String key() {
         return this.key_;
     }
 
@@ -276,6 +363,14 @@ public enum BaseConfig_EN implements ConfigInterface {
             }
             cachedConfig.put(key, value);
         }
+        for (TabComplete entry : TabComplete.values()) {
+            key = entry.key();
+            value = config.get(key);
+            if (value == null) {
+                value = entry.value;
+            }
+            cachedConfig.put(key, value);
+        }
         cachedConfig.put(altColor.key(), ((String) cachedConfig.get(altColor.key())).charAt(0));
         try {
             cachedConfig.put(option_restoreTool_durability.key(), (Integer) cachedConfig.get(option_restoreTool_durability.key()));
@@ -285,7 +380,7 @@ public enum BaseConfig_EN implements ConfigInterface {
         char altColor_char = (char) cachedConfig.get(altColor.key());
         cachedConfig.put(languageConf_prefix.key(),
                 ChatColor.translateAlternateColorCodes(altColor_char,
-                        (String)cachedConfig.get(languageConf_prefix.key())));
+                        (String) cachedConfig.get(languageConf_prefix.key())));
         config.addDefaults(cachedConfig);
 
         switch ((String) cachedConfig.get(language.key())) {
@@ -321,7 +416,7 @@ public enum BaseConfig_EN implements ConfigInterface {
                 try {
                     ntc = format_object(obj_, altColor_char);
                 } catch (Exception e) {
-                    Bukkit.getLogger().log(Level.WARNING,"[MT] Failed to load config for key: "+key);
+                    Bukkit.getLogger().log(Level.WARNING, "[MT] Failed to load config for key: " + key);
                     continue;
                 }
                 tcs.add(ntc);
@@ -331,7 +426,7 @@ public enum BaseConfig_EN implements ConfigInterface {
         return cachedConfig;
     }
 
-    private static TextComponent format_object(Object obj_, char altColor_char){
+    private static TextComponent format_object(Object obj_, char altColor_char) {
         Map<String, String> comp;
         TextComponent ntc;
         comp = (Map<String, String>) obj_;

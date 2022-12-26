@@ -20,8 +20,14 @@ public class mtReload extends mtCommands {
         return null;
     }
 
+    @Override
     protected String getPerm_key() {
         return BaseConfig_EN.perm_command_reload.key();
+    }
+
+    @Override
+    protected String getTabCompleteKey(){
+        return BaseConfig_EN.TabComplete.tabComplete_reload.key();
     }
 
     @Override

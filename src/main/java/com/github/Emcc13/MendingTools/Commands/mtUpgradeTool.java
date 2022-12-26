@@ -3,9 +3,11 @@ package com.github.Emcc13.MendingTools.Commands;
 import com.github.Emcc13.MendingTools.BookGUI.MendingBlueprint;
 import com.github.Emcc13.MendingTools.BookGUI.MendingTool;
 import com.github.Emcc13.MendingTools.Config.BaseConfig_EN;
+import com.github.Emcc13.MendingTools.Config.TranslateConf;
 import com.github.Emcc13.MendingTools.Util.Equationparser;
 import com.github.Emcc13.MendingTools.Util.Tuple;
 import com.github.Emcc13.MendingToolsMain;
+import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.Bukkit;
 import org.bukkit.NamespacedKey;
 import org.bukkit.OfflinePlayer;
@@ -22,18 +24,6 @@ import java.util.function.Consumer;
 
 public class mtUpgradeTool extends mtCommands {
     public static String COMMAND = "mt_upgrade_tool";
-    public static List<String> command_complete_list[] = new List[]{
-            new ArrayList<String>() {{
-                add("blueprint id");
-            }},
-            new ArrayList<String>() {{
-                add("enchantment");
-            }},
-            new ArrayList<String>() {{
-                add("new level");
-            }},
-    };
-
 
     public mtUpgradeTool(MendingToolsMain main) {
         super(main);
@@ -44,12 +34,17 @@ public class mtUpgradeTool extends mtCommands {
         return BaseConfig_EN.perm_command_upgradeTool.key();
     }
 
-    protected void commandHint(CommandSender commandSender){
+    @Override
+    protected String getTabCompleteKey() {
+        return BaseConfig_EN.TabComplete.tabComplete_upgradeTool.key();
+    }
+
+    protected void commandHint(CommandSender commandSender) {
         super.commandHint(commandSender, BaseConfig_EN.EN.languageConf_hint_upgradeTool.key(), COMMAND);
     }
 
-    public List<String> subCommandComplete(String[] args){
-        if (this.command_complete_list != null && args.length-1<=this.command_complete_list.length) {
+    public List<String> subCommandComplete(String[] args) {
+        if (this.command_complete_list != null && args.length - 1 <= this.command_complete_list.length) {
             return this.command_complete_list[args.length - 2];
         }
         return null;
@@ -69,33 +64,45 @@ public class mtUpgradeTool extends mtCommands {
         Long id;
         try {
             id = Long.valueOf(args[0]);
-        }catch (NumberFormatException e){
+        } catch (NumberFormatException e) {
             commandHint(commandSender);
             return false;
         }
         MendingTool tool = main.get_db().getTool(id);
-        if (tool == null){
+        if (tool == null) {
             sendErrorMessage(commandSender, BaseConfig_EN.EN.languageConf_error_noSuchTool.key(),
                     new Tuple<>("%ID%", String.valueOf(id)),
                     new Tuple<>("%PREFIX%", (String) MendingToolsMain.getInstance().getCachedConfig().get(BaseConfig_EN.languageConf_prefix.key())));
             return false;
         }
-        String enchantment = args[1];
+        String enchantment = args[1].toLowerCase();
         Enchantment ench = Enchantment.getByKey(NamespacedKey.minecraft(enchantment));
+        List<TextComponent> lang_ench = main.getLanguageConfig().get(TranslateConf.languageConf_enchantment + enchantment);
+        String lang_ench_str = formatComponents(lang_ench).toPlainText();
         if (ench == null) {
             sendErrorMessage(commandSender, BaseConfig_EN.EN.languageConf_error_noSuchEnchantment.key(),
                     new Tuple<>("%ENCH%", args[1]),
+                    new Tuple<>("%DISP-ENCH%", lang_ench_str),
                     new Tuple<>("%PREFIX%", (String) MendingToolsMain.getInstance().getCachedConfig().get(BaseConfig_EN.languageConf_prefix.key())));
             return false;
         }
         int level;
         try {
             level = Integer.parseInt(args[2]);
-        }catch (NumberFormatException e){
+        } catch (NumberFormatException e) {
             commandHint(commandSender);
             return false;
         }
-        if (level <= tool.getEnchantmentLevel(enchantment)) {
+        Integer curr_level = tool.getEnchantmentLevel(enchantment);
+        if (curr_level == null) {
+            sendErrorMessage(commandSender, BaseConfig_EN.EN.languageConf_error_toolHasNotEnchantment.key(),
+                    new Tuple<>("%ID%", String.valueOf(String.valueOf(id))),
+                    new Tuple<>("%DISP-ENCH%", lang_ench_str),
+                    new Tuple<>("%PREFIX%", (String) MendingToolsMain.getInstance().getCachedConfig().get(BaseConfig_EN.languageConf_prefix.key()))
+            );
+            return false;
+        }
+        if (level <= curr_level) {
             sendErrorMessage(commandSender, BaseConfig_EN.EN.languageConf_error_targetLevelBelow.key(),
                     new Tuple<>("%PREFIX%", (String) MendingToolsMain.getInstance().getCachedConfig().get(BaseConfig_EN.languageConf_prefix.key()))
             );
@@ -125,7 +132,7 @@ public class mtUpgradeTool extends mtCommands {
                 op = Bukkit.getServer().getOfflinePlayer(UUID.fromString(tool.getUuid()));
                 offline = true;
                 p_other = main.getOpenInv().loadPlayer(op);
-                if (p_other == null){
+                if (p_other == null) {
                     sendErrorMessage(commandSender, BaseConfig_EN.EN.languageConf_error_loadOfflinePlayer.key(),
                             new Tuple<>("%PLAYER%", p_other.getName()),
                             new Tuple<>("%PREFIX%", (String) MendingToolsMain.getInstance().getCachedConfig().get(BaseConfig_EN.languageConf_prefix.key())));
@@ -147,30 +154,30 @@ public class mtUpgradeTool extends mtCommands {
             Double dLevel = (double) intermediateLevel;
             moneyValue = Equationparser.eval(blueprintEnch.getMoney(), new HashMap<String, Double>() {{
                 put("%LEVEL%", dLevel);
-                for (Map.Entry<String, Integer> entry : tool.getEnchantments().entrySet()){
-                    put("%"+entry.getKey()+"%", (double)entry.getValue());
+                for (Map.Entry<String, Integer> entry : tool.getEnchantments().entrySet()) {
+                    put("%" + entry.getKey() + "%", (double) entry.getValue());
                 }
             }});
-            if (main.getEconomy().getBalance(p_withInv)<=moneyValue){
+            if (main.getEconomy().getBalance(p_withInv) <= moneyValue) {
                 break;
             }
             main.getEconomy().withdrawPlayer(p_withInv, moneyValue);
             List<String> formattedCommands = new LinkedList<>();
             for (String command : blueprintEnch.getCommands()) {
                 formattedCommands.add(formatCommand(command, p_withInv, tool, intermediateLevel, moneyValue,
-                        new HashMap<String, String>(){{
+                        new HashMap<String, String>() {{
                             for (Map.Entry<String, Integer> entry : tool.getEnchantments().entrySet())
-                                put("%"+entry.getKey()+"%", String.valueOf(entry.getValue()));
+                                put("%" + entry.getKey() + "%", String.valueOf(entry.getValue()));
                             put("%BPNAME%", blueprint.getName());
                             put("%BPID%", String.valueOf(blueprint.getID()));
                             put("%RESTORES%", String.valueOf(tool.getRestores()));
-                }}));
+                        }}));
             }
             Bukkit.getScheduler().runTaskLater(main, () -> {
                 for (String command : formattedCommands) {
                     Bukkit.dispatchCommand(Bukkit.getConsoleSender(), command);
                 }
-            },0);
+            }, 0);
             runningLevel = intermediateLevel;
         }
         final int finalLevel = runningLevel;
@@ -187,10 +194,10 @@ public class mtUpgradeTool extends mtCommands {
             }
             itemStack.addUnsafeEnchantment(ench, finalLevel);
         };
-        if (finalLevel < level){
+        if (finalLevel < level) {
             sendErrorMessage(commandSender, BaseConfig_EN.EN.languageConf_error_notEnoughMoney.key(),
                     new Tuple<>("%PLAYER%", p_withInv.getName()),
-                    new Tuple<>("%MONEY%", String.valueOf(moneyValue)),
+                    new Tuple<>("%MONEY%", String.format("%,.0f", moneyValue)),
                     new Tuple<>("%PREFIX%", (String) MendingToolsMain.getInstance().getCachedConfig().get(BaseConfig_EN.languageConf_prefix.key())));
             return false;
         }
@@ -203,7 +210,7 @@ public class mtUpgradeTool extends mtCommands {
         if (!tool.isBroken()) {
             p_withInv.getEnderChest().forEach(toolUpgrader);
             p_withInv.getInventory().forEach(toolUpgrader);
-            if (offline){
+            if (offline) {
                 p_withInv.saveData();
                 main.getOpenInv().unload(op);
             }
@@ -215,8 +222,8 @@ public class mtUpgradeTool extends mtCommands {
         command = command.replace("%PLAYER%", p.getName());
         command = command.replace("%LEVEL%", String.valueOf(level));
         command = command.replace("%ID%", String.valueOf(tool.getID()));
-        command = command.replace("%MONEY%", String.valueOf(moneyValue));
-        for (Map.Entry<String, String> entry : others.entrySet()){
+        command = command.replace("%MONEY%", String.format("%,.0f", moneyValue));
+        for (Map.Entry<String, String> entry : others.entrySet()) {
             command = command.replace(entry.getKey(), entry.getValue());
         }
         return command;

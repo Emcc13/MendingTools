@@ -13,20 +13,11 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataType;
 
-import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
 public class mtToolNew extends mtCommands {
     public static String COMMAND = "mt_tool_new";
-    public static List<String> command_complete_list[] = new List[]{
-            new ArrayList<String>() {{
-                add("blueprint id");
-            }},
-            new ArrayList<String>() {{
-                add("player name");
-            }},
-    };
 
     public mtToolNew(MendingToolsMain main) {
         super(main);
@@ -37,12 +28,17 @@ public class mtToolNew extends mtCommands {
         return BaseConfig_EN.perm_command_newMendingTool.key();
     }
 
-    protected void commandHint(CommandSender commandSender){
+    @Override
+    protected String getTabCompleteKey() {
+        return BaseConfig_EN.TabComplete.tabComplete_newTool.key();
+    }
+
+    protected void commandHint(CommandSender commandSender) {
         super.commandHint(commandSender, BaseConfig_EN.EN.languageConf_hint_toolNew.key(), COMMAND);
     }
 
-    public List<String> subCommandComplete(String[] args){
-        if (this.command_complete_list != null && args.length-1<=this.command_complete_list.length) {
+    public List<String> subCommandComplete(String[] args) {
+        if (this.command_complete_list != null && args.length - 1 <= this.command_complete_list.length) {
             return this.command_complete_list[args.length - 2];
         }
         return null;
@@ -59,9 +55,9 @@ public class mtToolNew extends mtCommands {
             return false;
         }
         int blueprintID;
-        try{
+        try {
             blueprintID = Integer.parseInt(args[0]);
-        }catch (NumberFormatException e){
+        } catch (NumberFormatException e) {
             commandHint(commandSender);
             return false;
         }
@@ -76,13 +72,13 @@ public class mtToolNew extends mtCommands {
         OfflinePlayer op = null;
         boolean offline = false;
         if (player == null) {
-            for (OfflinePlayer offlinePlayer : Bukkit.getServer().getOfflinePlayers()){
-                if (args[1].equals(offlinePlayer.getName())){
+            for (OfflinePlayer offlinePlayer : Bukkit.getServer().getOfflinePlayers()) {
+                if (args[1].equals(offlinePlayer.getName())) {
                     op = offlinePlayer;
                     break;
                 }
             }
-            if (op == null || !op.hasPlayedBefore()){
+            if (op == null || !op.hasPlayedBefore()) {
                 sendErrorMessage(commandSender, BaseConfig_EN.EN.languageConf_error_notPlayed.key(),
                         new Tuple<>("%PLAYER%", args[1]),
                         new Tuple<>("%PREFIX%", (String) MendingToolsMain.getInstance().getCachedConfig().get(BaseConfig_EN.languageConf_prefix.key())));
@@ -90,7 +86,7 @@ public class mtToolNew extends mtCommands {
             }
             offline = true;
             player = main.getOpenInv().loadPlayer(op);
-            if (player == null){
+            if (player == null) {
                 sendErrorMessage(commandSender, BaseConfig_EN.EN.languageConf_error_loadOfflinePlayer.key(),
                         new Tuple<>("%PLAYER%", op.getName()),
                         new Tuple<>("%PREFIX%", (String) MendingToolsMain.getInstance().getCachedConfig().get(BaseConfig_EN.languageConf_prefix.key())));
@@ -118,7 +114,7 @@ public class mtToolNew extends mtCommands {
         tool.setItemMeta(im);
 
         player.getInventory().addItem(tool);
-        if (offline){
+        if (offline) {
             player.saveData();
             main.getOpenInv().unload(op);
         }

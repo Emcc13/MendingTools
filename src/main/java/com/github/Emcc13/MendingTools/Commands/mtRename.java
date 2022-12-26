@@ -9,16 +9,10 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataType;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class mtRename extends mtCommands {
     public static String COMMAND = "mt_rename";
-    public static List<String> command_complete_list[] = new List[]{
-            new ArrayList<String>() {{
-                add("new name");
-            }},
-    };
 
     public mtRename(MendingToolsMain main) {
         super(main);
@@ -27,6 +21,11 @@ public class mtRename extends mtCommands {
     @Override
     protected String getPerm_key() {
         return BaseConfig_EN.perm_command_renameTool.key();
+    }
+
+    @Override
+    protected String getTabCompleteKey(){
+        return BaseConfig_EN.TabComplete.tabComplete_rename.key();
     }
 
     protected void commandHint(CommandSender commandSender) {
@@ -50,7 +49,6 @@ public class mtRename extends mtCommands {
             commandHint(commandSender);
             return false;
         }
-//        String new_name = String.join(" ", Arrays.copyOfRange(args, 1, args.length));
         String new_name = String.join(" ", args);
         Player p = (Player) commandSender;
         ItemStack is = p.getInventory().getItemInMainHand();
@@ -60,7 +58,6 @@ public class mtRename extends mtCommands {
             im.setDisplayName(new_name);
             is.setItemMeta(im);
         }
-//        p.getInventory().setItemInMainHand(is);
         return false;
     }
 }

@@ -100,12 +100,14 @@ public class MendingToolsMain extends JavaPlugin {
 //        getCommand(MendingToolsCMD.COMMAND).setTabCompleter(this.generalCommand);
     }
 
-    private void setCommandPermissions() {
+    private void updateCommandConfig() {
         for (CommandExecutor cmd_ce : this.commands.values()) {
             mtCommands cmd = (mtCommands) cmd_ce;
             cmd.setPermission();
+            cmd.setTabComplete();
         }
         this.generalCommand.setPermission();
+        this.generalCommand.setTabComplete();
     }
 
     private void addListener() {
@@ -134,7 +136,7 @@ public class MendingToolsMain extends JavaPlugin {
 
     public void reloadCachedConfig() {
         loadCachedConfig();
-        setCommandPermissions();
+        updateCommandConfig();
     }
 
     public Map<String, Object> getCachedConfig() {

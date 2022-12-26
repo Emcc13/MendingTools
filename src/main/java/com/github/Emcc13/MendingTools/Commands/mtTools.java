@@ -5,6 +5,7 @@ import com.github.Emcc13.MendingTools.BookGUI.MendingTool;
 import com.github.Emcc13.MendingTools.Config.BaseConfig_EN;
 import com.github.Emcc13.MendingTools.Util.Tuple;
 import com.github.Emcc13.MendingToolsMain;
+import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.chat.BaseComponent;
 import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.TextComponent;
@@ -17,25 +18,12 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.BookMeta;
 
-import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
 public class mtTools extends mtCommands {
     public static String COMMAND = "mt_tools";
-    public static List<String>[] command_complete_list = new List[]{
-            new ArrayList<String>() {{
-                add("id");
-                add("all");
-                add("book");
-                add("player name");
-            }},
-            new ArrayList<String>() {{
-                add("tool id");
-                add("book number");
-            }},
-    };
 
     public mtTools(MendingToolsMain main) {
         super(main);
@@ -44,6 +32,11 @@ public class mtTools extends mtCommands {
     @Override
     protected String getPerm_key() {
         return BaseConfig_EN.perm_command_tools.key();
+    }
+
+    @Override
+    protected String getTabCompleteKey() {
+        return BaseConfig_EN.TabComplete.tabComplete_tools.key();
     }
 
     protected void commandHint(CommandSender commandSender) {
@@ -94,7 +87,7 @@ public class mtTools extends mtCommands {
                     }
                     nextBookCommand.setClickEvent(new ClickEvent(
                             ClickEvent.Action.RUN_COMMAND,
-                            "/"+MendingToolsCMD.COMMAND + " tools all " + (bookNum + 2)
+                            "/" + MendingToolsCMD.COMMAND + " tools all " + (bookNum + 2)
                     ));
                     pages.addAll(pagesByTools(main.get_db().getToolsSorted(bookNum), true, nextBookCommand));
                     break;
@@ -143,7 +136,7 @@ public class mtTools extends mtCommands {
                     }
                     nextBookCommand.setClickEvent(new ClickEvent(
                             ClickEvent.Action.RUN_COMMAND,
-                            "/"+MendingToolsCMD.COMMAND + " tools book " + (bookNum + 2)
+                            "/" + MendingToolsCMD.COMMAND + " tools book " + (bookNum + 2)
                     ));
                     pages.addAll(pagesByTools(tools, false, nextBookCommand));
                     break;
@@ -180,12 +173,12 @@ public class mtTools extends mtCommands {
                         sendErrorMessage(commandSender, BaseConfig_EN.EN.languageConf_error_hasNoTools.key(),
                                 new Tuple<>("%PREFIX%", (String) MendingToolsMain.getInstance().getCachedConfig().get(BaseConfig_EN.languageConf_prefix.key())),
                                 new Tuple<>("%PLAYER%", args[0])
-                                );
+                        );
                         return false;
                     }
                     nextBookCommand.setClickEvent(new ClickEvent(
                             ClickEvent.Action.RUN_COMMAND,
-                            "/"+MendingToolsCMD.COMMAND + " tools " + lower_case_player_name + " " + (bookNum + 2)
+                            "/" + MendingToolsCMD.COMMAND + " tools " + lower_case_player_name + " " + (bookNum + 2)
                     ));
                     pages.addAll(pagesByTools(tools, true, nextBookCommand));
                     break;
@@ -199,7 +192,7 @@ public class mtTools extends mtCommands {
             }
             nextBookCommand.setClickEvent(new ClickEvent(
                     ClickEvent.Action.RUN_COMMAND,
-                    "/"+MendingToolsCMD.COMMAND + " tools book " + 2
+                    "/" + MendingToolsCMD.COMMAND + " tools book " + 2
             ));
             pages.addAll(pagesByTools(tools, false, nextBookCommand));
         }
@@ -235,15 +228,18 @@ public class mtTools extends mtCommands {
             toolPages.addAll(pages_tool);
         }
         List<BaseComponent> contentPage = new LinkedList<>();
-        TextComponent title = formatComponents((List<TextComponent>)MendingToolsMain.getInstance().getCachedConfig()
+        TextComponent title = formatComponents((List<TextComponent>) MendingToolsMain.getInstance().getCachedConfig()
                 .get(BaseConfig_EN.EN.languageConf_text_pageOfContentTitle.key()));
         title.addExtra("\n");
         contentPage.add(title);
         int numContentPages = (int) Math.ceil(blueprintNames.size() / 9.0);
         TextComponent tc;
         int chapter_counter = 1;
+        char altColor_char = (char) main.getCachedConfig().get(BaseConfig_EN.altColor.key());
         for (Tuple<String, Integer> content : blueprintNames) {
-            tc = new TextComponent(chapter_counter+" | "+content.t1 + "\n");
+            tc = new TextComponent(
+                    ChatColor.translateAlternateColorCodes(altColor_char,
+                            chapter_counter + " | " + content.t1 + "\n"));
             tc.setClickEvent(new ClickEvent(ClickEvent.Action.CHANGE_PAGE, String.valueOf(
                     content.t2 + numContentPages)));
             contentPage.add(tc);

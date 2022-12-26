@@ -13,36 +13,32 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataType;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-public class mtTransferTool extends mtCommands{
+public class mtTransferTool extends mtCommands {
     public static String COMMAND = "mt_transfer";
-    public static List<String> command_complete_list[] = new List[]{
-            new ArrayList<String>() {{
-                add("blueprint id");
-            }},
-            new ArrayList<String>() {{
-                add("player name");
-            }},
-    };
 
-    public mtTransferTool(MendingToolsMain main){
+    public mtTransferTool(MendingToolsMain main) {
         super(main);
     }
 
     @Override
-    protected String getPerm_key(){
+    protected String getPerm_key() {
         return BaseConfig_EN.perm_command_transferTool.key();
     }
 
-    protected void commandHint(CommandSender commandSender){
+    @Override
+    protected String getTabCompleteKey() {
+        return BaseConfig_EN.TabComplete.tabComplete_transferTool.key();
+    }
+
+    protected void commandHint(CommandSender commandSender) {
         super.commandHint(commandSender, BaseConfig_EN.EN.languageConf_hint_transferTool.key(), COMMAND);
     }
 
-    public List<String> subCommandComplete(String[] args){
-        if (this.command_complete_list != null && args.length-1<=this.command_complete_list.length) {
+    public List<String> subCommandComplete(String[] args) {
+        if (this.command_complete_list != null && args.length - 1 <= this.command_complete_list.length) {
             return this.command_complete_list[args.length - 2];
         }
         return null;
@@ -54,19 +50,19 @@ public class mtTransferTool extends mtCommands{
             noPermission(commandSender);
             return false;
         }
-        if (args.length<2){
+        if (args.length < 2) {
             commandHint(commandSender);
             return false;
         }
         Long id;
         try {
             id = Long.parseLong(args[0]);
-        }catch (NumberFormatException e){
+        } catch (NumberFormatException e) {
             commandHint(commandSender);
             return false;
         }
         MendingTool tool = main.get_db().getTool(id);
-        if (tool==null){
+        if (tool == null) {
             sendErrorMessage(commandSender, BaseConfig_EN.EN.languageConf_error_noSuchTool.key(),
                     new Tuple<>("%ID%", String.valueOf(id)),
                     new Tuple<>("%PREFIX%", (String) MendingToolsMain.getInstance().getCachedConfig().get(BaseConfig_EN.languageConf_prefix.key())));
@@ -76,14 +72,14 @@ public class mtTransferTool extends mtCommands{
         Player toPlayer = main.getServer().getPlayer(args[1]);
         OfflinePlayer toOP = null;
         boolean toOffline = false;
-        if (toPlayer==null){
-            for (OfflinePlayer offlinePlayer : main.getServer().getOfflinePlayers()){
-                if (args[1].equals(offlinePlayer.getName())){
+        if (toPlayer == null) {
+            for (OfflinePlayer offlinePlayer : main.getServer().getOfflinePlayers()) {
+                if (args[1].equals(offlinePlayer.getName())) {
                     toOP = offlinePlayer;
                     break;
                 }
             }
-            if (toOP == null || !toOP.hasPlayedBefore()){
+            if (toOP == null || !toOP.hasPlayedBefore()) {
                 sendErrorMessage(commandSender, BaseConfig_EN.EN.languageConf_error_notPlayed.key(),
                         new Tuple<>("%PLAYER%", toOP.getName()),
                         new Tuple<>("%PREFIX%", (String) MendingToolsMain.getInstance().getCachedConfig().get(BaseConfig_EN.languageConf_prefix.key())));
@@ -91,7 +87,7 @@ public class mtTransferTool extends mtCommands{
             }
             toOffline = true;
             toPlayer = main.getOpenInv().loadPlayer(toOP);
-            if (toPlayer == null){
+            if (toPlayer == null) {
                 sendErrorMessage(commandSender, BaseConfig_EN.EN.languageConf_error_loadOfflinePlayer.key(),
                         new Tuple<>("%PLAYER%", toPlayer.getName()),
                         new Tuple<>("%PREFIX%", (String) MendingToolsMain.getInstance().getCachedConfig().get(BaseConfig_EN.languageConf_prefix.key())));
@@ -99,7 +95,7 @@ public class mtTransferTool extends mtCommands{
             }
         }
 
-        if (!main.get_db().transfer_tool(id, toPlayer.getUniqueId().toString())){
+        if (!main.get_db().transfer_tool(id, toPlayer.getUniqueId().toString())) {
             sendErrorMessage(commandSender, BaseConfig_EN.EN.languageConf_error_db.key(),
                     new Tuple<>("%PREFIX%", (String) MendingToolsMain.getInstance().getCachedConfig().get(BaseConfig_EN.languageConf_prefix.key())));
             return false;
@@ -113,7 +109,7 @@ public class mtTransferTool extends mtCommands{
         boolean fromOffline = false;
         if (fromPlayer == null) {
             fromOP = Bukkit.getServer().getOfflinePlayer(UUID.fromString(tool.getUuid()));
-            if (!fromOP.hasPlayedBefore()){
+            if (!fromOP.hasPlayedBefore()) {
                 sendErrorMessage(commandSender, BaseConfig_EN.EN.languageConf_error_notPlayed.key(),
                         new Tuple<>("%PLAYER%", fromOP.getName()),
                         new Tuple<>("%PREFIX%", (String) MendingToolsMain.getInstance().getCachedConfig().get(BaseConfig_EN.languageConf_prefix.key())));
@@ -140,7 +136,7 @@ public class mtTransferTool extends mtCommands{
         boolean removedItem = false;
         ItemStack[] contents = fromPlayer.getInventory().getContents();
         ItemStack tmpStack;
-        for (int idx=0; idx< contents.length; idx++){
+        for (int idx = 0; idx < contents.length; idx++) {
             tmpStack = contents[idx];
             if (tmpStack == null) {
                 continue;
@@ -174,15 +170,15 @@ public class mtTransferTool extends mtCommands{
             removedItem = true;
             toPlayer.getInventory().addItem(itemStack);
         }
-        if (fromOffline){
+        if (fromOffline) {
             fromPlayer.saveData();
             main.getOpenInv().unload(fromOP);
         }
-        if (toOffline){
+        if (toOffline) {
             toPlayer.saveData();
             main.getOpenInv().unload(toOP);
         }
-        if (!removedItem){
+        if (!removedItem) {
             sendErrorMessage(commandSender, BaseConfig_EN.EN.languageConf_error_removingItem.key(),
                     new Tuple<>("%ID%", String.valueOf(tool.getID())),
                     new Tuple<>("%PLAYER%", fromPlayer.getName()),

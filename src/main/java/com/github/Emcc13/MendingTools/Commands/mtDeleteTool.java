@@ -13,17 +13,11 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataType;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
 public class mtDeleteTool extends mtCommands {
     public static String COMMAND = "mt_delete_tool";
-    public static List<String> command_complete_list[] = new List[]{
-            new ArrayList<String>() {{
-                add("blueprint id");
-            }},
-    };
 
     public mtDeleteTool(MendingToolsMain main) {
         super(main);
@@ -34,12 +28,17 @@ public class mtDeleteTool extends mtCommands {
         return BaseConfig_EN.perm_command_deleteTool.key();
     }
 
-    protected void commandHint(CommandSender commandSender){
+    @Override
+    protected String getTabCompleteKey() {
+        return BaseConfig_EN.TabComplete.tabComplete_deleteTool.key();
+    }
+
+    protected void commandHint(CommandSender commandSender) {
         super.commandHint(commandSender, BaseConfig_EN.EN.languageConf_hint_deleteTool.key(), COMMAND);
     }
 
-    public List<String> subCommandComplete(String[] args){
-        if (this.command_complete_list != null && args.length-1<=this.command_complete_list.length) {
+    public List<String> subCommandComplete(String[] args) {
+        if (this.command_complete_list != null && args.length - 1 <= this.command_complete_list.length) {
             return this.command_complete_list[args.length - 2];
         }
         return null;
@@ -78,7 +77,7 @@ public class mtDeleteTool extends mtCommands {
         if (p == null) {
             op = Bukkit.getServer().getOfflinePlayer(UUID.fromString(tool.getUuid()));
             if (!op.hasPlayedBefore()) {
-                sendErrorMessage(commandSender,BaseConfig_EN.EN.languageConf_error_notPlayed.key(),
+                sendErrorMessage(commandSender, BaseConfig_EN.EN.languageConf_error_notPlayed.key(),
                         new Tuple<>("%PLAYER%", op.getName()),
                         new Tuple<>("%PREFIX%", (String) MendingToolsMain.getInstance().getCachedConfig().get(BaseConfig_EN.languageConf_prefix.key())));
                 sendErrorMessage(commandSender, BaseConfig_EN.EN.languageConf_error_removingItem.key(),
@@ -104,7 +103,7 @@ public class mtDeleteTool extends mtCommands {
         boolean removedItem = false;
         ItemStack[] contents = p.getInventory().getContents();
         ItemStack tmpStack;
-        for (int idx=0; idx<contents.length; idx++){
+        for (int idx = 0; idx < contents.length; idx++) {
             tmpStack = contents[idx];
             if (tmpStack == null) {
                 continue;
@@ -115,7 +114,7 @@ public class mtDeleteTool extends mtCommands {
             if (!id.equals(is_id)) {
                 continue;
             }
-            contents[idx]=null;
+            contents[idx] = null;
             removedItem = true;
         }
         p.getInventory().setContents(contents);
@@ -138,7 +137,7 @@ public class mtDeleteTool extends mtCommands {
             p.saveData();
             main.getOpenInv().unload(op);
         }
-        if (!removedItem){
+        if (!removedItem) {
             sendErrorMessage(commandSender, BaseConfig_EN.EN.languageConf_error_removingItem.key(),
                     new Tuple<>("%ID%", String.valueOf(tool.getID())),
                     new Tuple<>("%PLAYER%", op.getName()),

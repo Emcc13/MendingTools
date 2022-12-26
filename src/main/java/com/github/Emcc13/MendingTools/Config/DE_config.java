@@ -61,6 +61,11 @@ public enum DE_config implements ConfigInterface {
             put("text", "%PREFIX% Die gewünschte Verzauberungsstufe ist niedriger als die Aktuelle!");
         }});
     }}),
+    languageConf_error_toolHasNotEnchantment(new ArrayList<Map<String, String>>() {{
+        add(new HashMap<String, String>() {{
+            put("text", "%PREFIX% Das Werkzeug %ID% hat nicht die Verzauberung: %DISP-ENCH%!");
+        }});
+    }}),
     languageConf_hint_deleteTool(new ArrayList<Map<String, String>>(){{
         add(new HashMap<String, String>(){{
             put("text", "/%COMMAND% <tool id>");

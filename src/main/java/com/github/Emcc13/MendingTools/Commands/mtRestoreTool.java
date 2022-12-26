@@ -18,11 +18,6 @@ import java.util.logging.Level;
 
 public class mtRestoreTool extends mtCommands {
     public static String COMMAND = "mt_restore_tool";
-    public static List<String> command_complete_list[] = new List[]{
-            new ArrayList<String>() {{
-                add("blueprint id");
-            }},
-    };
 
     public mtRestoreTool(MendingToolsMain main) {
         super(main);
@@ -33,12 +28,17 @@ public class mtRestoreTool extends mtCommands {
         return BaseConfig_EN.perm_command_restoreTool.key();
     }
 
-    protected void commandHint(CommandSender commandSender){
+    @Override
+    protected String getTabCompleteKey() {
+        return BaseConfig_EN.TabComplete.tabComplete_restoreTool.key();
+    }
+
+    protected void commandHint(CommandSender commandSender) {
         super.commandHint(commandSender, BaseConfig_EN.EN.languageConf_hint_restoreTool.key(), COMMAND);
     }
 
-    public List<String> subCommandComplete(String[] args){
-        if (this.command_complete_list != null && args.length-1<=this.command_complete_list.length) {
+    public List<String> subCommandComplete(String[] args) {
+        if (this.command_complete_list != null && args.length - 1 <= this.command_complete_list.length) {
             return this.command_complete_list[args.length - 2];
         }
         return null;
@@ -57,12 +57,12 @@ public class mtRestoreTool extends mtCommands {
         long id;
         try {
             id = Long.parseLong(args[0]);
-        }catch (NumberFormatException e){
+        } catch (NumberFormatException e) {
             commandHint(commandSender);
             return false;
         }
         MendingTool tool = main.get_db().getTool(id);
-        if (tool==null){
+        if (tool == null) {
             sendErrorMessage(commandSender, BaseConfig_EN.EN.languageConf_error_noSuchTool.key(),
                     new Tuple<>("%ID%", String.valueOf(id)),
                     new Tuple<>("%PREFIX%", (String) MendingToolsMain.getInstance().getCachedConfig().get(BaseConfig_EN.languageConf_prefix.key())));
@@ -75,7 +75,7 @@ public class mtRestoreTool extends mtCommands {
             return false;
         }
         MendingBlueprint blueprint = main.getBlueprintConfig().getBlueprints().get(tool.getBlueprintID());
-        if (blueprint==null && !(p_executor.hasPermission("mt.admin") || p_executor.isOp())){
+        if (blueprint == null && !(p_executor.hasPermission("mt.admin") || p_executor.isOp())) {
             sendErrorMessage(commandSender, BaseConfig_EN.EN.languageConf_error_loadBlueprint.key(),
                     new Tuple<>("%ID%", String.valueOf(tool.getBlueprintID())),
                     new Tuple<>("%PREFIX%", (String) MendingToolsMain.getInstance().getCachedConfig().get(BaseConfig_EN.languageConf_prefix.key())));
@@ -99,19 +99,19 @@ public class mtRestoreTool extends mtCommands {
         }
         ItemStack is = tool.getItemStack(p_receiver.getName());
         double toPay = 0;
-        if (blueprint!=null && blueprint.getMoney()!=null) {
-            toPay = Equationparser.eval(blueprint.getMoney(), new HashMap<String, Double>(){{
-                put("%RESTORES%", (double)tool.getRestores());
-                put("%#ENCH%", (double)tool.getEnchantments().size());
-                for (Map.Entry<String, Integer> entry: tool.getEnchantments().entrySet())
-                    put("%"+entry.getKey()+"%", (double)entry.getValue());
+        if (blueprint != null && blueprint.getMoney() != null) {
+            toPay = Equationparser.eval(blueprint.getMoney(), new HashMap<String, Double>() {{
+                put("%RESTORES%", (double) tool.getRestores());
+                put("%#ENCH%", (double) tool.getEnchantments().size());
+                for (Map.Entry<String, Integer> entry : tool.getEnchantments().entrySet())
+                    put("%" + entry.getKey() + "%", (double) entry.getValue());
             }});
             if (main.getEconomy().getBalance(p_receiver) < toPay) {
                 sendErrorMessage(commandSender, BaseConfig_EN.EN.languageConf_error_notEnoughMoney.key(),
                         new Tuple<>("%PLAYER%", p_receiver.getName()),
                         new Tuple<>("%MONEY%", String.valueOf(toPay)),
                         new Tuple<>("%PREFIX%", (String) MendingToolsMain.getInstance().getCachedConfig().get(BaseConfig_EN.languageConf_prefix.key()))
-                        );
+                );
                 return false;
             }
         }
@@ -120,14 +120,14 @@ public class mtRestoreTool extends mtCommands {
                     new Tuple<>("%PREFIX%", (String) MendingToolsMain.getInstance().getCachedConfig().get(BaseConfig_EN.languageConf_prefix.key())));
             return false;
         }
-        if (blueprint!=null && blueprint.getMoney()!=null) {
+        if (blueprint != null && blueprint.getMoney() != null) {
             main.getEconomy().withdrawPlayer(p_receiver, toPay);
         }
-        if (blueprint!=null && blueprint.getCommands()!=null) {
+        if (blueprint != null && blueprint.getCommands() != null) {
             List<String> commands = new LinkedList<>();
-            for (String command : blueprint.getCommands()){
+            for (String command : blueprint.getCommands()) {
                 commands.add(formatCommand(command, p_receiver, tool, toPay,
-                        new HashMap<String, String>(){{
+                        new HashMap<String, String>() {{
                             for (Map.Entry<String, Integer> entry : tool.getEnchantments().entrySet())
                                 put(entry.getKey(), String.valueOf(entry.getValue()));
                             put("%BPNAME%", blueprint.getName());
@@ -138,18 +138,18 @@ public class mtRestoreTool extends mtCommands {
             Bukkit.getScheduler().runTaskLater(main, () -> {
                 String latestCommand = "";
                 try {
-                    for (String command : commands){
+                    for (String command : commands) {
                         latestCommand = command;
                         Bukkit.dispatchCommand(Bukkit.getConsoleSender(), command);
                     }
                 } catch (Exception e) {
-                    Bukkit.getLogger().log(Level.WARNING,"Caught exception running: "+latestCommand);
+                    Bukkit.getLogger().log(Level.WARNING, "Caught exception running: " + latestCommand);
                     e.printStackTrace();
                 }
             }, 0);
         }
         p_receiver.getInventory().addItem(is);
-        if (offline){
+        if (offline) {
             p_receiver.saveData();
             main.getOpenInv().unload(op_receiver);
         }
@@ -159,8 +159,8 @@ public class mtRestoreTool extends mtCommands {
     private String formatCommand(String command, Player p, MendingTool tool, double moneyValue, Map<String, String> others) {
         command = command.replace("%PLAYER%", p.getName());
         command = command.replace("%ID%", String.valueOf(tool.getID()));
-        command = command.replace("%MONEY%", String.valueOf(moneyValue));
-        for (Map.Entry<String, String> entry : others.entrySet()){
+        command = command.replace("%MONEY%", String.format("%,.0f", moneyValue));
+        for (Map.Entry<String, String> entry : others.entrySet()) {
             command = command.replace(entry.getKey(), entry.getValue());
         }
         return command;

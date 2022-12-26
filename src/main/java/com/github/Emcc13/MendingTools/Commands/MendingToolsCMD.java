@@ -36,6 +36,14 @@ public class MendingToolsCMD extends mtCommands {
         return BaseConfig_EN.perm_command_mendingtools.key();
     }
 
+    @Override
+    protected String getTabCompleteKey(){
+        return "";
+    }
+
+    @Override
+    public void setTabComplete(){}
+
     protected void commandHint(CommandSender commandSender) {
         super.commandHint(commandSender, BaseConfig_EN.EN.languageConf_hint_mendingtools.key(), COMMAND);
     }
@@ -117,6 +125,8 @@ public class MendingToolsCMD extends mtCommands {
                         return ((mtCommands) main.commands.get(mtTools.COMMAND)).subCommandComplete(strings);
                     case "rename":
                         return ((mtCommands) main.commands.get(mtRename.COMMAND)).subCommandComplete(strings);
+                    case "version":
+                        return ((mtCommands) main.commands.get(mtVersion.COMMAND)).subCommandComplete(strings);
                     default:
                         return this.subCommandComplete(strings);
                 }

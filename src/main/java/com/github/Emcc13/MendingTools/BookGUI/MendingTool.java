@@ -225,7 +225,7 @@ public class MendingTool {
         LinkedList<BaseComponent> result = new LinkedList<BaseComponent>();
         TextComponent tc;
         for (Map.Entry<String, Integer> entry : enchantments.entrySet()) {
-            List<TextComponent> lang_ench = languageConf.get(TranslateConf.languageConf_enchantment + entry.getKey());
+            List<TextComponent> lang_ench = languageConf.get(TranslateConf.languageConf_enchantment + entry.getKey().toLowerCase());
             tc = formatComponents(lang_ench);
             tc.addExtra(":\n");
             result.add(tc);
@@ -241,8 +241,8 @@ public class MendingTool {
                         new Tuple<>("%ENCH%", entry.getKey()),
                         new Tuple<>("%DISP-ENCH%", lang_ench.get(0).getText()),
                         new Tuple<>("%CURRLEVEL%", String.valueOf(entry.getValue())),
-                        new Tuple<>("%MONEY%", blueprint.getMoney() != null ? String.valueOf(calcMoney(blueprint, entry.getKey(),
-                                entry.getValue())) : "0")
+                        new Tuple<>("%MONEY%", blueprint.getMoney() != null ? String.format("%,.0f",
+                                calcMoney(blueprint, entry.getKey(),entry.getValue())) : "0")
                 ));
                 tc.addExtra("\n");
                 tc.setColor(ChatColor.GRAY);
