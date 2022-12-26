@@ -137,12 +137,12 @@ public enum DE_config implements ConfigInterface {
     }}),
     languageConf_text_broken(new ArrayList<Map<String, String>>(){{
         add(new HashMap<String, String>(){{
-            put("text", "&oKaputt");
+            put("text", "&o&cKaputt");
         }});
     }}),
     languageConf_text_intact(new ArrayList<Map<String, String>>(){{
         add(new HashMap<String, String>(){{
-            put("text", "&oIntakt");
+            put("text", "&o&eIntakt");
         }});
     }}),
     languageConf_text_restore(new ArrayList<Map<String, String>>(){{
@@ -162,23 +162,23 @@ public enum DE_config implements ConfigInterface {
     }}),
     languageConf_text_mendingToolID(new ArrayList<Map<String, String>>(){{
         add(new HashMap<String, String>(){{
-            put("text", "Mending Werkzeug ID");
+            put("text", "Werkzeug ID");
         }});
     }}),
     languageConf_text_blueprintID(new ArrayList<Map<String, String>>(){{
         add(new HashMap<String, String>(){{
-            put("text", "Blaupause ID");
+            put("text", "Blaupausen ID");
         }});
     }}),
     languageConf_text_pageOfContentTitle(new ArrayList<Map<String, String>>(){{
         add(new HashMap<String, String>(){{
-            put("text", "Inhaltsverzeichnis");
+            put("text", "&lInhaltsverzeichnis");
         }});
     }}),
 
     bookButton_upgrade_command(new ArrayList<Map<String, String>>(){{
         add(new HashMap<String, String>(){{
-            put("text", "%PREFIX% Möchtest du für dein Tool %ID% die Verzauberung %ENCH% von Stufe " +
+            put("text", "%PREFIX% Möchtest du für dein Tool %ID% die Verzauberung %DISP-ENCH% von Stufe " +
                     "%CURRLEVEL% auf Stufe %LEVEL% für %MONEY% Platin aufwerten?  ");
         }});
         add(new HashMap<String, String>(){{
@@ -191,7 +191,7 @@ public enum DE_config implements ConfigInterface {
         add(new HashMap<String, String>(){{
             put("text", "&o&7Upgrade");
             put("runcommand", "/mt confirm "+DE_config.bookButton_upgrade_command.key()+
-                    " $ID$=%ID% $LEVEL$=%LEVEL% $ENCH$=%ENCH% $CURRLEVEL$=%CURRLEVEL% $MONEY$=%MONEY%");
+                    " $ID$=%ID% $LEVEL$=%LEVEL% $ENCH$=%ENCH% $CURRLEVEL$=%CURRLEVEL% $MONEY$=%MONEY% $DISP-ENCH$=%DISP-ENCH%");
         }});
     }})
     ;

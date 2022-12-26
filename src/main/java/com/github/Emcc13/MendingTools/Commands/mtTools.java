@@ -241,8 +241,9 @@ public class mtTools extends mtCommands {
         contentPage.add(title);
         int numContentPages = (int) Math.ceil(blueprintNames.size() / 9.0);
         TextComponent tc;
+        int chapter_counter = 1;
         for (Tuple<String, Integer> content : blueprintNames) {
-            tc = new TextComponent(content.t1 + "\n");
+            tc = new TextComponent(chapter_counter+" | "+content.t1 + "\n");
             tc.setClickEvent(new ClickEvent(ClickEvent.Action.CHANGE_PAGE, String.valueOf(
                     content.t2 + numContentPages)));
             contentPage.add(tc);
@@ -250,6 +251,7 @@ public class mtTools extends mtCommands {
                 pages.add(contentPage.toArray(new BaseComponent[]{}));
                 contentPage = new LinkedList<>();
             }
+            chapter_counter++;
         }
         if (page_idx >= 41) {
             contentPage.add(new TextComponent("\n"));

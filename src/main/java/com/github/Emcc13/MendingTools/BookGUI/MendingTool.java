@@ -225,20 +225,21 @@ public class MendingTool {
         LinkedList<BaseComponent> result = new LinkedList<BaseComponent>();
         TextComponent tc;
         for (Map.Entry<String, Integer> entry : enchantments.entrySet()) {
-            tc = formatComponents(languageConf.get(TranslateConf.languageConf_enchantment + entry.getKey()));
-            tc.addExtra(": ");
-            tc.setUnderlined(true);
+            List<TextComponent> lang_ench = languageConf.get(TranslateConf.languageConf_enchantment + entry.getKey());
+            tc = formatComponents(lang_ench);
+            tc.addExtra(":\n");
             result.add(tc);
-            tc = new TextComponent("   " + entry.getValue());
+            tc = new TextComponent("  " + entry.getValue());
             result.add(tc);
             if (blueprint != null && blueprint.isUpgradeable(entry.getKey(), entry.getValue()) &&
                     blueprint.getEnchantment(entry.getKey()).getMoney() != null) {
-                tc = new TextComponent("\n     ");
+                tc = new TextComponent(" ");
                 tc.addExtra(formatComponents(
                         (List<TextComponent>) conf.get(BaseConfig_EN.EN.bookButton_upgrade_confirm.key()),
                         new Tuple<>("%ID%", String.valueOf(id)),
                         new Tuple<>("%LEVEL%", String.valueOf(entry.getValue() + 1)),
                         new Tuple<>("%ENCH%", entry.getKey()),
+                        new Tuple<>("%DISP-ENCH%", lang_ench.get(0).getText()),
                         new Tuple<>("%CURRLEVEL%", String.valueOf(entry.getValue())),
                         new Tuple<>("%MONEY%", blueprint.getMoney() != null ? String.valueOf(calcMoney(blueprint, entry.getKey(),
                                 entry.getValue())) : "0")

@@ -207,20 +207,19 @@ public enum BaseConfig_EN implements ConfigInterface {
 
         bookButton_upgrade_command(new ArrayList<Map<String, String>>(){{
             add(new HashMap<String, String>(){{
-                put("text", "&%PREFIX% Are you sure you want to upgrade your tools %ID% enchantement %ENCH% from " +
+                put("text", "&%PREFIX% Are you sure you want to upgrade your tools %ID% enchantement %DISP-ENCH% from " +
                         "%CURRLEVEL% to %LEVEL% for %MONEY%?  ");
             }});
             add(new HashMap<String, String>(){{
                 put("text", "[YES]");
                 put("runcommand", "/mt upgrade %ID% %ENCH% %LEVEL%");
             }});
-
         }}),
         bookButton_upgrade_confirm(new ArrayList<Map<String, String>>(){{
             add(new HashMap<String, String>(){{
                 put("text", "&o&7Upgrade");
                 put("runcommand", "/mt confirm "+BaseConfig_EN.EN.bookButton_upgrade_command.key()+
-                        " $ID$=%ID% $LEVEL$=%LEVEL% $ENCH$=%ENCH% $CURRLEVEL$=%CURRLEVEL% $MONEY$=%MONEY%");
+                        " $ID$=%ID% $LEVEL$=%LEVEL% $ENCH$=%ENCH% $CURRLEVEL$=%CURRLEVEL% $MONEY$=%MONEY% $DISP-ENCH$=%DISP-ENCH%");
             }});
         }})
 
@@ -284,6 +283,9 @@ public enum BaseConfig_EN implements ConfigInterface {
             cachedConfig.put(option_restoreTool_durability.key(), (Integer) option_restoreTool_durability.value());
         }
         char altColor_char = (char) cachedConfig.get(altColor.key());
+        cachedConfig.put(languageConf_prefix.key(),
+                ChatColor.translateAlternateColorCodes(altColor_char,
+                        (String)cachedConfig.get(languageConf_prefix.key())));
         config.addDefaults(cachedConfig);
 
         switch ((String) cachedConfig.get(language.key())) {
