@@ -1,4 +1,4 @@
-# MendingTools v0.8.3 for API 1.18
+# MendingTools v0.9.1 for API 1.18
 
 A plugin to manage tools with a mending enchantment.
 
@@ -79,6 +79,7 @@ A plugin to manage tools with a mending enchantment.
 
 ## Config
 
+- tabComplete: autocompletion hints for every subcommand
 - language: de (default) & en
 - altColor: Chat color char (default: '&')
 - mendingToolBlueprintFile: filename for the blueprints xml

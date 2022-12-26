@@ -249,77 +249,74 @@ public enum BaseConfig_EN implements ConfigInterface {
     }
 
     public enum TabComplete implements ConfigInterface {
-        tabComplete_blueprints(new List[]{
-        }),
-        tabComplete_confirm(new List[]{
-                new ArrayList<String>() {{
+        tabComplete_blueprints(new ArrayList<List<String>>()),
+        tabComplete_confirm(new ArrayList<List<String>>(){{
+                add(new ArrayList<String>() {{
                     add("text string");
-                }},
-        }),
-        tabComplete_deleteTool(new List[]{
-                new ArrayList<String>() {{
+                }});
+        }}),
+        tabComplete_deleteTool(new ArrayList<List<String>>(){{
+                add(new ArrayList<String>() {{
                     add("tool id");
-                }},
-        }),
-        tabComplete_reload(new List[]{
-        }),
-        tabComplete_rename(new List[]{
-                new ArrayList<String>() {{
+                }});
+        }}),
+        tabComplete_reload(new ArrayList<List<String>>()),
+        tabComplete_rename(new ArrayList<List<String>>(){{
+                add(new ArrayList<String>() {{
                     add("new name");
-                }},
-        }),
-        tabComplete_restoreTool(new List[]{
-                new ArrayList<String>() {{
+                }});
+        }}),
+        tabComplete_restoreTool(new ArrayList<List<String>>(){{
+                add(new ArrayList<String>() {{
                     add("tool id");
-                }},
-        }),
-        tabComplete_newTool(new List[]{
-                new ArrayList<String>() {{
+                }});
+        }}),
+        tabComplete_newTool(new ArrayList<List<String>>(){{
+                add(new ArrayList<String>() {{
                     add("blueprint id");
-                }},
-                null,
-        }),
-        tabComplete_tools(new List[]{
-                new ArrayList<String>() {{
+                }});
+                add(null);
+        }}),
+        tabComplete_tools(new ArrayList<List<String>>(){{
+                add(new ArrayList<String>() {{
                     add("id");
                     add("all");
                     add("book");
                     add("player name");
-                }},
-                new ArrayList<String>() {{
+                }});
+                add(new ArrayList<String>() {{
                     add("tool id");
                     add("book number");
-                }},
-        }),
-        tabComplete_transferTool(new List[]{
-                new ArrayList<String>() {{
+                }});
+        }}),
+        tabComplete_transferTool(new ArrayList<List<String>>(){{
+                add(new ArrayList<String>() {{
                     add("tool id");
-                }},
-                null,
-        }),
-        tabComplete_upgradeTool(new List[]{
-                new ArrayList<String>() {{
+                }});
+                add(null);
+        }}),
+        tabComplete_upgradeTool(new ArrayList<List<String>>(){{
+                add(new ArrayList<String>() {{
                     add("tool id");
-                }},
-                new ArrayList<String>() {{
+                }});
+                add(new ArrayList<String>() {{
                     add("enchantment");
-                }},
-                new ArrayList<String>() {{
+                }});
+                add(new ArrayList<String>() {{
                     add("new level");
-                }},
-        }),
-        tabComplete_version(new List[]{
-        }),
+                }});
+        }}),
+        tabComplete_version(new ArrayList<List<String>>()),
         ;
-        public final List<String> value[];
+        public final List<List<String>> value;
         private final String key_;
 
-        TabComplete(List<String> value[]) {
+        TabComplete(List<List<String>> value) {
             this.value = value;
             this.key_ = this.name().replace('_', '.');
         }
 
-        TabComplete(String key, List<String> value[]) {
+        TabComplete(String key, List<List<String>> value) {
             this.value = value;
             this.key_ = key;
         }

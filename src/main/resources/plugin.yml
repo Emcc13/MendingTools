@@ -1,7 +1,7 @@
 name: MendingTools
 author: Emcc13
 desription: MendingTools - A plugin to manage tools with a mending enchantment.
-version: 0.9
+version: 0.9.1
 depend: [Vault,OpenInv]
 api-version: 1.18
 
