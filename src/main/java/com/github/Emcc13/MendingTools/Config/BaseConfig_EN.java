@@ -208,6 +208,11 @@ public enum BaseConfig_EN implements ConfigInterface {
                 put("text", "Page of Content");
             }});
         }}),
+        languageConf_text_unknownBlueprint(new ArrayList<Map<String, String>>(){{
+            add(new HashMap<String, String>(){{
+                put("text", "Unknown");
+            }});
+        }}),
 
         bookButton_upgrade_command(new ArrayList<Map<String, String>>() {{
             add(new HashMap<String, String>() {{

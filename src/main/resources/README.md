@@ -16,6 +16,7 @@ A plugin to manage tools with a mending enchantment.
         - delete -> mt_delete_tool
         - transfer -> mt_transfer_tool
         - confirm -> mt_confirm
+        - version -> mt_version
 - mt_reload
     - perm: mt.reload
     - reload config/blueprints

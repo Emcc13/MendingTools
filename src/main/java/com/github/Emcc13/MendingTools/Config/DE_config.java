@@ -180,6 +180,11 @@ public enum DE_config implements ConfigInterface {
             put("text", "&lInhaltsverzeichnis");
         }});
     }}),
+    languageConf_text_unknownBlueprint(new ArrayList<Map<String, String>>(){{
+        add(new HashMap<String, String>(){{
+            put("text", "Unbekannt");
+        }});
+    }}),
 
     bookButton_upgrade_command(new ArrayList<Map<String, String>>(){{
         add(new HashMap<String, String>(){{

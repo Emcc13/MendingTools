@@ -194,6 +194,10 @@ public class MendingBlueprint {
         return this.material.name();
     }
 
+    public Material getMaterialType(){
+        return this.material;
+    }
+
     public String getName() {
         return this.name;
     }

@@ -211,9 +211,17 @@ public class mtTools extends mtCommands {
         List<Tuple<String, Integer>> blueprintNames = new LinkedList<>();
         Map<Integer, MendingBlueprint> blueprintMap = MendingToolsMain.getInstance().getBlueprintConfig().getBlueprints();
         String last_blueprint_name = null;
+        MendingBlueprint blueprint;
+        String blueprint_name;
         int page_idx = 1;
         for (MendingTool tool : tools) {
-            String blueprint_name = blueprintMap.get(tool.getBlueprintID()).getName();
+            blueprint = blueprintMap.get(tool.getBlueprintID());
+            if (blueprint != null) {
+                blueprint_name = blueprint.getName();
+            }else{
+                blueprint_name = formatComponents((List<TextComponent>) MendingToolsMain.getInstance().
+                        getCachedConfig().get(BaseConfig_EN.EN.languageConf_text_unknownBlueprint.key())).toPlainText();
+            }
             if (!blueprint_name.equals(last_blueprint_name)) {
                 last_blueprint_name = blueprint_name;
                 blueprintNames.add(new Tuple<>(last_blueprint_name, page_idx));
@@ -232,7 +240,7 @@ public class mtTools extends mtCommands {
                 .get(BaseConfig_EN.EN.languageConf_text_pageOfContentTitle.key()));
         title.addExtra("\n");
         contentPage.add(title);
-        int numContentPages = (int) Math.ceil(blueprintNames.size() / 9.0);
+        int numContentPages = (int) Math.ceil((blueprintNames.size()+1) / 9.0);
         TextComponent tc;
         int chapter_counter = 1;
         char altColor_char = (char) main.getCachedConfig().get(BaseConfig_EN.altColor.key());
@@ -249,7 +257,7 @@ public class mtTools extends mtCommands {
             }
             chapter_counter++;
         }
-        if (page_idx >= 41) {
+        if (page_idx > 41) {
             contentPage.add(new TextComponent("\n"));
             contentPage.add(nextBookCommand);
         }

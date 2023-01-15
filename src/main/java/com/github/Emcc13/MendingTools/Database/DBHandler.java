@@ -15,18 +15,18 @@ import java.util.Map;
 public class DBHandler {
     private Connection connection = null;
     private final String dbFile;
-    private PreparedStatement insertTool = null;
-    private PreparedStatement deleteTool = null;
-    private PreparedStatement insertEnchantment = null;
-    private PreparedStatement deleteToolEnchantment = null;
-    private PreparedStatement transferTool = null;
-    private PreparedStatement breakTool = null;
-    private PreparedStatement restoreTool = null;
+//    private PreparedStatement insertTool = null;
+//    private PreparedStatement deleteTool = null;
+//    private PreparedStatement insertEnchantment = null;
+//    private PreparedStatement deleteToolEnchantment = null;
+//    private PreparedStatement transferTool = null;
+//    private PreparedStatement breakTool = null;
+//    private PreparedStatement restoreTool = null;
     private PreparedStatement playerTools = null;
     private PreparedStatement playerTools_limited = null;
     private PreparedStatement toolsEnchantments = null;
     private PreparedStatement idTool = null;
-    private PreparedStatement upgradeEnchantment = null;
+//    private PreparedStatement upgradeEnchantment = null;
     private PreparedStatement allToolsSorted = null;
 
     public DBHandler(MendingToolsMain main) {
@@ -56,21 +56,21 @@ public class DBHandler {
                     "PRIMARY KEY(ID, Name));");
             statement.close();
 
-            insertTool = connection.prepareStatement(
-                    "INSERT INTO Tool(BluePrintID, Material, UUID, Broken, Restores) VALUES(?, ?, ?, 0, 0);",
-                    Statement.RETURN_GENERATED_KEYS);
-            deleteTool = connection.prepareStatement(
-                    "DELETE FROM Tool where ID=?;");
-            insertEnchantment = connection.prepareStatement(
-                    "INSERT INTO Enchantments(ID, Name, Level) VALUES (?, ?, ?);");
-            deleteToolEnchantment = connection.prepareStatement(
-                    "DELETE FROM Enchantments where ID=?;");
-            transferTool = connection.prepareStatement(
-                    "UPDATE Tool SET UUID=? WHERE ID=?;");
-            breakTool = connection.prepareStatement(
-                    "UPDATE Tool SET Broken=? WHERE ID=?;");
-            restoreTool = connection.prepareStatement(
-                    "UPDATE Tool SET Restores=Restores+1, Broken=? WHERE ID=?;");
+//            insertTool = connection.prepareStatement(
+//                    "INSERT INTO Tool(BluePrintID, Material, UUID, Broken, Restores) VALUES(?, ?, ?, 0, 0);",
+//                    Statement.RETURN_GENERATED_KEYS);
+//            deleteTool = connection.prepareStatement(
+//                    "DELETE FROM Tool where ID=?;");
+//            insertEnchantment = connection.prepareStatement(
+//                    "INSERT INTO Enchantments(ID, Name, Level) VALUES (?, ?, ?);");
+//            deleteToolEnchantment = connection.prepareStatement(
+//                    "DELETE FROM Enchantments where ID=?;");
+//            transferTool = connection.prepareStatement(
+//                    "UPDATE Tool SET UUID=? WHERE ID=?;");
+//            breakTool = connection.prepareStatement(
+//                    "UPDATE Tool SET Broken=? WHERE ID=?;");
+//            restoreTool = connection.prepareStatement(
+//                    "UPDATE Tool SET Restores=Restores+1, Broken=? WHERE ID=?;");
             playerTools_limited = connection.prepareStatement(
                     "SELECT ID, BlueprintID, Material, Broken, Restores FROM Tool WHERE UUID=? " +
                             "ORDER BY BlueprintID ASC, ID ASC LIMIT ?, ?;");
@@ -80,8 +80,8 @@ public class DBHandler {
                     "SELECT UUID, BlueprintID, Material, Broken, Restores FROM Tool WHERE ID=?;");
             toolsEnchantments = connection.prepareStatement(
                     "SELECT Name, Level FROM Enchantments WHERE ID=?;");
-            upgradeEnchantment = connection.prepareStatement(
-                    "UPDATE Enchantments SET Level=? WHERE ID=? AND Name=?;");
+//            upgradeEnchantment = connection.prepareStatement(
+//                    "UPDATE Enchantments SET Level=? WHERE ID=? AND Name=?;");
             allToolsSorted = connection.prepareStatement(
                     "SELECT ID, BlueprintID, Material, Broken, Restores, UUID FROM Tool " +
                             "ORDER BY BlueprintID ASC, ID ASC LIMIT ?, ?;");
@@ -95,49 +95,85 @@ public class DBHandler {
 
     private PreparedStatement getInsertTool() {
         if (connect() != null) {
-            return insertTool;
+            try {
+                return connection.prepareStatement(
+                        "INSERT INTO Tool(BluePrintID, Material, UUID, Broken, Restores) VALUES(?, ?, ?, 0, 0);",
+                        Statement.RETURN_GENERATED_KEYS);
+            } catch (SQLException e) {
+                return null;
+            }
         }
         return null;
     }
 
     private PreparedStatement getDeleteTool(){
         if (connect() != null){
-            return deleteTool;
+            try {
+                return connection.prepareStatement(
+                        "DELETE FROM Tool where ID=?;");
+            } catch (SQLException e) {
+                return null;
+            }
         }
         return null;
     }
 
     private PreparedStatement getInsertEnchantment() {
         if (connect() != null) {
-            return insertEnchantment;
+            try {
+                return connection.prepareStatement(
+                        "INSERT INTO Enchantments(ID, Name, Level) VALUES (?, ?, ?);");
+            } catch (SQLException e) {
+                return null;
+            }
         }
         return null;
     }
 
     private PreparedStatement getDeleteToolEnchantment(){
         if (connect() != null){
-            return deleteToolEnchantment;
+            try {
+                return connection.prepareStatement(
+                        "DELETE FROM Enchantments where ID=?;");
+            } catch (SQLException e) {
+                return null;
+            }
         }
         return null;
     }
 
     private PreparedStatement getTransferTool(){
         if (connect() != null){
-            return transferTool;
+            try {
+                return connection.prepareStatement(
+                        "UPDATE Tool SET UUID=? WHERE ID=?;");
+            } catch (SQLException e) {
+                return null;
+            }
         }
         return null;
     }
 
     private PreparedStatement getBreakTool() {
         if (connect() != null) {
-            return breakTool;
+            try {
+                return connection.prepareStatement(
+                        "UPDATE Tool SET Broken=? WHERE ID=?;");
+            } catch (SQLException e) {
+                return null;
+            }
         }
         return null;
     }
 
     private PreparedStatement getRestoreTool(){
         if (connect() != null){
-            return restoreTool;
+            try {
+                return connection.prepareStatement(
+                        "UPDATE Tool SET Restores=Restores+1, Broken=? WHERE ID=?;");
+            } catch (SQLException e) {
+                return null;
+            }
         }
         return null;
     }
@@ -172,7 +208,12 @@ public class DBHandler {
 
     private PreparedStatement getUpgradeEnchantment(){
         if (connect() != null){
-            return upgradeEnchantment;
+            try {
+                return connection.prepareStatement(
+                        "UPDATE Enchantments SET Level=? WHERE ID=? AND Name=?;");
+            } catch (SQLException e) {
+                return null;
+            }
         }
         return null;
     }

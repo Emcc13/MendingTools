@@ -213,12 +213,20 @@ public class MTListener implements Listener {
     private int findBlueprint(ItemStack itemStack){
         Map<Enchantment, Integer> isEnch = itemStack.getEnchantments();
         for (MendingBlueprint mb : main.getBlueprintConfig().getBlueprints().values()){
+            if (mb.getMaterialType() != itemStack.getType())
+                continue;
             if (mb.getEnchantments().size() != itemStack.getEnchantments().size()){
                 continue;
             }
             boolean isOk = true;
             for (MendingBlueprint.MTEnchantment ench : mb.getEnchantments()){
                 if (ench.getMaxlevel()>=isEnch.getOrDefault(ench.getEnchantment(), 0))
+                    continue;
+                isOk = false;
+            }
+            for (Map.Entry<Enchantment, Integer> ench_entry: itemStack.getEnchantments().entrySet()){
+                if (mb.getEnchantment(ench_entry.getKey())!= null &&
+                        ench_entry.getValue()<=mb.getEnchantment(ench_entry.getKey()).getMaxlevel())
                     continue;
                 isOk = false;
             }
