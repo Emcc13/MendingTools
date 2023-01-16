@@ -86,6 +86,7 @@ public class MendingToolsMain extends JavaPlugin {
         this.commands.put(mtRename.COMMAND, new mtRename(this));
         this.commands.put(mtConfirm.COMMAND, new mtConfirm(this));
         this.commands.put(mtVersion.COMMAND, new mtVersion(this));
+        this.commands.put(mtUpdateDB.COMMAND, new mtUpdateDB(this));
 
         this.generalCommand = new MendingToolsCMD(this);
     }

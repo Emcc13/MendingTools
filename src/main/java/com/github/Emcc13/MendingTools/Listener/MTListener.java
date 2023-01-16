@@ -39,10 +39,10 @@ public class MTListener implements Listener {
         Enchantment ench = Enchantment.MENDING;
         Map<Long, MendingTool> tools = new HashMap<Long, MendingTool>();
         List<MendingTool> tmp = main.get_db().getPlayerTools(p.getUniqueId().toString());
-        if (tmp==null){
+        if (tmp == null) {
             tmp = new LinkedList<>();
         }
-        for (MendingTool tool : tmp){
+        for (MendingTool tool : tmp) {
             tools.put(tool.getID(), tool);
         }
 
@@ -55,7 +55,7 @@ public class MTListener implements Listener {
                 return;
             boolean has_lore = false;
             List<String> lore = meta.getLore();
-            if (lore != null){
+            if (lore != null) {
                 for (String lore_line : lore) {
                     if (ChatColor.stripColor(lore_line).equals(p.getName())) {
                         has_lore = true;
@@ -69,16 +69,20 @@ public class MTListener implements Listener {
                     tools.remove(id);
                     return;
                 }
-                if (!has_lore){
-                    meta.setLore(new ArrayList<String>(){{
+                if (!has_lore) {
+                    meta.setLore(new ArrayList<String>() {{
                         add(p.getName());
                     }});
-                    has_lore=true;
+                    has_lore = true;
                 }
             }
             if (!has_lore)
                 return;
-            id = main.get_db().add_tool(itemStack, p.getUniqueId().toString(), findBlueprint(itemStack));
+            MendingBlueprint mb = findBlueprint(itemStack);
+            if (mb == null)
+                id = main.get_db().add_tool(itemStack, p.getUniqueId().toString(), -1);
+            else
+                id = main.get_db().add_tool(mb, p.getUniqueId().toString());
             if (id < 1)
                 return;
             meta.getPersistentDataContainer().set(main.getNBT_key(), PersistentDataType.LONG, id);
@@ -86,7 +90,7 @@ public class MTListener implements Listener {
         };
         p.getInventory().forEach(item_register);
         p.getEnderChest().forEach(item_register);
-        for (MendingTool tool : tools.values()){
+        for (MendingTool tool : tools.values()) {
             if (!tool.isBroken()) {
                 main.get_db().break_tool(tool.getID());
             }
@@ -135,7 +139,7 @@ public class MTListener implements Listener {
             case MOVE_TO_OTHER_INVENTORY:
                 inv = event.getInventory();
                 item = event.getCurrentItem();
-                switch (inv.getType()){
+                switch (inv.getType()) {
                     case ENDER_CHEST:
                     case PLAYER:
                     case SMITHING:
@@ -172,7 +176,7 @@ public class MTListener implements Listener {
                 checkItem = true;
                 break;
         }
-        if (checkItem && item !=null && item.hasItemMeta() && item.getItemMeta().getPersistentDataContainer().
+        if (checkItem && item != null && item.hasItemMeta() && item.getItemMeta().getPersistentDataContainer().
                 get(main.getNBT_key(), PersistentDataType.LONG) != null) {
             event.setCancelled(true);
             p.updateInventory();
@@ -210,29 +214,37 @@ public class MTListener implements Listener {
         }
     }
 
-    private int findBlueprint(ItemStack itemStack){
+    private MendingBlueprint findBlueprint(ItemStack itemStack) {
         Map<Enchantment, Integer> isEnch = itemStack.getEnchantments();
-        for (MendingBlueprint mb : main.getBlueprintConfig().getBlueprints().values()){
-            if (mb.getMaterialType() != itemStack.getType())
+        boolean netherite_equal_diamond = (boolean) main.getCachedConfig().get(BaseConfig_EN.option_netherite_equal_diamond.key());
+        for (MendingBlueprint mb : main.getBlueprintConfig().getBlueprints().values()) {
+            String[] mb_mat = mb.getMaterial().split("_");
+            String[] is_mat = itemStack.getType().name().split("_");
+            if ((mb.getMaterialType() != itemStack.getType()) &&
+                    !(netherite_equal_diamond &&
+                            mb_mat[0].toLowerCase().equals("diamond") &&
+                            is_mat[0].toLowerCase().equals("netherite") &&
+                            mb_mat[1].toLowerCase().equals(is_mat[1].toLowerCase())
+                    ))
                 continue;
-            if (mb.getEnchantments().size() != itemStack.getEnchantments().size()){
+            if (mb.getEnchantments().size() != itemStack.getEnchantments().size()) {
                 continue;
             }
             boolean isOk = true;
-            for (MendingBlueprint.MTEnchantment ench : mb.getEnchantments()){
-                if (ench.getMaxlevel()>=isEnch.getOrDefault(ench.getEnchantment(), 0))
+            for (MendingBlueprint.MTEnchantment ench : mb.getEnchantments()) {
+                if (ench.getMaxlevel() >= isEnch.getOrDefault(ench.getEnchantment(), 0))
                     continue;
                 isOk = false;
             }
-            for (Map.Entry<Enchantment, Integer> ench_entry: itemStack.getEnchantments().entrySet()){
-                if (mb.getEnchantment(ench_entry.getKey())!= null &&
-                        ench_entry.getValue()<=mb.getEnchantment(ench_entry.getKey()).getMaxlevel())
+            for (Map.Entry<Enchantment, Integer> ench_entry : itemStack.getEnchantments().entrySet()) {
+                if (mb.getEnchantment(ench_entry.getKey().getKey().getKey()) != null &&
+                        ench_entry.getValue() <= mb.getEnchantment(ench_entry.getKey()).getMaxlevel())
                     continue;
                 isOk = false;
             }
             if (isOk)
-                return mb.getID();
+                return mb;
         }
-        return -1;
+        return null;
     }
 }

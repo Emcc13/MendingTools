@@ -92,6 +92,9 @@ public class MendingToolsCMD extends mtCommands {
             case "version":
                 main.commands.get(mtVersion.COMMAND).onCommand(commandSender, cmd, cmdname, Arrays.copyOfRange(args, 1, args.length));
                 break;
+            case "update_db":
+                main.commands.get(mtUpdateDB.COMMAND).onCommand(commandSender, cmd, cmdname, Arrays.copyOfRange(args, 1, args.length));
+                break;
             default:
                 commandHint(commandSender);
                 break;

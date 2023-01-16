@@ -31,6 +31,7 @@ public enum BaseConfig_EN implements ConfigInterface {
     language("de"),
     mendingToolBlueprintFile("blueprints.xml"),
     option_restoreTool_durability(15),
+    option_netherite_equal_diamond("option.netherite_equal_diamond", true),
     languageConf_prefix("[MT] "),
     ;
 
@@ -341,6 +342,10 @@ public enum BaseConfig_EN implements ConfigInterface {
     BaseConfig_EN(Object value) {
         this.value = value;
         this.key_ = this.name().replace('_', '.');
+    }
+    BaseConfig_EN(String key, Object value) {
+        this.value = value;
+        this.key_ = key;
     }
 
     public Object value() {

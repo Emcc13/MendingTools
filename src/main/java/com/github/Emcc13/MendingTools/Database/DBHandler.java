@@ -15,19 +15,12 @@ import java.util.Map;
 public class DBHandler {
     private Connection connection = null;
     private final String dbFile;
-//    private PreparedStatement insertTool = null;
-//    private PreparedStatement deleteTool = null;
-//    private PreparedStatement insertEnchantment = null;
-//    private PreparedStatement deleteToolEnchantment = null;
-//    private PreparedStatement transferTool = null;
-//    private PreparedStatement breakTool = null;
-//    private PreparedStatement restoreTool = null;
     private PreparedStatement playerTools = null;
     private PreparedStatement playerTools_limited = null;
     private PreparedStatement toolsEnchantments = null;
     private PreparedStatement idTool = null;
-//    private PreparedStatement upgradeEnchantment = null;
     private PreparedStatement allToolsSorted = null;
+    private PreparedStatement allToolsWithoutBPID = null;
 
     public DBHandler(MendingToolsMain main) {
         this.dbFile = "jdbc:sqlite:" + (new File(main.getDataFolder().toString(), "MendingTools.db"));
@@ -55,22 +48,6 @@ public class DBHandler {
                     "FOREIGN KEY(ID) REFERENCES Tool(ID), " +
                     "PRIMARY KEY(ID, Name));");
             statement.close();
-
-//            insertTool = connection.prepareStatement(
-//                    "INSERT INTO Tool(BluePrintID, Material, UUID, Broken, Restores) VALUES(?, ?, ?, 0, 0);",
-//                    Statement.RETURN_GENERATED_KEYS);
-//            deleteTool = connection.prepareStatement(
-//                    "DELETE FROM Tool where ID=?;");
-//            insertEnchantment = connection.prepareStatement(
-//                    "INSERT INTO Enchantments(ID, Name, Level) VALUES (?, ?, ?);");
-//            deleteToolEnchantment = connection.prepareStatement(
-//                    "DELETE FROM Enchantments where ID=?;");
-//            transferTool = connection.prepareStatement(
-//                    "UPDATE Tool SET UUID=? WHERE ID=?;");
-//            breakTool = connection.prepareStatement(
-//                    "UPDATE Tool SET Broken=? WHERE ID=?;");
-//            restoreTool = connection.prepareStatement(
-//                    "UPDATE Tool SET Restores=Restores+1, Broken=? WHERE ID=?;");
             playerTools_limited = connection.prepareStatement(
                     "SELECT ID, BlueprintID, Material, Broken, Restores FROM Tool WHERE UUID=? " +
                             "ORDER BY BlueprintID ASC, ID ASC LIMIT ?, ?;");
@@ -80,11 +57,11 @@ public class DBHandler {
                     "SELECT UUID, BlueprintID, Material, Broken, Restores FROM Tool WHERE ID=?;");
             toolsEnchantments = connection.prepareStatement(
                     "SELECT Name, Level FROM Enchantments WHERE ID=?;");
-//            upgradeEnchantment = connection.prepareStatement(
-//                    "UPDATE Enchantments SET Level=? WHERE ID=? AND Name=?;");
             allToolsSorted = connection.prepareStatement(
                     "SELECT ID, BlueprintID, Material, Broken, Restores, UUID FROM Tool " +
                             "ORDER BY BlueprintID ASC, ID ASC LIMIT ?, ?;");
+            allToolsWithoutBPID = connection.prepareStatement(
+                    "SELECT ID, Material FROM Tool WHERE BlueprintID=-1");
             return connection;
         } catch (SQLException e) {
             this.connection = null;
@@ -221,6 +198,25 @@ public class DBHandler {
     private PreparedStatement getAllToolsSorted(){
         if (connect() != null){
             return allToolsSorted;
+        }
+        return null;
+    }
+
+    private PreparedStatement getAllToolsWithoutBPID_(){
+        if (connect() != null){
+            return allToolsWithoutBPID;
+        }
+        return null;
+    }
+
+    private PreparedStatement getUpdateBlueprintID(){
+        if (connect() != null){
+            try {
+                return connection.prepareStatement(
+                        "UPDATE Tool SET BlueprintID=?, Material=? WHERE ID=?;");
+            } catch (SQLException e) {
+                return null;
+            }
         }
         return null;
     }
@@ -425,6 +421,42 @@ public class DBHandler {
         return result;
     }
 
+    public List<MendingTool> getAllToolsWithoutBPID() {
+        List<MendingTool> result = new LinkedList<>();
+        MendingTool mt;
+        long id;
+        PreparedStatement allToolsWithoutBPID = getAllToolsWithoutBPID_();
+        PreparedStatement toolsEnchantments = getToolsEnchantments();
+        if (allToolsWithoutBPID == null || toolsEnchantments == null){
+            return null;
+        }
+        try {
+            allToolsWithoutBPID.clearParameters();
+            ResultSet rs_tool = allToolsWithoutBPID.executeQuery();
+            ResultSet rs_enchantments;
+            while (rs_tool.next()) {
+                id = rs_tool.getLong(1);
+                mt = new MendingTool(id,
+                        -1,
+                        rs_tool.getString(2),
+                        false,
+                        0,
+                        null);
+                toolsEnchantments.clearParameters();
+                toolsEnchantments.setLong(1, id);
+                rs_enchantments = toolsEnchantments.executeQuery();
+                while (rs_enchantments.next()) {
+                    mt.addEnchantment(rs_enchantments.getString(1),
+                            rs_enchantments.getInt(2));
+                }
+                result.add(mt);
+            }
+        } catch (SQLException sqle) {
+            return new LinkedList<>();
+        }
+        return result;
+    }
+
     public MendingTool getTool(Long id) {
         MendingTool result = null;
         PreparedStatement idTool = getIdTool();
@@ -468,6 +500,23 @@ public class DBHandler {
             upgradeEnchantment.setLong(2, id);
             upgradeEnchantment.setString(3, enchantment);
             upgradeEnchantment.executeUpdate();
+        }catch (SQLException sqle){
+            return false;
+        }
+        return true;
+    }
+
+    public boolean updateBlueprintID(long id, int blueprintid, String material){
+        PreparedStatement updateBlueprintID = getUpdateBlueprintID();
+        if (updateBlueprintID == null){
+            return false;
+        }
+        try {
+            updateBlueprintID.clearParameters();
+            updateBlueprintID.setInt(1, blueprintid);
+            updateBlueprintID.setString(2, material);
+            updateBlueprintID.setLong(3, id);
+            updateBlueprintID.executeUpdate();
         }catch (SQLException sqle){
             return false;
         }

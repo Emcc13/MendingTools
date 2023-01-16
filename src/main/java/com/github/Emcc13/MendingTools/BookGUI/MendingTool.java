@@ -155,7 +155,13 @@ public class MendingTool {
     }
 
     protected List<BaseComponent> bookBlueprint(MendingBlueprint blueprint) {
-        TextComponent tc = new TextComponent((blueprint != null ? blueprint.getName() : this.material) + "\n");
+        TextComponent tc;
+        if (blueprint != null)
+            tc = new TextComponent(blueprint.getName() + "\n");
+        else {
+            tc = formatComponents(MendingToolsMain.getInstance().getLanguageConfig().get(TranslateConf.languageConf_material + this.material));
+            tc.addExtra("\n");
+        }
         tc.setBold(true);
         return new ArrayList<BaseComponent>() {{
             add(tc);
@@ -242,7 +248,7 @@ public class MendingTool {
                         new Tuple<>("%DISP-ENCH%", lang_ench.get(0).getText()),
                         new Tuple<>("%CURRLEVEL%", String.valueOf(entry.getValue())),
                         new Tuple<>("%MONEY%", blueprint.getMoney() != null ? String.format("%,.0f",
-                                calcMoney(blueprint, entry.getKey(),entry.getValue())) : "0")
+                                calcMoney(blueprint, entry.getKey(), entry.getValue())) : "0")
                 ));
                 tc.addExtra("\n");
                 tc.setColor(ChatColor.GRAY);

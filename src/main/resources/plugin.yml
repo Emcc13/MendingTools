@@ -1,7 +1,7 @@
 name: MendingTools
 author: Emcc13
 desription: MendingTools - A plugin to manage tools with a mending enchantment.
-version: 0.9.2
+version: 0.9.3
 depend: [Vault,OpenInv]
 api-version: 1.18
 
@@ -38,3 +38,6 @@ permissions:
   mt.admin:
     default: false
     description: bypass restore restrictions
+  mt.updatedb:
+    default: false
+    description: update blueprint id for all tools which could not be identified before
