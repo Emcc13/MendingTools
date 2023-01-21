@@ -546,7 +546,6 @@ public class DBHandler {
                 toolsEnchantments.setLong(1, id);
                 rs_enchantments = toolsEnchantments.executeQuery();
                 while (rs_enchantments.next()) {
-                    System.out.println(rs_enchantments.getString(1)+": "+rs_enchantments.getInt(2));
                     mt.addEnchantment(rs_enchantments.getString(1),
                             rs_enchantments.getInt(2));
                 }

@@ -53,7 +53,6 @@ public class mtUpdateDB extends mtCommands {
             return false;
         }
         boolean netherite_equal_diamond = (boolean) main.getCachedConfig().get(BaseConfig_EN.option_netherite_equal_diamond.key());
-        System.out.println(netherite_equal_diamond);
         DBHandler db = main.get_db();
         List<MendingTool> tools;
         if (args.length>0){
@@ -67,9 +66,6 @@ public class mtUpdateDB extends mtCommands {
         }else
             tools = db.getAllToolsWithoutBPID();
         for (MendingTool mt : tools) {
-            System.out.println("=========");
-            System.out.println(mt.getID());
-            System.out.println(mt.getBlueprintID());
             MendingBlueprint mb = findBlueprint(mt, netherite_equal_diamond);
             if (mb == null)
                 continue;
@@ -92,8 +88,7 @@ public class mtUpdateDB extends mtCommands {
                 }
             }
 
-            System.out.println(mb.getID());
-            System.out.println(db.updateBlueprintID(mt.getID(), mb, enchantments));
+            db.updateBlueprintID(mt.getID(), mb, enchantments);
         }
         return false;
     }
