@@ -19,7 +19,8 @@ public class DBHandler {
     private PreparedStatement playerTools_limited = null;
     private PreparedStatement toolsEnchantments = null;
     private PreparedStatement idTool = null;
-    private PreparedStatement allToolsSorted = null;
+    private PreparedStatement allToolsSortedLimited = null;
+    private PreparedStatement allTools = null;
     private PreparedStatement allToolsWithoutBPID = null;
 
     public DBHandler(MendingToolsMain main) {
@@ -57,9 +58,12 @@ public class DBHandler {
                     "SELECT UUID, BlueprintID, Material, Broken, Restores FROM Tool WHERE ID=?;");
             toolsEnchantments = connection.prepareStatement(
                     "SELECT Name, Level FROM Enchantments WHERE ID=?;");
-            allToolsSorted = connection.prepareStatement(
+            allToolsSortedLimited = connection.prepareStatement(
                     "SELECT ID, BlueprintID, Material, Broken, Restores, UUID FROM Tool " +
                             "ORDER BY BlueprintID ASC, ID ASC LIMIT ?, ?;");
+            allTools = connection.prepareStatement(
+                    "SELECT ID, BlueprintID, Material, Broken, Restores, UUID FROM Tool " +
+                            "ORDER BY BlueprintID ASC, ID ASC;");
             allToolsWithoutBPID = connection.prepareStatement(
                     "SELECT ID, Material FROM Tool WHERE BlueprintID=-1");
             return connection;
@@ -204,9 +208,16 @@ public class DBHandler {
         return null;
     }
 
-    private PreparedStatement getAllToolsSorted(){
+    private PreparedStatement getAllToolsSortedLimited(){
         if (connect() != null){
-            return allToolsSorted;
+            return allToolsSortedLimited;
+        }
+        return null;
+    }
+
+    private PreparedStatement getAllToolsSorted_PS(){
+        if (connect() != null){
+            return allTools;
         }
         return null;
     }
@@ -509,6 +520,44 @@ public class DBHandler {
         return result;
     }
 
+    public List<MendingTool> getAllTools(){
+        List<MendingTool> result = new LinkedList<>();
+        MendingTool mt;
+        long id;
+        PreparedStatement allTools = getAllToolsSorted_PS();
+        PreparedStatement toolsEnchantments = getToolsEnchantments();
+        if (allTools == null || toolsEnchantments == null){
+            return null;
+        }
+        try {
+            allTools.clearParameters();
+            ResultSet rs_tool = allTools.executeQuery();
+            ResultSet rs_enchantments;
+            while (rs_tool.next()) {
+                id = rs_tool.getLong(1);
+                mt = new MendingTool(id,
+                        rs_tool.getInt(2),
+                        rs_tool.getString(3),
+                        rs_tool.getInt(4) > 0,
+                        rs_tool.getInt(5),
+                        rs_tool.getString(6)
+                );
+                toolsEnchantments.clearParameters();
+                toolsEnchantments.setLong(1, id);
+                rs_enchantments = toolsEnchantments.executeQuery();
+                while (rs_enchantments.next()) {
+                    System.out.println(rs_enchantments.getString(1)+": "+rs_enchantments.getInt(2));
+                    mt.addEnchantment(rs_enchantments.getString(1),
+                            rs_enchantments.getInt(2));
+                }
+                result.add(mt);
+            }
+        } catch (SQLException sqle) {
+            return new LinkedList<>();
+        }
+        return result;
+    }
+
     public MendingTool getTool(Long id) {
         MendingTool result = null;
         PreparedStatement idTool = getIdTool();
@@ -592,7 +641,7 @@ public class DBHandler {
         List<MendingTool> result = new LinkedList<>();
         MendingTool mt;
         long id;
-        PreparedStatement allTools = getAllToolsSorted();
+        PreparedStatement allTools = getAllToolsSortedLimited();
         PreparedStatement toolsEnchantments = getToolsEnchantments();
         if (allTools == null || toolsEnchantments == null){
             return null;

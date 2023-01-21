@@ -5,11 +5,20 @@ import com.github.Emcc13.MendingTools.BookGUI.MendingTool;
 import com.github.Emcc13.MendingTools.Config.BaseConfig_EN;
 import com.github.Emcc13.MendingTools.Database.DBHandler;
 import com.github.Emcc13.MendingToolsMain;
+import org.bukkit.Bukkit;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
+import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.Inventory;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.persistence.PersistentDataType;
 
+import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 public class mtUpdateDB extends mtCommands {
     public static String COMMAND = "mt_update_db";
@@ -46,13 +55,63 @@ public class mtUpdateDB extends mtCommands {
         boolean netherite_equal_diamond = (boolean) main.getCachedConfig().get(BaseConfig_EN.option_netherite_equal_diamond.key());
         System.out.println(netherite_equal_diamond);
         DBHandler db = main.get_db();
-        for (MendingTool mt : db.getAllToolsWithoutBPID()) {
+        List<MendingTool> tools;
+        if (args.length>0){
+            switch (args[0]){
+                case "all":
+                    tools = db.getAllTools();
+                    break;
+                default:
+                    tools = db.getAllToolsWithoutBPID();
+            }
+        }else
+            tools = db.getAllToolsWithoutBPID();
+        for (MendingTool mt : tools) {
+            System.out.println("=========");
+            System.out.println(mt.getID());
+            System.out.println(mt.getBlueprintID());
             MendingBlueprint mb = findBlueprint(mt, netherite_equal_diamond);
             if (mb == null)
                 continue;
-            db.updateBlueprintID(mt.getID(), mb, mt.getEnchantments());
+            Map<String, Integer> enchantments = mt.getEnchantments();
+
+            if (mt.getUuid()!=null) {
+                Player player = Bukkit.getPlayer(UUID.fromString(mt.getUuid()));
+                if (player == null) {
+                    OfflinePlayer op = Bukkit.getServer().getOfflinePlayer(UUID.fromString(mt.getUuid()));
+                    player = main.getOpenInv().loadPlayer(op);
+                }
+                if (player!=null){
+                    ItemStack is = getItemStack(player.getInventory(), mt.getID());
+                    if (is == null)
+                        is = getItemStack(player.getEnderChest(), mt.getID());
+                    if (is != null){
+                        for (Map.Entry<Enchantment, Integer> entry : is.getEnchantments().entrySet())
+                            enchantments.put(entry.getKey().getKey().getKey(), entry.getValue());
+                    }
+                }
+            }
+
+            System.out.println(mb.getID());
+            System.out.println(db.updateBlueprintID(mt.getID(), mb, enchantments));
         }
         return false;
+    }
+
+    private ItemStack getItemStack(Inventory iv, long id){
+        ItemMeta im;
+        for (ItemStack itemstack : iv.getContents()){
+            if (itemstack == null)
+                continue;
+            im = itemstack.getItemMeta();
+            if (im == null)
+                continue;
+            Long is_id = im.getPersistentDataContainer().get(this.main.getNBT_key(), PersistentDataType.LONG);
+            if (id != is_id)
+                continue;
+            return itemstack;
+        }
+        return null;
     }
 
     private MendingBlueprint findBlueprint(MendingTool mendingTool, boolean netherite_equal_diamond) {
