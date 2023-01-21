@@ -82,7 +82,7 @@ public class MTListener implements Listener {
             if (mb == null)
                 id = main.get_db().add_tool(itemStack, p.getUniqueId().toString(), -1);
             else
-                id = main.get_db().add_tool(mb, p.getUniqueId().toString());
+                id = main.get_db().add_tool(itemStack, p.getUniqueId().toString(), mb);
             if (id < 1)
                 return;
             meta.getPersistentDataContainer().set(main.getNBT_key(), PersistentDataType.LONG, id);
@@ -217,6 +217,9 @@ public class MTListener implements Listener {
     private MendingBlueprint findBlueprint(ItemStack itemStack) {
         Map<Enchantment, Integer> isEnch = itemStack.getEnchantments();
         boolean netherite_equal_diamond = (boolean) main.getCachedConfig().get(BaseConfig_EN.option_netherite_equal_diamond.key());
+        MendingBlueprint last_bp=null;
+        Integer last_dist=null;
+        Integer ench_lvl;
         for (MendingBlueprint mb : main.getBlueprintConfig().getBlueprints().values()) {
             String[] mb_mat = mb.getMaterial().split("_");
             String[] is_mat = itemStack.getType().name().split("_");
@@ -227,24 +230,24 @@ public class MTListener implements Listener {
                             mb_mat[1].toLowerCase().equals(is_mat[1].toLowerCase())
                     ))
                 continue;
-            if (mb.getEnchantments().size() != itemStack.getEnchantments().size()) {
-                continue;
-            }
             boolean isOk = true;
             for (MendingBlueprint.MTEnchantment ench : mb.getEnchantments()) {
-                if (ench.getMaxlevel() >= isEnch.getOrDefault(ench.getEnchantment(), 0))
+                ench_lvl = isEnch.get(ench.getEnchantment());
+                if (ench_lvl!=null &&
+                        ench.getMaxlevel()>=ench_lvl &&
+                        ench.getLevel()<= ench_lvl
+                )
                     continue;
                 isOk = false;
             }
-            for (Map.Entry<Enchantment, Integer> ench_entry : itemStack.getEnchantments().entrySet()) {
-                if (mb.getEnchantment(ench_entry.getKey().getKey().getKey()) != null &&
-                        ench_entry.getValue() <= mb.getEnchantment(ench_entry.getKey()).getMaxlevel())
-                    continue;
-                isOk = false;
+            if (isOk){
+                int dist = isEnch.size()-mb.getEnchantments().size();
+                if (last_dist == null || dist < last_dist){
+                    last_dist = dist;
+                    last_bp = mb;
+                }
             }
-            if (isOk)
-                return mb;
         }
-        return null;
+        return last_bp;
     }
 }

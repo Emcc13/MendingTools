@@ -20,11 +20,11 @@ public class mtUpdateDB extends mtCommands {
 
     @Override
     protected String getPerm_key() {
-        return "mt.reload";
+        return "mt.updatedb";
     }
 
     public void setPermission() {
-        this.permission = "mt.reload";
+        this.permission = "mt.updatedb";
     }
 
     @Override
@@ -50,14 +50,16 @@ public class mtUpdateDB extends mtCommands {
             MendingBlueprint mb = findBlueprint(mt, netherite_equal_diamond);
             if (mb == null)
                 continue;
-            System.out.println("Updated:");
-            System.out.println(db.updateBlueprintID(mt.getID(), mb.getID(), mb.getMaterial()));
+            db.updateBlueprintID(mt.getID(), mb, mt.getEnchantments());
         }
         return false;
     }
 
     private MendingBlueprint findBlueprint(MendingTool mendingTool, boolean netherite_equal_diamond) {
         Map<String, Integer> isEnch = mendingTool.getEnchantments();
+        MendingBlueprint last_bp=null;
+        Integer last_dist=null;
+        Integer ench_lvl;
         for (MendingBlueprint mb : main.getBlueprintConfig().getBlueprints().values()) {
             String[] mb_mat = mb.getMaterial().split("_");
             String[] is_mat = mendingTool.getMaterial().split("_");
@@ -68,25 +70,24 @@ public class mtUpdateDB extends mtCommands {
                             mb_mat[1].toLowerCase().equals(is_mat[1].toLowerCase())
                     ))
                 continue;
-            if (mb.getEnchantments().size() != mendingTool.getEnchantments().size()) {
-                continue;
-            }
             boolean isOk = true;
             for (MendingBlueprint.MTEnchantment ench : mb.getEnchantments()) {
-                if (ench.getMaxlevel() >= isEnch.getOrDefault(ench.getEnchantment(), 0))
+                ench_lvl = isEnch.get(ench.getEnchantment().getKey().getKey());
+                if (ench_lvl!=null &&
+                        ench.getMaxlevel()>=ench_lvl &&
+                        ench.getLevel()<= ench_lvl
+                )
                     continue;
                 isOk = false;
             }
-            if (isOk)
-                for (Map.Entry<String, Integer> ench_entry : mendingTool.getEnchantments().entrySet()) {
-                    if (mb.getEnchantment(ench_entry.getKey()) != null &&
-                            ench_entry.getValue() <= mb.getEnchantment(ench_entry.getKey()).getMaxlevel())
-                        continue;
-                    isOk = false;
+            if (isOk){
+                int dist = isEnch.size()-mb.getEnchantments().size();
+                if (last_dist == null || dist < last_dist){
+                    last_dist = dist;
+                    last_bp = mb;
                 }
-            if (isOk)
-                return mb;
+            }
         }
-        return null;
+        return last_bp;
     }
 }

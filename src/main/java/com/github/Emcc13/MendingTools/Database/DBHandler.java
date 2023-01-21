@@ -70,6 +70,15 @@ public class DBHandler {
         }
     }
 
+    public void close(){
+        try {
+            if (this.connection != null)
+                this.connection.close();
+        } catch (SQLException e) {
+            return;
+        }
+    }
+
     private PreparedStatement getInsertTool() {
         if (connect() != null) {
             try {
@@ -282,22 +291,65 @@ public class DBHandler {
             return -1;
         }
     }
+    public long add_tool(ItemStack itemstack, String uuid, MendingBlueprint mb){
+        long tool_id;
+        PreparedStatement tool = getInsertTool();
+        PreparedStatement enchantment = getInsertEnchantment();
+        if (tool == null || enchantment == null)
+            return -3;
+        try {
+            tool.clearParameters();
+            tool.setInt(1, mb.getID());
+//            tool.setString(2, itemstack.getType().toString());
+            tool.setString(2, mb.getMaterial());
+            tool.setString(3, uuid);
+            if (tool.executeUpdate() != 0) {
+                ResultSet rs = tool.getGeneratedKeys();
+                rs.next();
+                tool_id = rs.getLong(1);
+            } else {
+                return -2;
+            }
+            for (Map.Entry<Enchantment, Integer> entry : itemstack.getEnchantments().entrySet()) {
+                if (mb.getEnchantment(entry.getKey()) == null)
+                    continue;
+                enchantment.clearParameters();
+                enchantment.setLong(1, tool_id);
+                enchantment.setString(2, entry.getKey().getKey().getKey());
+                enchantment.setInt(3, entry.getValue());
+                enchantment.executeUpdate();
+            }
+            return tool_id;
+        } catch (SQLException sqle) {
+            return -1;
+        }
+    }
 
     public boolean delete_tool(long id){
         PreparedStatement deleteTool = getDeleteTool();
         if (deleteTool == null){
             return false;
         }
+        if (!delete_enchantments(id))
+            return false;
+        try{
+            deleteTool.clearParameters();
+            deleteTool.setLong(1, id);
+            deleteTool.executeUpdate();
+        }catch (SQLException sqle){
+            return false;
+        }
+        return true;
+    }
+
+    public boolean delete_enchantments(long id){
         PreparedStatement deleteToolEnchantment = getDeleteToolEnchantment();
         if (deleteToolEnchantment == null){
             return false;
         }
         try{
-            deleteTool.clearParameters();
-            deleteTool.setLong(1, id);
             deleteToolEnchantment.clearParameters();
             deleteToolEnchantment.setLong(1, id);
-            deleteTool.executeUpdate();
             deleteToolEnchantment.executeUpdate();
         }catch (SQLException sqle){
             return false;
@@ -506,20 +558,33 @@ public class DBHandler {
         return true;
     }
 
-    public boolean updateBlueprintID(long id, int blueprintid, String material){
+    public boolean updateBlueprintID(long tool_id, MendingBlueprint mb, Map<String, Integer> enchantments){
         PreparedStatement updateBlueprintID = getUpdateBlueprintID();
-        if (updateBlueprintID == null){
+        PreparedStatement enchantment = getInsertEnchantment();
+        if (updateBlueprintID == null || enchantment == null){
             return false;
         }
+        if (!delete_enchantments(tool_id))
+            return false;
         try {
             updateBlueprintID.clearParameters();
-            updateBlueprintID.setInt(1, blueprintid);
-            updateBlueprintID.setString(2, material);
-            updateBlueprintID.setLong(3, id);
+            updateBlueprintID.setInt(1, mb.getID());
+            updateBlueprintID.setString(2, mb.getMaterial());
+            updateBlueprintID.setLong(3, tool_id);
             updateBlueprintID.executeUpdate();
+            for (Map.Entry<String, Integer> entry : enchantments.entrySet()) {
+                if (mb.getEnchantment(entry.getKey()) == null)
+                    continue;
+                enchantment.clearParameters();
+                enchantment.setLong(1, tool_id);
+                enchantment.setString(2, entry.getKey());
+                enchantment.setInt(3, entry.getValue());
+                enchantment.executeUpdate();
+            }
         }catch (SQLException sqle){
             return false;
         }
+
         return true;
     }
 

@@ -132,6 +132,8 @@ public class MendingToolsMain extends JavaPlugin {
         } catch (Exception e) {
             Bukkit.getLogger().log(Level.SEVERE, "[MT ERROR] Failed to load language config! Change it and reload it.");
         }
+        if (this.dbhandler!=null)
+            this.dbhandler.close();
         this.dbhandler = new DBHandler(this);
     }
 
