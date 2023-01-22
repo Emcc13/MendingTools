@@ -145,7 +145,7 @@ public class MendingBlueprint {
             result.add(new TextComponent("\n"));
             TextComponent enchant = new TextComponent(), level = new TextComponent();
             enchant.setText(enchantment.getEnchantment().getKey().getKey() + ":   ");
-            level.setText(enchantment.getLevel().toString());
+            level.setText(enchantment.getLevel().toString()+" - "+enchantment.getMaxlevel().toString());
             level.setItalic(true);
             enchant.addExtra(level);
             result.add(enchant);

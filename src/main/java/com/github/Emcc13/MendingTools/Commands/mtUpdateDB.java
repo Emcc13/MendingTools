@@ -102,7 +102,7 @@ public class mtUpdateDB extends mtCommands {
             if (im == null)
                 continue;
             Long is_id = im.getPersistentDataContainer().get(this.main.getNBT_key(), PersistentDataType.LONG);
-            if (id != is_id)
+            if (is_id == null || id != is_id)
                 continue;
             return itemstack;
         }

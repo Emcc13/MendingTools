@@ -257,7 +257,7 @@ public class mtTools extends mtCommands {
             }
             chapter_counter++;
         }
-        if (page_idx > 41) {
+        if (page_idx >= 41) {
             contentPage.add(new TextComponent("\n"));
             contentPage.add(nextBookCommand);
         }
