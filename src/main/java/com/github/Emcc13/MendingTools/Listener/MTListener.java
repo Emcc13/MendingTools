@@ -148,6 +148,8 @@ public class MTListener implements Listener {
                         if (ArrayUtils.indexOf(inv.getContents(), null) > 0)
                             checkItem = true;
                         break;
+                    default:
+                        checkItem = true;
                 }
                 break;
             case PLACE_ALL:
@@ -166,6 +168,8 @@ public class MTListener implements Listener {
                         if (event.getSlot() > 0)
                             checkItem = true;
                         break;
+                    default:
+                        checkItem = true;
                 }
                 break;
             case CLONE_STACK:
@@ -179,7 +183,6 @@ public class MTListener implements Listener {
         if (checkItem && item != null && item.hasItemMeta() && item.getItemMeta().getPersistentDataContainer().
                 get(main.getNBT_key(), PersistentDataType.LONG) != null) {
             event.setCancelled(true);
-            p.updateInventory();
         }
     }
 
@@ -191,11 +194,13 @@ public class MTListener implements Listener {
             case ENDER_CHEST:
             case PLAYER:
             case SMITHING:
+            case CRAFTING:
                 return;
         }
         ItemStack is = event.getOldCursor();
-        if (is != null && is.getType() != Material.AIR && is.
-                getItemMeta().getPersistentDataContainer().get(main.getNBT_key(), PersistentDataType.LONG) != null) {
+        if (is != null && is.getType() != Material.AIR &&
+        is.getItemMeta() != null &&
+                is.getItemMeta().getPersistentDataContainer().get(main.getNBT_key(), PersistentDataType.LONG) != null) {
             event.setCancelled(true);
             p.updateInventory();
         }
@@ -206,8 +211,10 @@ public class MTListener implements Listener {
         ItemStack is = event.getItemDrop().getItemStack();
         if (is == null || is.getType() == Material.AIR)
             return;
-        Long id = event.getItemDrop().getItemStack().getItemMeta().
-                getPersistentDataContainer().get(main.getNBT_key(), PersistentDataType.LONG);
+        ItemMeta im = event.getItemDrop().getItemStack().getItemMeta();
+        if (im==null)
+            return;
+        Long id = im.getPersistentDataContainer().get(main.getNBT_key(), PersistentDataType.LONG);
         if (id != null) {
             event.getItemDrop().remove();
             event.setCancelled(true);
