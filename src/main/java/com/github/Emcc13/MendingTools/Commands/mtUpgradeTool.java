@@ -163,21 +163,23 @@ public class mtUpgradeTool extends mtCommands {
             }
             main.getEconomy().withdrawPlayer(p_withInv, moneyValue);
             List<String> formattedCommands = new LinkedList<>();
-            for (String command : blueprintEnch.getCommands()) {
-                formattedCommands.add(formatCommand(command, p_withInv, tool, intermediateLevel, moneyValue,
-                        new HashMap<String, String>() {{
-                            for (Map.Entry<String, Integer> entry : tool.getEnchantments().entrySet())
-                                put("%" + entry.getKey() + "%", String.valueOf(entry.getValue()));
-                            put("%BPNAME%", blueprint.getName());
-                            put("%BPID%", String.valueOf(blueprint.getID()));
-                            put("%RESTORES%", String.valueOf(tool.getRestores()));
-                        }}));
-            }
-            Bukkit.getScheduler().runTaskLater(main, () -> {
-                for (String command : formattedCommands) {
-                    Bukkit.dispatchCommand(Bukkit.getConsoleSender(), command);
+            if (blueprintEnch.getCommands() != null) {
+                for (String command : blueprintEnch.getCommands()) {
+                    formattedCommands.add(formatCommand(command, p_withInv, tool, intermediateLevel, moneyValue,
+                            new HashMap<String, String>() {{
+                                for (Map.Entry<String, Integer> entry : tool.getEnchantments().entrySet())
+                                    put("%" + entry.getKey() + "%", String.valueOf(entry.getValue()));
+                                put("%BPNAME%", blueprint.getName());
+                                put("%BPID%", String.valueOf(blueprint.getID()));
+                                put("%RESTORES%", String.valueOf(tool.getRestores()));
+                            }}));
                 }
-            }, 0);
+                Bukkit.getScheduler().runTaskLater(main, () -> {
+                    for (String command : formattedCommands) {
+                        Bukkit.dispatchCommand(Bukkit.getConsoleSender(), command);
+                    }
+                }, 0);
+            }
             runningLevel = intermediateLevel;
         }
         final int finalLevel = runningLevel;
