@@ -177,6 +177,7 @@ public class MTListener implements Listener {
             case DROP_ALL_SLOT:
             case DROP_ONE_CURSOR:
             case DROP_ONE_SLOT:
+            case SWAP_WITH_CURSOR:
                 checkItem = true;
                 break;
         }
