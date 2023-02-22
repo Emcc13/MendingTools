@@ -217,6 +217,16 @@ public class mtUpgradeTool extends mtCommands {
                 main.getOpenInv().unload(op);
             }
         }
+        TextComponent message = formatComponents((List<TextComponent>)main.getCachedConfig().
+                        get(BaseConfig_EN.EN.languageConf_text_upgradedTool.key()),
+                new Tuple<>("%PREFIX%", (String) MendingToolsMain.getInstance().getCachedConfig().get(BaseConfig_EN.languageConf_prefix.key())),
+                new Tuple<>("%ID%", String.valueOf(String.valueOf(id))),
+                new Tuple<>("%DISP-ENCH%", lang_ench_str),
+                new Tuple<>("%MONEY%", String.format("%,.0f", moneyValue)),
+                new Tuple<>("%BPNAME%", blueprint.getName())
+        );
+        p_withInv.spigot().sendMessage(message);
+        // TODO: send info message
         return false;
     }
 

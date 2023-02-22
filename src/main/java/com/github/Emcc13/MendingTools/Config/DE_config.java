@@ -66,6 +66,11 @@ public enum DE_config implements ConfigInterface {
             put("text", "%PREFIX% Das Werkzeug %ID% hat nicht die Verzauberung: %DISP-ENCH%!");
         }});
     }}),
+    languageConf_error_noSpaceInInventory(new ArrayList<Map<String, String>>() {{
+        add(new HashMap<String, String>() {{
+            put("text", "%PREFIX% Dein Inventar ist voll!");
+        }});
+    }}),
     languageConf_hint_deleteTool(new ArrayList<Map<String, String>>(){{
         add(new HashMap<String, String>(){{
             put("text", "/%COMMAND% <tool id>");
@@ -183,6 +188,11 @@ public enum DE_config implements ConfigInterface {
     languageConf_text_unknownBlueprint(new ArrayList<Map<String, String>>(){{
         add(new HashMap<String, String>(){{
             put("text", "Unbekannt");
+        }});
+    }}),
+    languageConf_text_upgradedTool(new ArrayList<Map<String, String>>(){{
+        add(new HashMap<String, String>(){{
+            put("text", "%PREFIX% Bei deinem Werkzeug %ID% wurde die Verzauberung %DISP-ENCH% auf %LEVEL% aufgewertet.");
         }});
     }}),
 

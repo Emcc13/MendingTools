@@ -77,6 +77,7 @@ public class mtTools extends mtCommands {
                     if (!(p.hasPermission(permission + "_team") || p.isOp())) {
                         sendErrorMessage(commandSender, BaseConfig_EN.EN.languageConf_noPermission.key(),
                                 new Tuple<>("%PREFIX%", (String) MendingToolsMain.getInstance().getCachedConfig().get(BaseConfig_EN.languageConf_prefix.key())));
+                        return false;
                     }
                     bookNum = 0;
                     if (args.length > 1) {

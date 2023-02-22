@@ -8,16 +8,18 @@ import org.apache.commons.lang.ArrayUtils;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
+import org.bukkit.entity.HumanEntity;
+import org.bukkit.entity.ItemFrame;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.PlayerDeathEvent;
+import org.bukkit.event.hanging.HangingPlaceEvent;
 import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.event.inventory.InventoryDragEvent;
-import org.bukkit.event.player.PlayerDropItemEvent;
-import org.bukkit.event.player.PlayerItemBreakEvent;
-import org.bukkit.event.player.PlayerJoinEvent;
+import org.bukkit.event.player.*;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
@@ -131,7 +133,6 @@ public class MTListener implements Listener {
     @EventHandler
     public void onInventoryClick(InventoryClickEvent event) {
         if (event.isCancelled() || !(event.getWhoClicked() instanceof Player)) return;
-        final Player p = (Player) event.getWhoClicked();
         ItemStack item = event.getCursor();
         boolean checkItem = false;
         Inventory inv = event.getClickedInventory();
@@ -155,6 +156,7 @@ public class MTListener implements Listener {
             case PLACE_ALL:
             case PLACE_ONE:
             case PLACE_SOME:
+            case SWAP_WITH_CURSOR:
                 if (inv == null) {
                     checkItem = true;
                     break;
@@ -177,13 +179,66 @@ public class MTListener implements Listener {
             case DROP_ALL_SLOT:
             case DROP_ONE_CURSOR:
             case DROP_ONE_SLOT:
-            case SWAP_WITH_CURSOR:
                 checkItem = true;
                 break;
         }
-        if (checkItem && item != null && item.hasItemMeta() && item.getItemMeta().getPersistentDataContainer().
+        if (checkItem && item != null && item.hasItemMeta() &&
+                item.getItemMeta().getPersistentDataContainer().
                 get(main.getNBT_key(), PersistentDataType.LONG) != null) {
             event.setCancelled(true);
+        }
+    }
+
+    @EventHandler
+    public void onPlayerInteractEntity(PlayerInteractEntityEvent event){
+        System.out.println("PlayerInteractEntity");
+        if (!(event.getRightClicked() instanceof ItemFrame)){
+            return;
+        }
+        ItemStack item = event.getPlayer().getInventory().getItemInMainHand();
+        if (item.getType() == Material.AIR)
+            item = event.getPlayer().getInventory().getItemInOffHand();
+        if (item.hasItemMeta() && item.getItemMeta() != null && item.getItemMeta().getPersistentDataContainer().
+                get(main.getNBT_key(), PersistentDataType.LONG) != null) {
+            event.setCancelled(true);
+        }
+    }
+
+    @EventHandler
+    public void onPlayerInteractAtEntity(PlayerInteractAtEntityEvent event){
+        if (!(event.getRightClicked() instanceof ItemFrame)){
+            return;
+        }
+        ItemStack item = event.getPlayer().getInventory().getItemInMainHand();
+        if (item.getType() == Material.AIR)
+            item = event.getPlayer().getInventory().getItemInOffHand();
+        if (item.hasItemMeta() && item.getItemMeta() != null && item.getItemMeta().getPersistentDataContainer().
+                get(main.getNBT_key(), PersistentDataType.LONG) != null) {
+            event.setCancelled(true);
+        }
+    }
+
+    @EventHandler
+    public void onHangingPlace(HangingPlaceEvent event){
+        System.out.println("HangingPlaceEvent");
+    }
+
+    @EventHandler
+    public void onInventoryClose(InventoryCloseEvent event){
+        ItemStack itemOnCursor = event.getPlayer().getItemOnCursor();
+        if (itemOnCursor.getType() == Material.AIR ||
+                itemOnCursor.getItemMeta() == null ||
+                itemOnCursor.getItemMeta().getPersistentDataContainer()
+                        .get(main.getNBT_key(), PersistentDataType.LONG) == null
+        )
+            return;
+        if (!has_free_slot(event.getPlayer())){
+            // TODO: maybe reopen instead mark it broken
+            Long id = itemOnCursor.getItemMeta().getPersistentDataContainer()
+                    .get(main.getNBT_key(), PersistentDataType.LONG);
+            if (id != null) {
+                main.get_db().break_tool(id);
+            }
         }
     }
 
@@ -257,5 +312,15 @@ public class MTListener implements Listener {
             }
         }
         return last_bp;
+    }
+
+    public static boolean has_free_slot(HumanEntity player){
+        for (ItemStack is : player.getInventory().getStorageContents()){
+            if (is == null)
+                return true;
+            if (is.getType() == Material.AIR)
+                return true;
+        }
+        return false;
     }
 }

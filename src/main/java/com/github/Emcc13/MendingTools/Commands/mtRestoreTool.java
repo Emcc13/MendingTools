@@ -3,6 +3,7 @@ package com.github.Emcc13.MendingTools.Commands;
 import com.github.Emcc13.MendingTools.BookGUI.MendingBlueprint;
 import com.github.Emcc13.MendingTools.BookGUI.MendingTool;
 import com.github.Emcc13.MendingTools.Config.BaseConfig_EN;
+import com.github.Emcc13.MendingTools.Listener.MTListener;
 import com.github.Emcc13.MendingTools.Util.Equationparser;
 import com.github.Emcc13.MendingTools.Util.Tuple;
 import com.github.Emcc13.MendingToolsMain;
@@ -97,6 +98,13 @@ public class mtRestoreTool extends mtCommands {
                 }
             }
         }
+        if (!MTListener.has_free_slot(p_receiver)){
+            sendErrorMessage(p_executor, BaseConfig_EN.EN.languageConf_error_noSpaceInInventory.key(),
+                    new Tuple<>("%PREFIX%", (String) MendingToolsMain.getInstance().getCachedConfig().get(BaseConfig_EN.languageConf_prefix.key()))
+                    );
+            return false;
+        }
+
         ItemStack is = tool.getItemStack(p_receiver.getName());
         double toPay = 0;
         if (blueprint != null && blueprint.getMoney() != null) {

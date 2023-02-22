@@ -96,6 +96,11 @@ public enum BaseConfig_EN implements ConfigInterface {
                 put("text", "%PREFIX% The tool %ID% has not the enchantment: %DISP-ENCH%!");
             }});
         }}),
+        languageConf_error_noSpaceInInventory(new ArrayList<Map<String, String>>() {{
+            add(new HashMap<String, String>() {{
+                put("text", "%PREFIX% There is no space in your inventory!");
+            }});
+        }}),
         languageConf_hint_deleteTool(new ArrayList<Map<String, String>>() {{
             add(new HashMap<String, String>() {{
                 put("text", "/%COMMAND% <tool id>");
@@ -212,6 +217,11 @@ public enum BaseConfig_EN implements ConfigInterface {
         languageConf_text_unknownBlueprint(new ArrayList<Map<String, String>>(){{
             add(new HashMap<String, String>(){{
                 put("text", "Unknown");
+            }});
+        }}),
+        languageConf_text_upgradedTool(new ArrayList<Map<String, String>>(){{
+            add(new HashMap<String, String>(){{
+                put("text", "%PREFIX% You upgraded tool %ID% %DISP-ENCH% to level %LEVEL%.");
             }});
         }}),
 
