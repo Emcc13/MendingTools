@@ -15,7 +15,6 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.PlayerDeathEvent;
-import org.bukkit.event.hanging.HangingPlaceEvent;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.event.inventory.InventoryDragEvent;
@@ -181,6 +180,19 @@ public class MTListener implements Listener {
             case DROP_ONE_SLOT:
                 checkItem = true;
                 break;
+            case HOTBAR_SWAP:
+            case HOTBAR_MOVE_AND_READD:
+                switch (event.getClickedInventory().getType()){
+                    case PLAYER:
+                    case ENDER_CHEST:
+                    case SMITHING:
+                        return;
+                    default:
+                        item = event.getWhoClicked().getInventory().getItem(event.getHotbarButton());
+                        checkItem = true;
+                        break;
+                }
+                break;
         }
         if (checkItem && item != null && item.hasItemMeta() &&
                 item.getItemMeta().getPersistentDataContainer().
@@ -191,7 +203,6 @@ public class MTListener implements Listener {
 
     @EventHandler
     public void onPlayerInteractEntity(PlayerInteractEntityEvent event){
-        System.out.println("PlayerInteractEntity");
         if (!(event.getRightClicked() instanceof ItemFrame)){
             return;
         }
@@ -216,11 +227,6 @@ public class MTListener implements Listener {
                 get(main.getNBT_key(), PersistentDataType.LONG) != null) {
             event.setCancelled(true);
         }
-    }
-
-    @EventHandler
-    public void onHangingPlace(HangingPlaceEvent event){
-        System.out.println("HangingPlaceEvent");
     }
 
     @EventHandler

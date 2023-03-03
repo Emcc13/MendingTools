@@ -223,7 +223,8 @@ public class mtUpgradeTool extends mtCommands {
                 new Tuple<>("%ID%", String.valueOf(String.valueOf(id))),
                 new Tuple<>("%DISP-ENCH%", lang_ench_str),
                 new Tuple<>("%MONEY%", String.format("%,.0f", moneyValue)),
-                new Tuple<>("%BPNAME%", blueprint.getName())
+                new Tuple<>("%BPNAME%", blueprint.getName()),
+                new Tuple<>("%LEVEL%", String.valueOf(finalLevel))
         );
         p_withInv.spigot().sendMessage(message);
         // TODO: send info message
