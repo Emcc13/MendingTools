@@ -26,6 +26,7 @@ import org.bukkit.persistence.PersistentDataType;
 
 import java.util.*;
 import java.util.function.Consumer;
+import java.util.stream.Collectors;
 
 public class MTListener implements Listener {
     private MendingToolsMain main;
@@ -229,7 +230,7 @@ public class MTListener implements Listener {
         }
     }
 
-    @EventHandler
+    @EventHandler(priority = EventPriority.HIGHEST)
     public void onInventoryClose(InventoryCloseEvent event){
         ItemStack itemOnCursor = event.getPlayer().getItemOnCursor();
         if (itemOnCursor.getType() == Material.AIR ||
@@ -284,7 +285,17 @@ public class MTListener implements Listener {
     }
 
     private MendingBlueprint findBlueprint(ItemStack itemStack) {
-        Map<Enchantment, Integer> isEnch = itemStack.getEnchantments();
+        Map<String, Integer> isEnch = itemStack.getEnchantments().entrySet().stream()
+                .collect(Collectors.toMap(entry -> entry.getKey().getKey().getKey(), Map.Entry::getValue));
+        for (String line : itemStack.getItemMeta().getLore()){
+            if (line.startsWith("&7")){
+                String[]ench = line.split(" ");
+                try {
+                    isEnch.put(ench[0], roman2int(ench[1]));
+                }catch (Exception e){}
+            }
+        }
+
         boolean netherite_equal_diamond = (boolean) main.getCachedConfig().get(BaseConfig_EN.option_netherite_equal_diamond.key());
         MendingBlueprint last_bp=null;
         Integer last_dist=null;
@@ -328,5 +339,51 @@ public class MTListener implements Listener {
                 return true;
         }
         return false;
+    }
+
+    private static int roman2value(char r){
+        r = Character.toLowerCase(r);
+        switch (r){
+            case 'i':
+                return 1;
+            case 'v':
+                return 5;
+            case 'x':
+                return 10;
+            case 'l':
+                return 50;
+            case 'c':
+                return 100;
+            case 'd':
+                return 500;
+            case 'm':
+                return 1000;
+            default:
+                return 0;
+        }
+    }
+
+    public static int roman2int(String roman){
+        int result = 0;
+        roman = roman.toLowerCase();
+        int last_value = 0;
+        int new_value = 0;
+        for (int idx = 0; idx<roman.length(); idx++){
+            new_value = roman2value(roman.charAt(idx));
+            if (last_value<new_value)
+                result -= 2*last_value;
+            result += new_value;
+            last_value = new_value;
+        }
+        return result;
+    }
+
+    public static String int2roman(int value){
+        String[] thousands = {"", "M", "MM", "MMM"};
+        String[] hundreds = {"", "C", "CC", "CCC", "CD", "D", "DC", "DCC", "DCCC", "CM"};
+        String[] tens = {"", "X", "XX", "XXX", "XL", "L", "LX", "LXX", "LXXX", "XC"};
+        String[] ones = {"", "I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX"};
+
+        return thousands[value / 1000] + hundreds[(value % 1000) / 100] + tens[(value % 100) / 10] + ones[value % 10];
     }
 }

@@ -1,12 +1,15 @@
 package com.github.Emcc13.MendingTools.BookGUI;
 
 import com.github.Emcc13.MendingTools.Commands.MendingToolsCMD;
+import com.github.Emcc13.MendingTools.Listener.MTListener;
+import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -17,14 +20,19 @@ import java.util.*;
 
 public class MendingBlueprint {
     public class MTEnchantment {
-        private Enchantment enchantment;
+        private String enchantment;
         private Integer level;
         private Integer maxlevel = 0;
         private List<String> commands = null;
         private String money = null;
 
         public MTEnchantment(Element enchNode) {
-            this.enchantment = Enchantment.getByKey(NamespacedKey.minecraft(enchNode.getAttribute("name")));
+            try{
+                Enchantment mc_enchantment = Enchantment.getByKey(NamespacedKey.minecraft(enchNode.getAttribute("name")));
+                this.enchantment = mc_enchantment.getKey().getKey();
+            }catch (Exception e){
+                this.enchantment = enchNode.getAttribute("name");
+            }
             this.level = Integer.parseInt(enchNode.getAttribute("level"));
             String mlString = enchNode.getAttribute("maxlevel");
             if (mlString.length() > 0) {
@@ -45,7 +53,7 @@ public class MendingBlueprint {
             }
         }
 
-        public Enchantment getEnchantment() {
+        public String getEnchantment() {
             return enchantment;
         }
 
@@ -67,7 +75,7 @@ public class MendingBlueprint {
 
         public void addToConf(Element root, Document doc) {
             Element enchantment = doc.createElement("enchantment");
-            enchantment.setAttribute("name", this.enchantment.getKey().getKey());
+            enchantment.setAttribute("name", this.enchantment);
             enchantment.setAttribute("level", this.level.toString());
             enchantment.setAttribute("maxlevel", this.maxlevel.toString());
             if (this.money != null) {
@@ -124,7 +132,7 @@ public class MendingBlueprint {
                 continue;
             element = (Element) nodes.item(idx);
             enchantment = new MTEnchantment(element);
-            this.enchantments.put(enchantment.enchantment.getKey().getKey(), enchantment);
+            this.enchantments.put(enchantment.enchantment, enchantment);
         }
     }
 
@@ -144,7 +152,7 @@ public class MendingBlueprint {
         for (MTEnchantment enchantment : this.enchantments.values()) {
             result.add(new TextComponent("\n"));
             TextComponent enchant = new TextComponent(), level = new TextComponent();
-            enchant.setText(enchantment.getEnchantment().getKey().getKey() + ":   ");
+            enchant.setText(enchantment.getEnchantment() + ":   ");
             level.setText(enchantment.getLevel().toString()+" - "+enchantment.getMaxlevel().toString());
             level.setItalic(true);
             enchant.addExtra(level);
@@ -184,9 +192,21 @@ public class MendingBlueprint {
 
     public ItemStack getItemStack() {
         ItemStack result = new ItemStack(this.material);
+        ItemMeta im = result.getItemMeta();
+        List<String> lore = new LinkedList<>();
         for (MTEnchantment enchantment : this.enchantments.values()) {
-            result.addUnsafeEnchantment(enchantment.enchantment, enchantment.level);
+            try{
+                result.addUnsafeEnchantment(Enchantment.getByKey(NamespacedKey.minecraft(enchantment.enchantment)), enchantment.level);
+            }catch (Exception e){
+                lore.add(ChatColor.translateAlternateColorCodes('&',enchantment.enchantment+" "+ MTListener.int2roman(enchantment.level)));
+            }
         }
+        if (lore.size()>0){
+            lore.add("");
+        }
+        im = result.getItemMeta();
+        im.setLore(lore);
+        result.setItemMeta(im);
         return result;
     }
 

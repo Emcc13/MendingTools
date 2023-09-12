@@ -262,7 +262,7 @@ public class DBHandler {
             for (MendingBlueprint.MTEnchantment mtEnchantment : blueprint.getEnchantments()){
                 enchantment.clearParameters();
                 enchantment.setLong(1, tool_id);
-                enchantment.setString(2, mtEnchantment.getEnchantment().getKey().getKey());
+                enchantment.setString(2, mtEnchantment.getEnchantment());
                 enchantment.setInt(3, mtEnchantment.getLevel());
                 enchantment.executeUpdate();
             }

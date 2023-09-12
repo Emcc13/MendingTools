@@ -3,6 +3,7 @@ package com.github.Emcc13.MendingTools.BookGUI;
 import com.github.Emcc13.MendingTools.Commands.MendingToolsCMD;
 import com.github.Emcc13.MendingTools.Config.BaseConfig_EN;
 import com.github.Emcc13.MendingTools.Config.TranslateConf;
+import com.github.Emcc13.MendingTools.Listener.MTListener;
 import com.github.Emcc13.MendingTools.Util.Equationparser;
 import com.github.Emcc13.MendingTools.Util.Tuple;
 import com.github.Emcc13.MendingToolsMain;
@@ -214,7 +215,6 @@ public class MendingTool {
         } else {
             return new ArrayList<BaseComponent>();
         }
-
     }
 
     protected List<BaseComponent> bookBlueprintID(MendingBlueprint blueprint, Map<String, Object> conf) {
@@ -231,7 +231,10 @@ public class MendingTool {
         LinkedList<BaseComponent> result = new LinkedList<BaseComponent>();
         TextComponent tc;
         for (Map.Entry<String, Integer> entry : enchantments.entrySet()) {
-            List<TextComponent> lang_ench = languageConf.get(TranslateConf.languageConf_enchantment + entry.getKey().toLowerCase());
+            List<TextComponent> lang_ench = languageConf.getOrDefault(
+                    TranslateConf.languageConf_enchantment + entry.getKey().toLowerCase(),
+                    new LinkedList<TextComponent>(){{add(new TextComponent(entry.getKey().substring(2)));}}
+                    );
             tc = formatComponents(lang_ench);
             tc.addExtra(":\n");
             result.add(tc);
@@ -264,23 +267,26 @@ public class MendingTool {
         Map<String, Object> conf = MendingToolsMain.getInstance().getCachedConfig();
         ItemStack result = new ItemStack(Material.getMaterial(material));
         ItemMeta im = result.getItemMeta();
-        List<String> lore = im.getLore();
-        if (lore == null)
-            lore = new LinkedList<>();
-        lore.add(playerName);
-        im.setLore(lore);
+        List<String> lore = new LinkedList<>();
+
         NamespacedKey key = MendingToolsMain.getInstance().getNBT_key();
         im.getPersistentDataContainer().set(key, PersistentDataType.LONG, id);
         Damageable damage = (Damageable) im;
         damage.setDamage(result.getData().getItemType().getMaxDurability() - (Integer) conf.get(BaseConfig_EN.option_restoreTool_durability.key()));
         result.setItemMeta(im);
-        Enchantment ench;
         for (Map.Entry<String, Integer> entry : enchantments.entrySet()) {
-            ench = Enchantment.getByKey(NamespacedKey.minecraft(entry.getKey()));
-            if (ench == null)
-                continue;
-            result.addUnsafeEnchantment(ench, entry.getValue());
+            try {
+                result.addUnsafeEnchantment(Enchantment.getByKey(NamespacedKey.minecraft(entry.getKey())), entry.getValue());
+            }catch (Exception e){
+                lore.add(ChatColor.translateAlternateColorCodes('&', entry.getKey())+" "+ MTListener.int2roman(entry.getValue()));
+            }
         }
+        if (lore.size()>0)
+            lore.add("");
+        lore.add(playerName);
+        im = result.getItemMeta();
+        im.setLore(lore);
+        result.setItemMeta(im);
         return result;
     }
 
@@ -329,13 +335,13 @@ public class MendingTool {
     }
 
     private double calcMoney(MendingBlueprint blueprint, String enchantment, int currlevel) {
-        Enchantment ench = Enchantment.getByKey(NamespacedKey.minecraft(enchantment));
-        MendingBlueprint.MTEnchantment blueprintEnch = blueprint.getEnchantment(ench);
+//        Enchantment ench = Enchantment.getByKey(NamespacedKey.minecraft(enchantment));
+        MendingBlueprint.MTEnchantment blueprintEnch = blueprint.getEnchantment(enchantment);
         double moneyValue = 0;
         if (blueprintEnch.getMoney() == null)
             return moneyValue;
         for (int intermediateLevel = currlevel + 1; intermediateLevel <= currlevel + 1; intermediateLevel++) {
-            if (!blueprint.upgradeAllowed(ench, intermediateLevel)) {
+            if (!blueprint.upgradeAllowed(enchantment, intermediateLevel)) {
                 break;
             }
             Double dLevel = (double) intermediateLevel;

@@ -140,7 +140,8 @@ public class mtDeleteTool extends mtCommands {
         if (!removedItem) {
             sendErrorMessage(commandSender, BaseConfig_EN.EN.languageConf_error_removingItem.key(),
                     new Tuple<>("%ID%", String.valueOf(tool.getID())),
-                    new Tuple<>("%PLAYER%", op.getName()),
+//                    op is null error
+                    new Tuple<>("%PLAYER%", p.getName()),
                     new Tuple<>("%PREFIX%", (String) MendingToolsMain.getInstance().getCachedConfig().get(BaseConfig_EN.languageConf_prefix.key())));
         }
         return false;

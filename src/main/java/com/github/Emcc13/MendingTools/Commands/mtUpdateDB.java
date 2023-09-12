@@ -126,7 +126,7 @@ public class mtUpdateDB extends mtCommands {
                 continue;
             boolean isOk = true;
             for (MendingBlueprint.MTEnchantment ench : mb.getEnchantments()) {
-                ench_lvl = isEnch.get(ench.getEnchantment().getKey().getKey());
+                ench_lvl = isEnch.get(ench.getEnchantment());
                 if (ench_lvl!=null &&
                         ench.getMaxlevel()>=ench_lvl &&
                         ench.getLevel()<= ench_lvl

@@ -4,9 +4,11 @@ import com.github.Emcc13.MendingTools.BookGUI.MendingBlueprint;
 import com.github.Emcc13.MendingTools.BookGUI.MendingTool;
 import com.github.Emcc13.MendingTools.Config.BaseConfig_EN;
 import com.github.Emcc13.MendingTools.Config.TranslateConf;
+import com.github.Emcc13.MendingTools.Listener.MTListener;
 import com.github.Emcc13.MendingTools.Util.Equationparser;
 import com.github.Emcc13.MendingTools.Util.Tuple;
 import com.github.Emcc13.MendingToolsMain;
+import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.Bukkit;
 import org.bukkit.NamespacedKey;
@@ -76,16 +78,21 @@ public class mtUpgradeTool extends mtCommands {
             return false;
         }
         String enchantment = args[1].toLowerCase();
-        Enchantment ench = Enchantment.getByKey(NamespacedKey.minecraft(enchantment));
-        List<TextComponent> lang_ench = main.getLanguageConfig().get(TranslateConf.languageConf_enchantment + enchantment);
+//        Enchantment ench = Enchantment.getByKey(NamespacedKey.minecraft(enchantment));
+        List<TextComponent> lang_ench = main.getLanguageConfig().getOrDefault(
+                TranslateConf.languageConf_enchantment + enchantment,
+                new LinkedList<TextComponent>() {{
+                    add(new TextComponent(enchantment.substring(2)));
+                }}
+        );
         String lang_ench_str = formatComponents(lang_ench).toPlainText();
-        if (ench == null) {
-            sendErrorMessage(commandSender, BaseConfig_EN.EN.languageConf_error_noSuchEnchantment.key(),
-                    new Tuple<>("%ENCH%", args[1]),
-                    new Tuple<>("%DISP-ENCH%", lang_ench_str),
-                    new Tuple<>("%PREFIX%", (String) MendingToolsMain.getInstance().getCachedConfig().get(BaseConfig_EN.languageConf_prefix.key())));
-            return false;
-        }
+//        if (ench == null) {
+//            sendErrorMessage(commandSender, BaseConfig_EN.EN.languageConf_error_noSuchEnchantment.key(),
+//                    new Tuple<>("%ENCH%", args[1]),
+//                    new Tuple<>("%DISP-ENCH%", lang_ench_str),
+//                    new Tuple<>("%PREFIX%", (String) MendingToolsMain.getInstance().getCachedConfig().get(BaseConfig_EN.languageConf_prefix.key())));
+//            return false;
+//        }
         int level;
         try {
             level = Integer.parseInt(args[2]);
@@ -142,13 +149,13 @@ public class mtUpgradeTool extends mtCommands {
             p_withInv = p_other;
         }
 
-        int currentLevel = tool.getEnchantmentLevel(ench.getKey().getKey());
+        int currentLevel = tool.getEnchantmentLevel(enchantment);
         int runningLevel = currentLevel;
 
-        MendingBlueprint.MTEnchantment blueprintEnch = blueprint.getEnchantment(ench);
+        MendingBlueprint.MTEnchantment blueprintEnch = blueprint.getEnchantment(enchantment);
         double moneyValue = 0;
         for (int intermediateLevel = currentLevel + 1; intermediateLevel <= level; intermediateLevel++) {
-            if (!blueprint.upgradeAllowed(ench, intermediateLevel)) {
+            if (!blueprint.upgradeAllowed(enchantment, intermediateLevel)) {
                 break;
             }
             Double dLevel = (double) intermediateLevel;
@@ -158,7 +165,7 @@ public class mtUpgradeTool extends mtCommands {
                     put("%" + entry.getKey() + "%", (double) entry.getValue());
                 }
             }});
-            if (main.getEconomy().getBalance(p_withInv) <= moneyValue) {
+            if (main.getEconomy().getBalance(p_withInv) < moneyValue) {
                 break;
             }
             main.getEconomy().withdrawPlayer(p_withInv, moneyValue);
@@ -194,7 +201,20 @@ public class mtUpgradeTool extends mtCommands {
             if (!id.equals(is_id)) {
                 return;
             }
-            itemStack.addUnsafeEnchantment(ench, finalLevel);
+            try {
+                itemStack.addUnsafeEnchantment(Enchantment.getByKey(NamespacedKey.minecraft(enchantment)), finalLevel);
+            } catch (IllegalArgumentException e) {
+                List<String> lore = new LinkedList<>();
+                for (String line : im.getLore()){
+                    if (line.length() > 0 && line.substring(1).startsWith(enchantment.substring(1))){
+                        lore.add(ChatColor.translateAlternateColorCodes('&', enchantment + " " + MTListener.int2roman(finalLevel)));
+                    }else{
+                        lore.add(line);
+                    }
+                }
+                im.setLore(lore);
+                itemStack.setItemMeta(im);
+            }
         };
         if (finalLevel < level) {
             sendErrorMessage(commandSender, BaseConfig_EN.EN.languageConf_error_notEnoughMoney.key(),
@@ -217,7 +237,7 @@ public class mtUpgradeTool extends mtCommands {
                 main.getOpenInv().unload(op);
             }
         }
-        TextComponent message = formatComponents((List<TextComponent>)main.getCachedConfig().
+        TextComponent message = formatComponents((List<TextComponent>) main.getCachedConfig().
                         get(BaseConfig_EN.EN.languageConf_text_upgradedTool.key()),
                 new Tuple<>("%PREFIX%", (String) MendingToolsMain.getInstance().getCachedConfig().get(BaseConfig_EN.languageConf_prefix.key())),
                 new Tuple<>("%ID%", String.valueOf(String.valueOf(id))),
@@ -227,7 +247,6 @@ public class mtUpgradeTool extends mtCommands {
                 new Tuple<>("%LEVEL%", String.valueOf(finalLevel))
         );
         p_withInv.spigot().sendMessage(message);
-        // TODO: send info message
         return false;
     }
 
