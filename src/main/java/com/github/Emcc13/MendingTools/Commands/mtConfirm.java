@@ -17,8 +17,6 @@ import java.util.*;
 
 public class mtConfirm extends mtCommands {
     public static String COMMAND = "mt_confirm";
-
-
     public mtConfirm(MendingToolsMain main) {
         super(main);
     }

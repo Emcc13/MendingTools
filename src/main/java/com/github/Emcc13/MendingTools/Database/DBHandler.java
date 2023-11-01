@@ -200,7 +200,7 @@ public class DBHandler {
         if (connect() != null){
             try {
                 return connection.prepareStatement(
-                        "UPDATE Enchantments SET Level=? WHERE ID=? AND Name=?;");
+                        "INSERT OR REPLACE INTO Enchantments (Level, ID, Name) VALUES (?, ?, ?);");
             } catch (SQLException e) {
                 return null;
             }

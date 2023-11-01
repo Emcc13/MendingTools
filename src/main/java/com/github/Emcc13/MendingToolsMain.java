@@ -4,8 +4,10 @@ import com.github.Emcc13.MendingTools.Commands.*;
 import com.github.Emcc13.MendingTools.Config.BaseConfig_EN;
 import com.github.Emcc13.MendingTools.Config.BlueprintConfig;
 import com.github.Emcc13.MendingTools.Config.TranslateConf;
+import com.github.Emcc13.MendingTools.DM_Requirements.PersistentMetaHandler;
 import com.github.Emcc13.MendingTools.Database.DBHandler;
 import com.github.Emcc13.MendingTools.Listener.MTListener;
+import com.github.Emcc13.MendingTools.Util.VaultHook;
 import com.lishid.openinv.IOpenInv;
 import net.md_5.bungee.api.chat.TextComponent;
 import net.milkbowl.vault.economy.Economy;
@@ -31,6 +33,9 @@ public class MendingToolsMain extends JavaPlugin {
     private IOpenInv openInv;
     private mtCommands generalCommand;
 
+    private PersistentMetaHandler persistentMetaHandler;
+    private VaultHook vaultHook;
+
     public Map<String, CommandExecutor> commands;
 
     public MendingToolsMain() {
@@ -38,24 +43,6 @@ public class MendingToolsMain extends JavaPlugin {
     }
 
     public void onEnable() {
-//        try {
-//            this.cachedConfig = BaseConfig_EN.getConfig(this);
-//        } catch (Exception e) {
-//            Bukkit.getLogger().log(Level.SEVERE, "[MT ERROR] Failed to load config! Change it and reload it.");
-//        }
-//        try {
-//            this.blueprintConfig = new BlueprintConfig((String) cachedConfig.get(
-//                    BaseConfig_EN.mendingToolBlueprintFile.key()));
-//        } catch (Exception e) {
-//            Bukkit.getLogger().log(Level.SEVERE, "[MT ERROR] Failed to load blueprints! Change it and reload it.");
-//        }
-//        try {
-//            this.languageConfig = TranslateConf.getConfig(this.cachedConfig);
-//        } catch (Exception e) {
-//            Bukkit.getLogger().log(Level.SEVERE, "[MT ERROR] Failed to load language config! Change it and reload it.");
-//        }
-//        this.dbhandler = new DBHandler(this);
-//        this.setCommandPermissions();
         this.economy = Objects.requireNonNull(this.getServer().getServicesManager().getRegistration(Economy.class)).getProvider();
         this.openInv = (IOpenInv) this.getServer().getPluginManager().getPlugin("OpenInv");
         this.loadCachedConfig();
@@ -63,6 +50,14 @@ public class MendingToolsMain extends JavaPlugin {
         this.registerCommands();
         this.NBT_key = new NamespacedKey(this, "ID");
         this.addListener();
+
+        this.persistentMetaHandler = new PersistentMetaHandler();
+        if (Bukkit.getPluginManager().getPlugin("Vault") != null) {
+            this.vaultHook = new VaultHook();
+            if (this.vaultHook.hooked()) {
+                this.getLogger().log(Level.INFO,  "Successfully hooked into Vault!" );
+            }
+        }
     }
 
     public void onDisable() {
@@ -87,6 +82,7 @@ public class MendingToolsMain extends JavaPlugin {
         this.commands.put(mtConfirm.COMMAND, new mtConfirm(this));
         this.commands.put(mtVersion.COMMAND, new mtVersion(this));
         this.commands.put(mtUpdateDB.COMMAND, new mtUpdateDB(this));
+        this.commands.put(mtUpdateInventory.COMMAND, new mtUpdateInventory(this));
 
         this.generalCommand = new MendingToolsCMD(this);
     }
@@ -125,6 +121,7 @@ public class MendingToolsMain extends JavaPlugin {
             this.blueprintConfig = new BlueprintConfig((String) cachedConfig.get(
                     BaseConfig_EN.mendingToolBlueprintFile.key()));
         } catch (Exception e) {
+            e.printStackTrace();
             Bukkit.getLogger().log(Level.SEVERE, "[MT ERROR] Failed to load blueprints! Change it and reload it.");
         }
         try {
@@ -170,4 +167,11 @@ public class MendingToolsMain extends JavaPlugin {
         return this.openInv;
     }
 
+    public PersistentMetaHandler getPersistentMetaHandler(){
+        return this.persistentMetaHandler;
+    }
+
+    public VaultHook getVault() {
+        return this.vaultHook;
+    }
 }

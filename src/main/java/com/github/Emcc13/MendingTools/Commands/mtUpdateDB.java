@@ -44,8 +44,6 @@ public class mtUpdateDB extends mtCommands {
     public void setTabComplete() {
         this.command_complete_list = null;
     }
-
-
     @Override
     protected boolean runCommandLater(CommandSender commandSender, Command cmd, String cmdname, String[] args) {
         if (commandSender instanceof Player && !(commandSender.hasPermission(permission) || commandSender.isOp())) {

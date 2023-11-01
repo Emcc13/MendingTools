@@ -16,6 +16,11 @@ public enum DE_config implements ConfigInterface {
             put("text", "%PREFIX% Datenbankaktion fehlgeschlagen!");
         }});
     }}),
+    languageConf_error_requirement(new ArrayList<Map<String, String>>(){{
+        add(new HashMap<String, String>(){{
+            put("text", "%PREFIX% You don't have the necessary requirements!");
+        }});
+    }}),
     languageConf_error_noSuchTool(new ArrayList<Map<String, String>>(){{
         add(new HashMap<String, String>(){{
             put("text", "%PREFIX% Es existiert kein Werkzeug mit der ID: %ID%!");
@@ -34,6 +39,11 @@ public enum DE_config implements ConfigInterface {
     languageConf_error_notPlayed(new ArrayList<Map<String, String>>(){{
         add(new HashMap<String, String>(){{
             put("text", "%PREFIX% %PLAYER% hat bisher noch nicht auf dem Server gespielt! Bitte dies überprüfen und die Aktion manuell ausführen!");
+        }});
+    }}),
+    languageConf_error_notOnline(new ArrayList<Map<String, String>>() {{
+        add(new HashMap<String, String>() {{
+            put("text", "%PREFIX% %PLAYER% ist derzeit nicht auf dem Server eingeloggt!");
         }});
     }}),
     languageConf_error_loadOfflinePlayer(new ArrayList<Map<String, String>>(){{

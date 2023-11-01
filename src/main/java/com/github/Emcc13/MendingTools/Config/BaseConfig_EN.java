@@ -46,6 +46,11 @@ public enum BaseConfig_EN implements ConfigInterface {
                 put("text", "%PREFIX% Failed to perform database action!");
             }});
         }}),
+        languageConf_error_requirement(new ArrayList<Map<String, String>>(){{
+            add(new HashMap<String, String>(){{
+                put("text", "%PREFIX% You don't have the necessary requirements!");
+            }});
+        }}),
         languageConf_error_noSuchTool(new ArrayList<Map<String, String>>() {{
             add(new HashMap<String, String>() {{
                 put("text", "%PREFIX% There is no such tool %ID%!");
@@ -66,6 +71,11 @@ public enum BaseConfig_EN implements ConfigInterface {
                 put("text", "%PREFIX% %PLAYER% has not played on the server! Please check this and perform the action by hand if necessary!");
             }});
         }}),
+        languageConf_error_notOnline(new ArrayList<Map<String, String>>() {{
+            add(new HashMap<String, String>() {{
+                put("text", "%PREFIX% %PLAYER% is currently not on the server!");
+            }});
+        }}),
         languageConf_error_loadOfflinePlayer(new ArrayList<Map<String, String>>() {{
             add(new HashMap<String, String>() {{
                 put("text", "%PREFIX% Failed to load offline Player: %PLAYER%! Please check this and perform the action by hand if necessary!");
@@ -81,6 +91,11 @@ public enum BaseConfig_EN implements ConfigInterface {
                 put("text", "%PREFIX% %PLAYER% has not enough money; required: %MONEY%.");
             }});
         }}),
+//        languageConf_error_dontMeetRequirements(new ArrayList<Map<String, String>>(){{
+//            add(new HashMap<String, String>(){{
+//                put("text", "PREFIX% You don't meet the requirements!");
+//            }});
+//        }}),
         languageConf_error_removingItem(new ArrayList<Map<String, String>>() {{
             add(new HashMap<String, String>() {{
                 put("text", "%PREFIX% Failed to remove tool %ID% from player %PLAYER%!");
@@ -408,8 +423,6 @@ public enum BaseConfig_EN implements ConfigInterface {
                 cachedConfig.putAll(parse_language(EN.class, config, altColor_char));
                 break;
         }
-
-
         config.options().copyDefaults(true);
         main.saveConfig();
         return cachedConfig;

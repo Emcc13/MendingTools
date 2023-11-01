@@ -155,7 +155,7 @@ public class mtUpgradeTool extends mtCommands {
         MendingBlueprint.MTEnchantment blueprintEnch = blueprint.getEnchantment(enchantment);
         double moneyValue = 0;
         for (int intermediateLevel = currentLevel + 1; intermediateLevel <= level; intermediateLevel++) {
-            if (!blueprint.upgradeAllowed(enchantment, intermediateLevel)) {
+            if (!blueprint.upgradeAllowed(p_withInv, enchantment, intermediateLevel)) {
                 break;
             }
             Double dLevel = (double) intermediateLevel;
@@ -217,7 +217,7 @@ public class mtUpgradeTool extends mtCommands {
             }
         };
         if (finalLevel < level) {
-            sendErrorMessage(commandSender, BaseConfig_EN.EN.languageConf_error_notEnoughMoney.key(),
+            sendErrorMessage(commandSender, BaseConfig_EN.EN.languageConf_error_requirement.key(),
                     new Tuple<>("%PLAYER%", p_withInv.getName()),
                     new Tuple<>("%MONEY%", String.format("%,.0f", moneyValue)),
                     new Tuple<>("%PREFIX%", (String) MendingToolsMain.getInstance().getCachedConfig().get(BaseConfig_EN.languageConf_prefix.key())));

@@ -69,10 +69,6 @@ public class BlueprintConfig {
                 Bukkit.getLogger().log(Level.SEVERE,"[ERROR MT] Failed to load any blueprints!");
             }
         }
-
-
-
-
 //        File customXML = new File(MendingToolsMain.getInstance().getDataFolder().getAbsolutePath(),"blueprints.xml");
 
 //        InputStream is = getClass().getResourceAsStream(default_file_name);

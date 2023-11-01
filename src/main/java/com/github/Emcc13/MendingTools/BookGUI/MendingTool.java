@@ -240,8 +240,10 @@ public class MendingTool {
             result.add(tc);
             tc = new TextComponent("  " + entry.getValue());
             result.add(tc);
-            if (blueprint != null && blueprint.isUpgradeable(entry.getKey(), entry.getValue()) &&
-                    blueprint.getEnchantment(entry.getKey()).getMoney() != null) {
+            if (blueprint != null
+                    && blueprint.isUpgradeable(entry.getKey(), entry.getValue())
+                    && (blueprint.getEnchantment(entry.getKey()).getMoney() != null || blueprint.getEnchantment(entry.getKey()).getRequirements().size() > 0)
+            ) {
                 tc = new TextComponent(" ");
                 tc.addExtra(formatComponents(
                         (List<TextComponent>) conf.get(BaseConfig_EN.EN.bookButton_upgrade_confirm.key()),
@@ -340,18 +342,17 @@ public class MendingTool {
         double moneyValue = 0;
         if (blueprintEnch.getMoney() == null)
             return moneyValue;
-        for (int intermediateLevel = currlevel + 1; intermediateLevel <= currlevel + 1; intermediateLevel++) {
-            if (!blueprint.upgradeAllowed(enchantment, intermediateLevel)) {
-                break;
+        int intermediateLevel = currlevel + 1;
+//        if (!blueprint.upgradeAllowed(p, enchantment, intermediateLevel)) {
+//            return moneyValue;
+//        }
+        Double dLevel = (double) intermediateLevel;
+        moneyValue += Equationparser.eval(blueprintEnch.getMoney(), new HashMap<String, Double>() {{
+            put("%LEVEL%", dLevel);
+            for (Map.Entry<String, Integer> enchantment_ : enchantments.entrySet()) {
+                put("%" + enchantment_.getKey() + "%", (double) enchantment_.getValue());
             }
-            Double dLevel = (double) intermediateLevel;
-            moneyValue += Equationparser.eval(blueprintEnch.getMoney(), new HashMap<String, Double>() {{
-                put("%LEVEL%", dLevel);
-                for (Map.Entry<String, Integer> enchantment_ : enchantments.entrySet()) {
-                    put("%" + enchantment_.getKey() + "%", (double) enchantment_.getValue());
-                }
-            }});
-        }
+        }});
         return moneyValue;
     }
 }

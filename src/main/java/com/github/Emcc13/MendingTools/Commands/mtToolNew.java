@@ -101,6 +101,12 @@ public class mtToolNew extends mtCommands {
             return false;
         }
 
+        if (!blueprint.checkRequirements(player)){
+            sendErrorMessage(commandSender, BaseConfig_EN.EN.languageConf_error_requirement.key(),
+                    new Tuple<>("%PREFIX%", (String) MendingToolsMain.getInstance().getCachedConfig().get(BaseConfig_EN.languageConf_prefix.key())));
+            return false;
+        }
+
         ItemStack tool = blueprint.getItemStack();
 
         ItemMeta im = tool.getItemMeta();
