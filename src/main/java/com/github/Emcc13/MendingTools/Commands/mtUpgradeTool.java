@@ -82,7 +82,7 @@ public class mtUpgradeTool extends mtCommands {
         List<TextComponent> lang_ench = main.getLanguageConfig().getOrDefault(
                 TranslateConf.languageConf_enchantment + enchantment,
                 new LinkedList<TextComponent>() {{
-                    add(new TextComponent(enchantment.substring(2)));
+                    add(new TextComponent(enchantment));
                 }}
         );
         String lang_ench_str = formatComponents(lang_ench).toPlainText();

@@ -2,6 +2,7 @@ package com.github.Emcc13.MendingTools.Util;
 
 import com.github.Emcc13.MendingTools.BookGUI.MendingBlueprint;
 import com.github.Emcc13.MendingTools.BookGUI.MendingTool;
+import com.github.Emcc13.MendingTools.Config.BaseConfig_EN;
 import com.github.Emcc13.MendingToolsMain;
 import org.bukkit.ChatColor;
 import org.bukkit.enchantments.Enchantment;
@@ -10,10 +11,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataType;
 
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.function.Consumer;
 import java.util.logging.Level;
 
@@ -44,8 +42,9 @@ public class InventoryUtil {
             }
 
             MendingBlueprint mb;
+            MendingTool mt=null;
             if (id != null){
-                MendingTool mt = main.get_db().getTool(id);
+                mt = main.get_db().getTool(id);
                 if (mt==null){
                     main.getLogger().log(Level.WARNING, "Unregistered Tool with ID: "+id+" detected! Is the database corrupted?");
                     id = null;
@@ -54,30 +53,6 @@ public class InventoryUtil {
                         tools.remove(id);
                     else
                         main.getLogger().log(Level.SEVERE, "Duplicated tool detected! ID: " + id);
-
-                    Map<String, Integer> new_lore_enchantments = new HashMap<>();
-                    Integer ench_level;
-                    String ench_text;
-                    for (String lore_line : lore){
-                        if (lore_line.startsWith("&7")){
-                            String[]lore_ench = lore_line.split(" ");
-                            ench_text = lore_ench[0];
-                            try {
-                                ench_level = lore_ench.length>1?MendingBlueprint.roman2int(lore_ench[1]):1;
-                            }catch (Exception e){
-                                ench_level = 0;
-                            }
-                            Integer current_level = mt.getEnchantmentLevel(ench_text);
-                            if (current_level==null || current_level<ench_level){
-                                new_lore_enchantments.put(ench_text, ench_level);
-                            }
-                        }
-                    }
-                    for (Map.Entry<String, Integer> entry : new_lore_enchantments.entrySet()){
-                        main.getLogger().log(Level.FINE, "Set external updated lore enchantment '"+
-                                entry.getKey()+"' for tool '"+id+"' to level '"+entry.getValue()+"'!");
-                        main.get_db().upgradeToolEnchantment(id, entry.getKey(), entry.getValue());
-                    }
                 }
             }
             if (id == null){
@@ -99,6 +74,33 @@ public class InventoryUtil {
                     return;
                 meta.getPersistentDataContainer().set(main.getNBT_key(), PersistentDataType.LONG, id);
                 itemStack.setItemMeta(meta);
+
+                mt = main.get_db().getTool(id);
+            }
+            Map customEnchantments = (Map)main.getCachedConfig().get(BaseConfig_EN.customEnchantments.key());
+            Map<String, Integer> new_lore_enchantments = new HashMap<>();
+            Integer ench_level;
+            String ench_text;
+            for (String lore_line : lore){
+                lore_line = ChatColor.stripColor(lore_line);
+                String[]lore_ench = lore_line.split(" ");
+                ench_text = lore_ench[0];
+                if (customEnchantments.containsKey(ench_text)){
+                    try {
+                        ench_level = lore_ench.length>1?MendingBlueprint.roman2int(lore_ench[1]):1;
+                    }catch (Exception e){
+                        ench_level = 0;
+                    }
+                    Integer current_level = mt.getEnchantmentLevel(ench_text);
+                    if (current_level==null || current_level<ench_level){
+                        new_lore_enchantments.put(ench_text, ench_level);
+                    }
+                }
+            }
+            for (Map.Entry<String, Integer> entry : new_lore_enchantments.entrySet()){
+                main.getLogger().log(Level.FINE, "Set external updated lore enchantment '"+
+                        entry.getKey()+"' for tool '"+id+"' to level '"+entry.getValue()+"'!");
+                main.get_db().upgradeToolEnchantment(id, entry.getKey(), entry.getValue());
             }
         };
         p.getInventory().forEach(item_register);

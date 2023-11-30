@@ -233,8 +233,10 @@ public class MendingTool {
         for (Map.Entry<String, Integer> entry : enchantments.entrySet()) {
             List<TextComponent> lang_ench = languageConf.getOrDefault(
                     TranslateConf.languageConf_enchantment + entry.getKey().toLowerCase(),
-                    new LinkedList<TextComponent>(){{add(new TextComponent(entry.getKey().substring(2)));}}
-                    );
+                    new LinkedList<TextComponent>() {{
+                        add(new TextComponent(entry.getKey()));
+                    }}
+            );
             tc = formatComponents(lang_ench);
             tc.addExtra(":\n");
             result.add(tc);
@@ -279,11 +281,14 @@ public class MendingTool {
         for (Map.Entry<String, Integer> entry : enchantments.entrySet()) {
             try {
                 result.addUnsafeEnchantment(Enchantment.getByKey(NamespacedKey.minecraft(entry.getKey())), entry.getValue());
-            }catch (Exception e){
-                lore.add(ChatColor.translateAlternateColorCodes('&', entry.getKey())+" "+ MTListener.int2roman(entry.getValue()));
+            } catch (Exception e) {
+                lore.add(ChatColor.translateAlternateColorCodes('&',
+                        ((Map) MendingToolsMain.getInstance().getCachedConfig().
+                                get(BaseConfig_EN.customEnchantments.key())).get(entry.getKey()) +
+                                entry.getKey()) + " " + MTListener.int2roman(entry.getValue()));
             }
         }
-        if (lore.size()>0)
+        if (lore.size() > 0)
             lore.add("");
         lore.add(playerName);
         im = result.getItemMeta();

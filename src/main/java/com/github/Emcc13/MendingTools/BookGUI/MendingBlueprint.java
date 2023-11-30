@@ -221,8 +221,10 @@ public class MendingBlueprint {
                 try{
                     result.addUnsafeEnchantment(Enchantment.getByKey(NamespacedKey.minecraft(enchantment.enchantment)), enchantment.level);
                 }catch (Exception e){
-
-                    lore.add(ChatColor.translateAlternateColorCodes('&',enchantment.enchantment+" "+ MTListener.int2roman(enchantment.level)));
+                    lore.add(ChatColor.translateAlternateColorCodes('&',
+                            ((Map)MendingToolsMain.getInstance().getCachedConfig().
+                                    get(BaseConfig_EN.customEnchantments.key())).get(enchantment.enchantment)+
+                            enchantment.enchantment+" "+ MTListener.int2roman(enchantment.level)));
                 }
             }
         }
@@ -313,8 +315,9 @@ public class MendingBlueprint {
         Map<String, Integer> isEnch = itemStack.getEnchantments().entrySet().stream()
                 .collect(Collectors.toMap(entry -> entry.getKey().getKey().getKey(), Map.Entry::getValue));
         for (String line : itemStack.getItemMeta().getLore()){
-            if (line.startsWith("&7")){
-                String[]ench = line.split(" ");
+            String[]ench = line.split(" ");
+            Map customEnchantments = (Map)main.getCachedConfig().get(BaseConfig_EN.customEnchantments.key());
+            if (customEnchantments.containsKey(ench[0])){
                 try {
                     isEnch.put(ench[0], ench.length>1?roman2int(ench[1]):1);
                 }catch (Exception e){}

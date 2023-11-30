@@ -8,6 +8,7 @@ import net.md_5.bungee.api.chat.TextComponent;
 import net.md_5.bungee.api.chat.hover.content.Text;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.Configuration;
+import org.bukkit.configuration.MemorySection;
 import org.yaml.snakeyaml.Yaml;
 
 import java.util.*;
@@ -33,6 +34,7 @@ public enum BaseConfig_EN implements ConfigInterface {
     option_restoreTool_durability(15),
     option_netherite_equal_diamond("option.netherite_equal_diamond", true),
     languageConf_prefix("[MT] "),
+    customEnchantments(new HashMap<String, String>(){{put("sticky", "&7"); put("veins", "&7");}}),
     ;
 
     public enum EN implements ConfigInterface {
@@ -413,6 +415,13 @@ public enum BaseConfig_EN implements ConfigInterface {
         cachedConfig.put(languageConf_prefix.key(),
                 ChatColor.translateAlternateColorCodes(altColor_char,
                         (String) cachedConfig.get(languageConf_prefix.key())));
+        try {
+            MemorySection ms = (MemorySection) cachedConfig.get(customEnchantments.key());
+            cachedConfig.put(customEnchantments.key(), ms.getValues(true));
+        } catch (Exception e){
+            main.getLogger().log(Level.WARNING, "Failed to load "+customEnchantments.key());
+            cachedConfig.put(customEnchantments.key(), (HashMap) customEnchantments.value());
+        }
         config.addDefaults(cachedConfig);
 
         switch ((String) cachedConfig.get(language.key())) {

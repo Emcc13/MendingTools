@@ -5,8 +5,7 @@ import com.github.Emcc13.MendingTools.Util.InventoryUtil;
 import com.github.Emcc13.MendingToolsMain;
 import org.apache.commons.lang.ArrayUtils;
 import org.bukkit.Material;
-import org.bukkit.entity.HumanEntity;
-import org.bukkit.entity.Player;
+import org.bukkit.entity.*;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
@@ -157,6 +156,11 @@ public class MTListener implements Listener {
 //        if (!(event.getRightClicked() instanceof ItemFrame)){
 //            return;
 //        }
+        if (event.getRightClicked() instanceof Sheep ||
+                event.getRightClicked() instanceof MushroomCow ||
+                event.getRightClicked() instanceof Snowman
+        )
+            return;
         ItemStack item = event.getPlayer().getInventory().getItemInMainHand();
         if (item.getType() == Material.AIR)
             item = event.getPlayer().getInventory().getItemInOffHand();
