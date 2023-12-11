@@ -142,6 +142,11 @@ public class MTListener implements Listener {
 //        if (!(event.getRightClicked() instanceof ItemFrame)){
 //            return;
 //        }
+        if (event.getRightClicked() instanceof Sheep ||
+                event.getRightClicked() instanceof MushroomCow ||
+                event.getRightClicked() instanceof Snowman
+        )
+            return;
         ItemStack item = event.getPlayer().getInventory().getItemInMainHand();
         if (item.getType() == Material.AIR)
             item = event.getPlayer().getInventory().getItemInOffHand();
@@ -156,11 +161,11 @@ public class MTListener implements Listener {
 //        if (!(event.getRightClicked() instanceof ItemFrame)){
 //            return;
 //        }
-        if (event.getRightClicked() instanceof Sheep ||
-                event.getRightClicked() instanceof MushroomCow ||
-                event.getRightClicked() instanceof Snowman
-        )
-            return;
+//        if (event.getRightClicked() instanceof Sheep ||
+//                event.getRightClicked() instanceof MushroomCow ||
+//                event.getRightClicked() instanceof Snowman
+//        )
+//            return;
         ItemStack item = event.getPlayer().getInventory().getItemInMainHand();
         if (item.getType() == Material.AIR)
             item = event.getPlayer().getInventory().getItemInOffHand();
@@ -234,7 +239,9 @@ public class MTListener implements Listener {
         return false;
     }
 
-    public static String int2roman(int value){
+    public static String int2roman(Integer value){
+        if (value==null)
+            return "";
         String[] thousands = {"", "M", "MM", "MMM"};
         String[] hundreds = {"", "C", "CC", "CCC", "CD", "D", "DC", "DCC", "DCCC", "CM"};
         String[] tens = {"", "X", "XX", "XXX", "XL", "L", "LX", "LXX", "LXXX", "XC"};

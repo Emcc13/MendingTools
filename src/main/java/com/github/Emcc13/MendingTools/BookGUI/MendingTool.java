@@ -238,9 +238,11 @@ public class MendingTool {
                     }}
             );
             tc = formatComponents(lang_ench);
-            tc.addExtra(":\n");
-            result.add(tc);
-            tc = new TextComponent("  " + entry.getValue());
+            if (entry.getValue() > 0) {
+                tc.addExtra(":\n");
+                result.add(tc);
+                tc = new TextComponent("  " + entry.getValue());
+            }
             result.add(tc);
             if (blueprint != null
                     && blueprint.isUpgradeable(entry.getKey(), entry.getValue())
@@ -285,7 +287,8 @@ public class MendingTool {
                 lore.add(ChatColor.translateAlternateColorCodes('&',
                         ((Map) MendingToolsMain.getInstance().getCachedConfig().
                                 get(BaseConfig_EN.customEnchantments.key())).get(entry.getKey()) +
-                                entry.getKey()) + " " + MTListener.int2roman(entry.getValue()));
+                                entry.getKey() +
+                                (entry.getValue() != null ? " " + MTListener.int2roman(entry.getValue()) : "")));
             }
         }
         if (lore.size() > 0)

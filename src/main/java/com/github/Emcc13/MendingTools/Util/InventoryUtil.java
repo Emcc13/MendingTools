@@ -16,7 +16,7 @@ import java.util.function.Consumer;
 import java.util.logging.Level;
 
 public class InventoryUtil {
-    public static void scanPlayerInventory(Player p){
+    public static void scanPlayerInventory(Player p) {
         MendingToolsMain main = MendingToolsMain.getInstance();
         Enchantment ench = Enchantment.MENDING;
         Map<Long, MendingTool> tools = new HashMap<Long, MendingTool>();
@@ -42,20 +42,20 @@ public class InventoryUtil {
             }
 
             MendingBlueprint mb;
-            MendingTool mt=null;
-            if (id != null){
+            MendingTool mt = null;
+            if (id != null) {
                 mt = main.get_db().getTool(id);
-                if (mt==null){
-                    main.getLogger().log(Level.WARNING, "Unregistered Tool with ID: "+id+" detected! Is the database corrupted?");
+                if (mt == null) {
+                    main.getLogger().log(Level.WARNING, "Unregistered Tool with ID: " + id + " detected! Is the database corrupted?");
                     id = null;
-                }else {
+                } else {
                     if (tools.containsKey(id))
                         tools.remove(id);
                     else
                         main.getLogger().log(Level.SEVERE, "Duplicated tool detected! ID: " + id);
                 }
             }
-            if (id == null){
+            if (id == null) {
                 boolean has_lore = false;
                 for (String lore_line : lore) {
                     if (ChatColor.stripColor(lore_line).equals(p.getName())) {
@@ -77,29 +77,31 @@ public class InventoryUtil {
 
                 mt = main.get_db().getTool(id);
             }
-            Map customEnchantments = (Map)main.getCachedConfig().get(BaseConfig_EN.customEnchantments.key());
+            Map customEnchantments = (Map) main.getCachedConfig().get(BaseConfig_EN.customEnchantments.key());
             Map<String, Integer> new_lore_enchantments = new HashMap<>();
             Integer ench_level;
             String ench_text;
-            for (String lore_line : lore){
+            for (String lore_line : lore) {
                 lore_line = ChatColor.stripColor(lore_line);
-                String[]lore_ench = lore_line.split(" ");
+                String[] lore_ench = lore_line.split(" ");
+                if (lore_ench.length<1)
+                    continue;
                 ench_text = lore_ench[0];
-                if (customEnchantments.containsKey(ench_text)){
+                if (customEnchantments.containsKey(ench_text)) {
                     try {
-                        ench_level = lore_ench.length>1?MendingBlueprint.roman2int(lore_ench[1]):1;
-                    }catch (Exception e){
-                        ench_level = 0;
+                        ench_level = lore_ench.length > 1 ? MendingBlueprint.roman2int(lore_ench[1]) : null;
+                    } catch (Exception e) {
+                        ench_level = null;
                     }
                     Integer current_level = mt.getEnchantmentLevel(ench_text);
-                    if (current_level==null || current_level<ench_level){
+                    if (current_level == null || (ench_level != null && current_level < ench_level)) {
                         new_lore_enchantments.put(ench_text, ench_level);
                     }
                 }
             }
-            for (Map.Entry<String, Integer> entry : new_lore_enchantments.entrySet()){
-                main.getLogger().log(Level.FINE, "Set external updated lore enchantment '"+
-                        entry.getKey()+"' for tool '"+id+"' to level '"+entry.getValue()+"'!");
+            for (Map.Entry<String, Integer> entry : new_lore_enchantments.entrySet()) {
+                main.getLogger().log(Level.FINE, "Set external updated lore enchantment '" +
+                        entry.getKey() + "' for tool '" + id + "' to level '" + entry.getValue() + "'!");
                 main.get_db().upgradeToolEnchantment(id, entry.getKey(), entry.getValue());
             }
         };

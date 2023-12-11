@@ -580,7 +580,7 @@ public class DBHandler {
                 ResultSet rs_enchantments = toolsEnchantments.executeQuery();
                 while (rs_enchantments.next()) {
                     result.addEnchantment(rs_enchantments.getString(1),
-                            rs_enchantments.getInt(2));
+                            (Integer)rs_enchantments.getObject(2));
                 }
             }
         } catch (SQLException sqle) {
@@ -589,14 +589,14 @@ public class DBHandler {
         return result;
     }
 
-    public boolean upgradeToolEnchantment(long id, String enchantment, int level){
+    public boolean upgradeToolEnchantment(long id, String enchantment, Integer level){
         PreparedStatement upgradeEnchantment = getUpgradeEnchantment();
         if (upgradeEnchantment == null){
             return false;
         }
         try{
             upgradeEnchantment.clearParameters();
-            upgradeEnchantment.setInt(1, level);
+            upgradeEnchantment.setObject(1, level);
             upgradeEnchantment.setLong(2, id);
             upgradeEnchantment.setString(3, enchantment);
             upgradeEnchantment.executeUpdate();

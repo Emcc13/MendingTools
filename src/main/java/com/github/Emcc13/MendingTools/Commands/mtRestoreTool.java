@@ -112,7 +112,7 @@ public class mtRestoreTool extends mtCommands {
                 put("%RESTORES%", (double) tool.getRestores());
                 put("%#ENCH%", (double) tool.getEnchantments().size());
                 for (Map.Entry<String, Integer> entry : tool.getEnchantments().entrySet())
-                    put("%" + entry.getKey() + "%", (double) entry.getValue());
+                    put("%" + entry.getKey() + "%", entry.getValue()==null?0.0:entry.getValue().doubleValue());
             }});
             if (main.getEconomy().getBalance(p_receiver) < toPay) {
                 sendErrorMessage(commandSender, BaseConfig_EN.EN.languageConf_error_notEnoughMoney.key(),
@@ -137,7 +137,7 @@ public class mtRestoreTool extends mtCommands {
                 commands.add(formatCommand(command, p_receiver, tool, toPay,
                         new HashMap<String, String>() {{
                             for (Map.Entry<String, Integer> entry : tool.getEnchantments().entrySet())
-                                put(entry.getKey(), String.valueOf(entry.getValue()));
+                                put(entry.getKey(), (entry.getValue()==null?"1":entry.getValue().toString()));
                             put("%BPNAME%", blueprint.getName());
                             put("%BPID%", String.valueOf(blueprint.getID()));
                             put("%RESTORES%", String.valueOf(tool.getRestores()));
