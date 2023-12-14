@@ -8,13 +8,14 @@ import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
+import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataType;
 
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
+import java.util.logging.Level;
 
 public class mtToolNew extends mtCommands {
     public static String COMMAND = "mt_tool_new";
@@ -101,7 +102,7 @@ public class mtToolNew extends mtCommands {
             return false;
         }
 
-        if (!blueprint.checkRequirements(player)){
+        if (!blueprint.checkRequirements(player)) {
             sendErrorMessage(commandSender, BaseConfig_EN.EN.languageConf_error_requirement.key(),
                     new Tuple<>("%PREFIX%", (String) MendingToolsMain.getInstance().getCachedConfig().get(BaseConfig_EN.languageConf_prefix.key())));
             return false;
@@ -118,6 +119,40 @@ public class mtToolNew extends mtCommands {
         im.setLore(lore);
         im.getPersistentDataContainer().set(main.getNBT_key(), PersistentDataType.LONG, tool_id);
         tool.setItemMeta(im);
+
+        if (blueprint.getCreate_commands() != null) {
+            List<String> commands = new LinkedList<>();
+            Set<Tuple<String, String>> replacements_set = new HashSet<Tuple<String, String>>();
+            replacements_set.add(new Tuple<>("%PLAYER%", player.getName()));
+            replacements_set.add(new Tuple<>("%ID%", String.valueOf(tool_id)));
+            replacements_set.add(new Tuple<>("%BPID%", String.valueOf(blueprintID)));
+            replacements_set.add(new Tuple<>("%BPNAME%", blueprint.getName()));
+            for (Map.Entry<Enchantment, Integer> entry : tool.getEnchantments().entrySet())
+                replacements_set.add(
+                        new Tuple<String, String>(
+                                entry.getKey().toString(),
+                                entry.getValue() == null ? "1" : entry.getValue().toString()
+                        )
+                );
+            Tuple<String, String>[] replacements = replacements_set.toArray(new Tuple[0]);
+            for (String command : blueprint.getCreate_commands()) {
+                commands.add(formatString(command,
+                        replacements
+                        ));
+            }
+            Bukkit.getScheduler().runTaskLater(main, () -> {
+                String latestCommand = "";
+                try {
+                    for (String command : commands) {
+                        latestCommand = command;
+                        Bukkit.dispatchCommand(Bukkit.getConsoleSender(), command);
+                    }
+                } catch (Exception e) {
+                    Bukkit.getLogger().log(Level.WARNING, "Caught exception running: " + latestCommand);
+                    e.printStackTrace();
+                }
+            }, 0);
+        }
 
         player.getInventory().addItem(tool);
         if (offline) {

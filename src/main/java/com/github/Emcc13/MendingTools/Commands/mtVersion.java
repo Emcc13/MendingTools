@@ -6,10 +6,12 @@ import com.github.Emcc13.MendingToolsMain;
 import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
+import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.entity.Player;
 
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Level;
 
 public class mtVersion extends mtCommands {
     public static String COMMAND = "mt_version";
@@ -41,6 +43,16 @@ public class mtVersion extends mtCommands {
 
     @Override
     protected boolean runCommandLater(CommandSender commandSender, Command cmd, String cmdname, String[] args) {
+        if (commandSender instanceof ConsoleCommandSender) {
+            Map<String, Object> cached_config = main.getCachedConfig();
+            main.getLogger().log(Level.INFO,
+                    formatComponents(
+                            (List<TextComponent>) cached_config.get(BaseConfig_EN.EN.languageConf_text_version.key()),
+                            new Tuple<String, String>("%PREFIX%", (String) cached_config.get(BaseConfig_EN.languageConf_prefix.key())),
+                            new Tuple<String, String>("%VERSION%", main.getDescription().getVersion())
+                    ).toPlainText());
+            return false;
+        }
         if (!(commandSender instanceof Player) || !(commandSender.hasPermission(permission) || commandSender.isOp())) {
             noPermission(commandSender);
             return false;

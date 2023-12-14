@@ -46,8 +46,8 @@ public abstract class mtCommands implements TabExecutor {
         return null;
     }
 
-    public List<String> subCommandComplete(String[] args){
-        if (this.command_complete_list != null && args.length-1<=this.command_complete_list.length) {
+    public List<String> subCommandComplete(String[] args) {
+        if (this.command_complete_list != null && args.length - 1 <= this.command_complete_list.length) {
             return this.command_complete_list[args.length - 2];
         }
         return null;
@@ -61,12 +61,13 @@ public abstract class mtCommands implements TabExecutor {
         this.permission = (String) main.getCachedConfig().get(this.getPerm_key());
     }
 
-    public void setTabComplete(){
-        this.command_complete_list = ((List<List<String>>)main.getCachedConfig().
+    public void setTabComplete() {
+        this.command_complete_list = ((List<List<String>>) main.getCachedConfig().
                 get(this.getTabCompleteKey())).toArray(new ArrayList[]{});
     }
 
     protected abstract String getPerm_key();
+
     protected abstract String getTabCompleteKey();
 
     protected TextComponent formatComponents(List<TextComponent> template, Tuple<String, String>... replacements) {
@@ -105,11 +106,11 @@ public abstract class mtCommands implements TabExecutor {
     }
 
     protected void noPermission(CommandSender commandSender) {
-        assert commandSender instanceof Player;
-        ((Player) commandSender).spigot().sendMessage(formatComponents(
-                (List<TextComponent>) main.getCachedConfig().
-                        get(BaseConfig_EN.EN.languageConf_noPermission.key()),
-                new Tuple<>("%PREFIX%", (String) main.getCachedConfig().get(BaseConfig_EN.languageConf_prefix.key()))));
+        if (commandSender instanceof Player)
+            ((Player) commandSender).spigot().sendMessage(formatComponents(
+                    (List<TextComponent>) main.getCachedConfig().
+                            get(BaseConfig_EN.EN.languageConf_noPermission.key()),
+                    new Tuple<>("%PREFIX%", (String) main.getCachedConfig().get(BaseConfig_EN.languageConf_prefix.key()))));
     }
 
     protected void sendErrorMessage(CommandSender commandSender, String key, Tuple<String, String>... replacements) {

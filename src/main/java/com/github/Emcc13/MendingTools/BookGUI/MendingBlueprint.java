@@ -116,7 +116,8 @@ public class MendingBlueprint {
     private String name;
     private Material material;
     private String money = null;
-    private List<String> commands = null;
+    private List<String> restore_commands = null;
+    private List<String> create_commands = null;
     private Map<String, MTEnchantment> enchantments;
     private List<Requirement> requirements = null;
 
@@ -138,10 +139,14 @@ public class MendingBlueprint {
                     this.money = node.getTextContent();
                     break;
                 case "command":
-                    if (this.commands == null)
-                        this.commands = new LinkedList<>();
-                    this.commands.add(node.getTextContent());
+                    if (this.restore_commands == null)
+                        this.restore_commands = new LinkedList<>();
+                    this.restore_commands.add(node.getTextContent());
                     break;
+                case "newcommand":
+                    if (this.create_commands == null)
+                        this.create_commands = new LinkedList<>();
+                    this.create_commands.add(node.getTextContent());
                 case "enchantment":
                     if (node.getNodeType() != Node.ELEMENT_NODE)
                         break;
@@ -200,8 +205,8 @@ public class MendingBlueprint {
             money.setTextContent(this.money);
             blueprint.appendChild(money);
         }
-        if (this.commands != null) {
-            for (String command : this.commands) {
+        if (this.restore_commands != null) {
+            for (String command : this.restore_commands) {
                 Element elemCommand = doc.createElement("command");
                 elemCommand.setTextContent(command);
                 blueprint.appendChild(elemCommand);
@@ -257,8 +262,12 @@ public class MendingBlueprint {
         return this.money;
     }
 
-    public List<String> getCommands() {
-        return this.commands;
+    public List<String> getRestore_commands() {
+        return this.restore_commands;
+    }
+
+    public List<String> getCreate_commands(){
+        return this.create_commands;
     }
 
     public Collection<MTEnchantment> getEnchantments() {

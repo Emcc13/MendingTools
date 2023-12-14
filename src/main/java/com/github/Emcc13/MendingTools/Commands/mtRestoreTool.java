@@ -131,9 +131,9 @@ public class mtRestoreTool extends mtCommands {
         if (blueprint != null && blueprint.getMoney() != null) {
             main.getEconomy().withdrawPlayer(p_receiver, toPay);
         }
-        if (blueprint != null && blueprint.getCommands() != null) {
+        if (blueprint != null && blueprint.getRestore_commands() != null) {
             List<String> commands = new LinkedList<>();
-            for (String command : blueprint.getCommands()) {
+            for (String command : blueprint.getRestore_commands()) {
                 commands.add(formatCommand(command, p_receiver, tool, toPay,
                         new HashMap<String, String>() {{
                             for (Map.Entry<String, Integer> entry : tool.getEnchantments().entrySet())

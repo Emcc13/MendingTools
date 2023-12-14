@@ -7,6 +7,7 @@ import com.github.Emcc13.MendingTools.Config.TranslateConf;
 import com.github.Emcc13.MendingTools.DM_Requirements.PersistentMetaHandler;
 import com.github.Emcc13.MendingTools.Database.DBHandler;
 import com.github.Emcc13.MendingTools.Listener.MTListener;
+import com.github.Emcc13.MendingTools.Util.UpdateChecker;
 import com.github.Emcc13.MendingTools.Util.VaultHook;
 import com.lishid.openinv.IOpenInv;
 import net.md_5.bungee.api.chat.TextComponent;
@@ -16,10 +17,7 @@ import org.bukkit.NamespacedKey;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 import java.util.logging.Level;
 
 public class MendingToolsMain extends JavaPlugin {
@@ -55,8 +53,39 @@ public class MendingToolsMain extends JavaPlugin {
         if (Bukkit.getPluginManager().getPlugin("Vault") != null) {
             this.vaultHook = new VaultHook();
             if (this.vaultHook.hooked()) {
-                this.getLogger().log(Level.INFO,  "Successfully hooked into Vault!" );
+                this.getLogger().log(Level.INFO, "Successfully hooked into Vault!");
             }
+        }
+
+        try {
+            String latestRelease = UpdateChecker.getLatestReleaseTitle();
+            String[] partial = latestRelease.split(" ");
+            if (partial.length < 3)
+                return;
+            latestRelease = String.copyValueOf(partial[2].toCharArray(), 1, partial[2].length() - 1);
+            int[] current_version = Arrays
+                    .stream(this.getDescription().getVersion().split("\\."))
+                    .mapToInt(Integer::parseInt)
+                    .toArray(),
+                    latest_version = Arrays
+                            .stream(latestRelease.split("\\."))
+                            .mapToInt(Integer::parseInt)
+                            .toArray();
+            for (int idx = 0; idx < Math.min(current_version.length, latest_version.length); idx++) {
+                if (latest_version[idx] > current_version[idx]) {
+                    this.getLogger().log(Level.SEVERE, "There is a new version available. " +
+                            "Check out: https://github.com/Emcc13/MendingTools/releases/latest");
+                    break;
+                }
+                if (current_version[idx] > latest_version[idx]) {
+                    this.getLogger().log(Level.WARNING, "Your version is ahead! " +
+                            "Are you using an experimental build?");
+                }
+            }
+
+        } catch (Exception e) {
+            this.getLogger().log(Level.SEVERE, "Failed to check for latest version. " +
+                    "Is the repository public and the latest release correctly named?");
         }
     }
 
@@ -111,7 +140,7 @@ public class MendingToolsMain extends JavaPlugin {
         getServer().getPluginManager().registerEvents(new MTListener(this), this);
     }
 
-    private void loadCachedConfig(){
+    private void loadCachedConfig() {
         try {
             this.cachedConfig = BaseConfig_EN.getConfig(this);
         } catch (Exception e) {
@@ -129,7 +158,7 @@ public class MendingToolsMain extends JavaPlugin {
         } catch (Exception e) {
             Bukkit.getLogger().log(Level.SEVERE, "[MT ERROR] Failed to load language config! Change it and reload it.");
         }
-        if (this.dbhandler!=null)
+        if (this.dbhandler != null)
             this.dbhandler.close();
         this.dbhandler = new DBHandler(this);
     }
@@ -167,7 +196,7 @@ public class MendingToolsMain extends JavaPlugin {
         return this.openInv;
     }
 
-    public PersistentMetaHandler getPersistentMetaHandler(){
+    public PersistentMetaHandler getPersistentMetaHandler() {
         return this.persistentMetaHandler;
     }
 
