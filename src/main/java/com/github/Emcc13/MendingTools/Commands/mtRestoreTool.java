@@ -137,7 +137,7 @@ public class mtRestoreTool extends mtCommands {
                 commands.add(formatCommand(command, p_receiver, tool, toPay,
                         new HashMap<String, String>() {{
                             for (Map.Entry<String, Integer> entry : tool.getEnchantments().entrySet())
-                                put(entry.getKey(), (entry.getValue()==null?"1":entry.getValue().toString()));
+                                put(entry.getKey(), (entry.getValue() == null ? "1" : entry.getValue().toString()));
                             put("%BPNAME%", blueprint.getName());
                             put("%BPID%", String.valueOf(blueprint.getID()));
                             put("%RESTORES%", String.valueOf(tool.getRestores()));

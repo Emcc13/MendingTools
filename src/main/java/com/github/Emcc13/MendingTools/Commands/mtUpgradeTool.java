@@ -162,7 +162,7 @@ public class mtUpgradeTool extends mtCommands {
             moneyValue = Equationparser.eval(blueprintEnch.getMoney(), new HashMap<String, Double>() {{
                 put("%LEVEL%", dLevel);
                 for (Map.Entry<String, Integer> entry : tool.getEnchantments().entrySet()) {
-                    put("%" + entry.getKey() + "%", (double) entry.getValue());
+                    put("%" + entry.getKey() + "%", (entry.getValue() == null ? 1.0 : (double) entry.getValue()));
                 }
             }});
             if (main.getEconomy().getBalance(p_withInv) < moneyValue) {
